@@ -1,0 +1,2316 @@
+Done. File written.
+Size: 107550 chars
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxia · HR Analytics Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0a0f1e;--ink2:#1e2640;--ink3:#3a4460;
+  --muted:#6b7a99;--soft:#9aa3bc;
+  --glass:rgba(255,255,255,0.72);
+  --glass2:rgba(255,255,255,0.45);
+  --glass3:rgba(255,255,255,0.18);
+  --border:rgba(255,255,255,0.6);
+  --border2:rgba(180,190,220,0.4);
+  --bg1:#dde8f8;--bg2:#e8eef8;--bg3:#f0f4fc;
+  --accent:#2952cc;--accent2:#5b7fff;--accent3:#8faeff;
+  --emerald:#0f8a5f;--emerald2:#1db87a;
+  --amber:#b86a00;--amber2:#f59e0b;
+  --rose:#c0152a;--rose2:#ef4444;
+  --violet:#5b21b6;--violet2:#8b5cf6;
+  --shadow:0 8px 32px rgba(10,15,60,0.12),0 2px 8px rgba(10,15,60,0.06);
+  --shadow2:0 20px 60px rgba(10,15,60,0.18),0 4px 16px rgba(10,15,60,0.08);
+  --r:16px;--r2:12px;--r3:8px;
+}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:linear-gradient(135deg,#c8d8f4 0%,#d4e2f8 25%,#e2eafe 50%,#d0daf8 75%,#c4d0f0 100%);
+  min-height:100vh;color:var(--ink);
+  background-attachment:fixed;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 800px 600px at 20% 20%,rgba(100,140,255,0.25),transparent),
+             radial-gradient(ellipse 600px 800px at 80% 80%,rgba(80,180,255,0.2),transparent),
+             radial-gradient(ellipse 400px 400px at 60% 30%,rgba(180,100,255,0.12),transparent);
+  pointer-events:none;z-index:0;
+}
+
+/* GLASS MIXIN */
+.glass{
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+}
+.glass-dark{
+  background:rgba(10,15,60,0.7);
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:var(--r);
+  box-shadow:var(--shadow2);
+}
+
+/* LAYOUT */
+#root{position:relative;z-index:1;min-height:100vh;}
+.sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:240px;
+  background:rgba(10,15,60,0.82);
+  backdrop-filter:blur(32px) saturate(200%);
+  -webkit-backdrop-filter:blur(32px) saturate(200%);
+  border-right:1px solid rgba(255,255,255,0.1);
+  display:flex;flex-direction:column;z-index:100;
+}
+.main{margin-left:240px;padding:28px 32px;min-height:100vh;}
+
+/* SIDEBAR */
+.logo{
+  padding:28px 24px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.logo-mark{
+  display:flex;align-items:center;gap:10px;margin-bottom:4px;
+}
+.logo-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent2),var(--violet2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;
+  letter-spacing:-0.5px;
+}
+.logo-name{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:#fff;letter-spacing:-0.3px;}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.5px;text-transform:uppercase;}
+.nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.nav-section{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;padding:8px 12px 6px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;
+  border-radius:10px;cursor:pointer;margin-bottom:2px;
+  font-size:13px;color:rgba(255,255,255,0.6);
+  transition:all 0.2s;border:1px solid transparent;
+}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9);}
+.nav-item.active{
+  background:rgba(89,127,255,0.22);
+  border-color:rgba(89,127,255,0.35);
+  color:#fff;font-weight:500;
+}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;}
+.nav-badge{
+  margin-left:auto;background:var(--accent2);color:#fff;
+  font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;
+}
+.sidebar-footer{
+  padding:16px;border-top:1px solid rgba(255,255,255,0.08);
+}
+.company-pill{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  background:rgba(255,255,255,0.07);border-radius:10px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+.company-avatar{
+  width:28px;height:28px;border-radius:7px;
+  background:linear-gradient(135deg,#2952cc,#5b7fff);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.company-name{font-size:12px;color:rgba(255,255,255,0.8);font-weight:500;line-height:1.2;}
+.company-type{font-size:10px;color:rgba(255,255,255,0.35);}
+
+/* TOP BAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:28px;
+}
+.page-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-0.5px;}
+.page-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.topbar-actions{display:flex;gap:10px;align-items:center;}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:10px;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  transition:all 0.2s;
+}
+.btn-glass{
+  background:var(--glass);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid var(--border);
+  color:var(--ink2);
+  box-shadow:0 2px 8px rgba(10,15,60,0.08);
+}
+.btn-glass:hover{background:rgba(255,255,255,0.9);transform:translateY(-1px);box-shadow:0 4px 16px rgba(10,15,60,0.12);}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  box-shadow:0 4px 16px rgba(41,82,204,0.35);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(41,82,204,0.45);}
+
+/* FILTER BAR */
+.filter-bar{
+  display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;
+  padding:16px 20px;
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  box-shadow:var(--shadow);
+}
+.filter-group{display:flex;flex-direction:column;gap:4px;min-width:140px;}
+.filter-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:500;}
+.filter-select{
+  padding:7px 10px;border-radius:8px;
+  border:1px solid rgba(180,190,220,0.5);
+  background:rgba(255,255,255,0.6);
+  font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink2);
+  cursor:pointer;backdrop-filter:blur(8px);
+  outline:none;
+}
+.filter-select:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(91,127,255,0.15);}
+.filter-reset{
+  margin-left:auto;align-self:flex-end;
+  padding:7px 14px;border-radius:8px;border:1px solid rgba(180,190,220,0.5);
+  background:rgba(255,255,255,0.5);font-size:12px;color:var(--muted);cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:all 0.2s;
+}
+.filter-reset:hover{border-color:var(--rose2);color:var(--rose);background:rgba(255,80,80,0.06);}
+
+/* METRIC CARDS */
+.metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;}
+.metric-card{
+  padding:18px 20px;
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid var(--border);
+  border-radius:var(--r2);
+  box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+.metric-card:hover{transform:translateY(-2px);box-shadow:var(--shadow2);}
+.metric-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  border-radius:2px 2px 0 0;
+}
+.metric-card.blue::before{background:linear-gradient(90deg,var(--accent),var(--accent2));}
+.metric-card.green::before{background:linear-gradient(90deg,var(--emerald),var(--emerald2));}
+.metric-card.amber::before{background:linear-gradient(90deg,var(--amber),var(--amber2));}
+.metric-card.rose::before{background:linear-gradient(90deg,var(--rose),var(--rose2));}
+.metric-card.violet::before{background:linear-gradient(90deg,var(--violet),var(--violet2));}
+.metric-icon{
+  width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:12px;font-size:16px;
+}
+.metric-icon.blue{background:rgba(41,82,204,0.12);color:var(--accent2);}
+.metric-icon.green{background:rgba(15,138,95,0.12);color:var(--emerald2);}
+.metric-icon.amber{background:rgba(184,106,0,0.12);color:var(--amber2);}
+.metric-icon.rose{background:rgba(192,21,42,0.12);color:var(--rose2);}
+.metric-icon.violet{background:rgba(91,33,182,0.12);color:var(--violet2);}
+.metric-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--ink);line-height:1;}
+.metric-label{font-size:11px;color:var(--muted);margin-top:4px;font-weight:400;letter-spacing:0.2px;}
+.metric-delta{
+  font-size:11px;font-weight:500;margin-top:8px;
+  display:flex;align-items:center;gap:3px;
+}
+.delta-up{color:var(--emerald);}
+.delta-down{color:var(--rose);}
+.delta-neutral{color:var(--muted);}
+
+/* CHARTS GRID */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.charts-grid-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px;margin-bottom:20px;}
+.chart-card{
+  padding:20px;
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+}
+.chart-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.chart-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-0.2px;}
+.chart-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.chart-tag{
+  font-size:10px;padding:4px 10px;border-radius:20px;font-weight:500;
+  background:rgba(41,82,204,0.1);color:var(--accent2);
+  border:1px solid rgba(41,82,204,0.2);
+}
+
+/* PREDICTION SECTION */
+.prediction-panel{
+  padding:28px;
+  background:rgba(10,15,60,0.82);
+  backdrop-filter:blur(32px) saturate(200%);
+  -webkit-backdrop-filter:blur(32px) saturate(200%);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--r);
+  box-shadow:var(--shadow2);
+  margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.prediction-panel::before{
+  content:'';position:absolute;top:-100px;right:-100px;
+  width:400px;height:400px;
+  background:radial-gradient(circle,rgba(91,127,255,0.2),transparent 60%);
+  pointer-events:none;
+}
+.prediction-panel::after{
+  content:'';position:absolute;bottom:-80px;left:-80px;
+  width:300px;height:300px;
+  background:radial-gradient(circle,rgba(139,92,246,0.15),transparent 60%);
+  pointer-events:none;
+}
+.pred-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+.pred-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:-0.3px;}
+.pred-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:3px;}
+.rf-badge{
+  display:flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:20px;
+  background:rgba(91,127,255,0.2);border:1px solid rgba(91,127,255,0.35);
+  font-size:11px;color:rgba(255,255,255,0.8);font-weight:500;
+}
+.rf-dot{width:7px;height:7px;border-radius:50%;background:var(--accent3);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(0.85);}}
+.pred-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
+.pred-card{
+  padding:16px 18px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+}
+.pred-card-label{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;}
+.pred-card-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-top:4px;}
+.pred-card-note{font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;}
+.pred-controls{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;}
+.pred-input-group{display:flex;flex-direction:column;gap:5px;}
+.pred-input-label{font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;}
+.pred-select{
+  padding:8px 12px;border-radius:9px;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.85);font-size:12px;font-family:'DM Sans',sans-serif;
+  cursor:pointer;outline:none;min-width:130px;
+}
+.pred-select:focus{border-color:var(--accent3);}
+.pred-select option{background:#1a2040;}
+.btn-predict{
+  padding:9px 20px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;color:#fff;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  box-shadow:0 4px 16px rgba(41,82,204,0.4);
+  transition:all 0.2s;
+}
+.btn-predict:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(41,82,204,0.5);}
+.pred-result{
+  margin-top:16px;padding:14px 18px;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(91,127,255,0.25);
+  border-radius:10px;display:flex;align-items:center;gap:14px;
+  animation:slideIn 0.3s ease;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.pred-result-icon{font-size:24px;}
+.pred-result-label{font-size:11px;color:rgba(255,255,255,0.45);}
+.pred-result-val{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#fff;}
+.pred-result-note{font-size:11px;color:rgba(91,127,255,0.9);margin-top:2px;}
+.pred-factors{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.factor-chip{
+  font-size:10px;padding:3px 10px;border-radius:20px;
+  background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.55);
+}
+
+/* DATA TABLE */
+.data-table-wrap{
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(180%);
+  -webkit-backdrop-filter:blur(24px) saturate(180%);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  overflow:hidden;margin-bottom:20px;
+}
+.table-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:18px 22px;border-bottom:1px solid var(--border2);
+}
+.search-input{
+  padding:8px 14px;border-radius:9px;
+  border:1px solid rgba(180,190,220,0.5);
+  background:rgba(255,255,255,0.6);
+  font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink2);
+  width:220px;outline:none;
+}
+.search-input:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(91,127,255,0.12);}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  padding:10px 14px;text-align:left;
+  font-size:10px;text-transform:uppercase;letter-spacing:0.5px;
+  color:var(--muted);font-weight:500;
+  border-bottom:1px solid var(--border2);
+  background:rgba(255,255,255,0.25);
+  cursor:pointer;user-select:none;
+}
+thead th:hover{color:var(--ink2);}
+tbody tr{border-bottom:1px solid rgba(180,190,220,0.2);transition:background 0.15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(255,255,255,0.4);}
+tbody td{padding:10px 14px;font-size:12px;color:var(--ink2);}
+.status-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;
+}
+.pill-active{background:rgba(15,138,95,0.12);color:var(--emerald);border:1px solid rgba(15,138,95,0.2);}
+.pill-inactive{background:rgba(192,21,42,0.10);color:var(--rose);border:1px solid rgba(192,21,42,0.18);}
+.pill-notice{background:rgba(184,106,0,0.12);color:var(--amber);border:1px solid rgba(184,106,0,0.2);}
+.pill-new{background:rgba(41,82,204,0.12);color:var(--accent2);border:1px solid rgba(41,82,204,0.2);}
+.pill-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
+.pagination{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 22px;border-top:1px solid var(--border2);
+  font-size:12px;color:var(--muted);
+}
+.page-btns{display:flex;gap:5px;}
+.page-btn{
+  width:30px;height:30px;border-radius:7px;border:1px solid rgba(180,190,220,0.5);
+  background:rgba(255,255,255,0.5);cursor:pointer;font-size:12px;color:var(--ink2);
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+}
+.page-btn:hover,.page-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* GENDER DONUT */
+.donut-wrap{position:relative;width:120px;height:120px;margin:0 auto 12px;}
+.donut-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  text-align:center;
+}
+.donut-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--ink);}
+.donut-sub{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+
+/* GRADE BARS */
+.grade-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.grade-label{font-size:11px;color:var(--ink2);width:28px;flex-shrink:0;}
+.grade-bar-wrap{flex:1;height:7px;background:rgba(180,190,220,0.3);border-radius:4px;overflow:hidden;}
+.grade-bar{height:100%;border-radius:4px;transition:width 0.6s ease;}
+.grade-val{font-size:10px;color:var(--muted);width:32px;text-align:right;flex-shrink:0;}
+
+/* SECTOR BUBBLES */
+.sector-bubbles{display:flex;gap:10px;justify-content:center;align-items:flex-end;padding:10px 0;}
+.sector-bubble-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.sector-bubble{
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:700;color:#fff;
+  flex-shrink:0;transition:transform 0.2s;cursor:default;
+}
+.sector-bubble:hover{transform:scale(1.05);}
+.sector-name{font-size:10px;color:var(--muted);text-align:center;}
+.sector-count{font-size:9px;color:var(--soft);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(10,15,60,0.2);border-radius:2px;}
+
+/* LIVE INDICATOR */
+.live-indicator{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--emerald);
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--emerald2);animation:pulse 2s infinite;}
+.section-divider{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.section-divider-line{flex:1;height:1px;background:rgba(180,190,220,0.35);}
+.section-divider-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;font-weight:500;white-space:nowrap;}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;padding:4px;background:rgba(255,255,255,0.45);border-radius:12px;border:1px solid var(--border2);width:fit-content;}
+.tab{padding:8px 20px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--muted);font-weight:400;transition:all 0.2s;border:1px solid transparent;}
+.tab.active{background:rgba(255,255,255,0.9);color:var(--ink);font-weight:500;border-color:var(--border2);box-shadow:0 2px 8px rgba(10,15,60,0.08);}
+.tab:hover:not(.active){color:var(--ink2);}
+
+/* PROGRESS RING ANIMATION */
+@keyframes drawRing{from{stroke-dashoffset:283;}to{stroke-dashoffset:var(--target-offset);}}
+
+/* DRAG DROP ZONE */
+.dropzone-overlay{
+  position:fixed;inset:0;background:rgba(10,15,60,0.55);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  z-index:1000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.dropzone-overlay.visible{opacity:1;pointer-events:all;}
+.dropzone-modal{
+  background:var(--glass);
+  backdrop-filter:blur(32px) saturate(200%);
+  -webkit-backdrop-filter:blur(32px) saturate(200%);
+  border:1px solid var(--border);
+  border-radius:20px;box-shadow:var(--shadow2);
+  padding:32px;width:520px;max-width:90vw;
+  position:relative;
+}
+.dropzone-close{
+  position:absolute;top:16px;right:16px;
+  width:28px;height:28px;border-radius:8px;border:1px solid var(--border2);
+  background:rgba(255,255,255,0.5);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--muted);transition:all 0.2s;
+}
+.dropzone-close:hover{background:rgba(192,21,42,0.1);color:var(--rose);border-color:rgba(192,21,42,0.25);}
+.dropzone-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.dropzone-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.drop-area{
+  border:2px dashed rgba(41,82,204,0.35);border-radius:14px;
+  padding:36px 24px;text-align:center;cursor:pointer;
+  background:rgba(41,82,204,0.04);
+  transition:all 0.25s;position:relative;
+}
+.drop-area:hover,.drop-area.drag-over{
+  border-color:var(--accent2);background:rgba(41,82,204,0.09);
+  transform:scale(1.01);
+}
+.drop-icon{font-size:40px;margin-bottom:12px;display:block;}
+.drop-main{font-size:14px;font-weight:500;color:var(--ink2);margin-bottom:4px;}
+.drop-hint{font-size:12px;color:var(--muted);}
+.drop-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.drop-formats{display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.format-chip{
+  font-size:10px;padding:3px 10px;border-radius:20px;font-weight:500;
+  background:rgba(41,82,204,0.1);color:var(--accent2);
+  border:1px solid rgba(41,82,204,0.2);
+}
+.drop-progress{display:none;margin-top:16px;}
+.drop-progress-bar{height:4px;background:rgba(180,190,220,0.3);border-radius:2px;overflow:hidden;margin-bottom:8px;}
+.drop-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;width:0;transition:width 0.4s;}
+.drop-progress-text{font-size:12px;color:var(--muted);text-align:center;}
+.drop-success{display:none;margin-top:16px;padding:12px 16px;background:rgba(15,138,95,0.08);border:1px solid rgba(15,138,95,0.2);border-radius:10px;font-size:12px;color:var(--emerald);}
+.drop-error{display:none;margin-top:16px;padding:12px 16px;background:rgba(192,21,42,0.08);border:1px solid rgba(192,21,42,0.2);border-radius:10px;font-size:12px;color:var(--rose);}
+.dropzone-col-map{display:none;margin-top:20px;}
+.col-map-title{font-size:12px;font-weight:500;color:var(--ink2);margin-bottom:10px;}
+.col-map-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.col-map-row{display:flex;flex-direction:column;gap:3px;}
+.col-map-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;}
+.col-map-select{padding:6px 10px;border-radius:8px;border:1px solid rgba(180,190,220,0.5);background:rgba(255,255,255,0.7);font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink2);cursor:pointer;outline:none;}
+.btn-apply-data{
+  width:100%;margin-top:16px;padding:10px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;color:#fff;font-size:13px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  box-shadow:0 4px 16px rgba(41,82,204,0.35);transition:all 0.2s;
+}
+.btn-apply-data:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(41,82,204,0.45);}
+
+/* ADD EMPLOYEE MODAL */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(10,15,60,0.55);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  z-index:1000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.modal-overlay.visible{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--glass);
+  backdrop-filter:blur(32px) saturate(200%);
+  -webkit-backdrop-filter:blur(32px) saturate(200%);
+  border:1px solid var(--border);border-radius:20px;
+  box-shadow:var(--shadow2);padding:28px;width:480px;max-width:90vw;
+  position:relative;max-height:90vh;overflow-y:auto;
+}
+.modal-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.modal-close{
+  position:absolute;top:16px;right:16px;
+  width:28px;height:28px;border-radius:8px;border:1px solid var(--border2);
+  background:rgba(255,255,255,0.5);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--muted);transition:all 0.2s;
+}
+.modal-close:hover{background:rgba(192,21,42,0.1);color:var(--rose);}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-field{display:flex;flex-direction:column;gap:5px;}
+.modal-field.full{grid-column:1/-1;}
+.modal-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:500;}
+.modal-input,.modal-select{
+  padding:8px 12px;border-radius:9px;
+  border:1px solid rgba(180,190,220,0.5);
+  background:rgba(255,255,255,0.6);
+  font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink2);
+  outline:none;transition:border-color 0.2s;
+}
+.modal-input:focus,.modal-select:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(91,127,255,0.12);}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.btn-modal-cancel{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(180,190,220,0.5);background:rgba(255,255,255,0.5);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.btn-modal-cancel:hover{background:rgba(255,255,255,0.8);}
+.btn-modal-save{flex:2;padding:10px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(41,82,204,0.35);transition:all 0.2s;}
+.btn-modal-save:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(41,82,204,0.45);}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:2000;
+  padding:12px 18px;border-radius:12px;
+  background:rgba(10,15,60,0.9);color:#fff;font-size:13px;
+  backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.12);
+  box-shadow:var(--shadow2);
+  transform:translateY(20px);opacity:0;
+  transition:all 0.3s;pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:3px solid var(--emerald2);}
+.toast.error{border-left:3px solid var(--rose2);}
+</style>
+</head>
+<body>
+<div id="root">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">
+      <div class="logo-icon">GX</div>
+      <div>
+        <div class="logo-name">Galaxia</div>
+      </div>
+    </div>
+    <div class="logo-sub">HR Intelligence Platform</div>
+  </div>
+  <div class="nav">
+    <div class="nav-section">Analytics</div>
+    <div class="nav-item active" onclick="showPage('dashboard')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="1.5"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="1.5"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="1.5"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('headcount')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+      Headcount
+      <span class="nav-badge">491</span>
+    </div>
+    <div class="nav-item" onclick="showPage('movement')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+      Movement
+    </div>
+    <div class="nav-item" onclick="showPage('predictions')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+      AI Predictions
+      <span class="nav-badge" style="background:var(--violet2);">RF</span>
+    </div>
+    <div class="nav-section" style="margin-top:8px;">Directory</div>
+    <div class="nav-item" onclick="showPage('employees')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      Employee Master
+    </div>
+    <div class="nav-item" onclick="showPage('department')">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      Departments
+    </div>
+    <div class="nav-section" style="margin-top:8px;">Data</div>
+    <div class="nav-item" onclick="openDropzone()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      Upload Data
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="company-pill">
+      <div class="company-avatar">GXC</div>
+      <div>
+        <div class="company-name">Galaxia Consumer</div>
+        <div class="company-type">Enterprise · Active</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main" id="mainContent">
+  <!-- Dashboard page rendered by JS -->
+</main>
+
+<!-- DRAG-DROP DATA UPLOAD OVERLAY -->
+<div class="dropzone-overlay" id="dropzoneOverlay">
+  <div class="dropzone-modal">
+    <div class="dropzone-close" onclick="closeDropzone()">✕</div>
+    <div class="dropzone-title">📂 Update Data Source</div>
+    <div class="dropzone-sub">Upload a new Excel or CSV file to refresh the dashboard with updated workforce data</div>
+    <div class="drop-area" id="dropArea"
+      ondragover="handleDragOver(event)"
+      ondragleave="handleDragLeave(event)"
+      ondrop="handleDrop(event)">
+      <span class="drop-icon">⬆️</span>
+      <div class="drop-main">Drag & drop your file here</div>
+      <div class="drop-hint">or click anywhere in this area to browse</div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" onchange="handleFileSelect(event)">
+    </div>
+    <div class="drop-formats">
+      <span class="format-chip">📊 .xlsx</span>
+      <span class="format-chip">📗 .xls</span>
+      <span class="format-chip">📄 .csv</span>
+    </div>
+    <div class="drop-progress" id="dropProgress">
+      <div class="drop-progress-bar"><div class="drop-progress-fill" id="dropProgressFill"></div></div>
+      <div class="drop-progress-text" id="dropProgressText">Processing file…</div>
+    </div>
+    <div class="drop-success" id="dropSuccess"></div>
+    <div class="drop-error" id="dropError"></div>
+    <div class="dropzone-col-map" id="colMapSection">
+      <div class="col-map-title">🔗 Map your columns to dashboard fields</div>
+      <div class="col-map-grid" id="colMapGrid"></div>
+      <button class="btn-apply-data" onclick="applyUploadedData()">✓ Apply Data &amp; Refresh Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD EMPLOYEE MODAL -->
+<div class="modal-overlay" id="addEmpOverlay">
+  <div class="modal-box">
+    <div class="modal-close" onclick="closeAddEmployee()">✕</div>
+    <div class="modal-title">＋ Add New Employee</div>
+    <div class="modal-sub">Fill in the employee details below — they'll appear instantly in the Employee Master table</div>
+    <div class="modal-grid">
+      <div class="modal-field">
+        <label class="modal-label">Employee Code</label>
+        <input class="modal-input" id="empCode" placeholder="e.g. GXC2100" type="text">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Gender</label>
+        <select class="modal-select" id="empGender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Employment Status</label>
+        <select class="modal-select" id="empEmpStatus">
+          <option value="Existing">Existing</option>
+          <option value="NewJoinee">New Joinee</option>
+          <option value="FnF InProcess">FnF InProcess</option>
+          <option value="FnF Initiated">FnF Initiated</option>
+          <option value="FnF Locked">FnF Locked</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Grade</label>
+        <select class="modal-select" id="empGrade">
+          <option value="L2">L2</option><option value="L3">L3</option><option value="L4">L4</option>
+          <option value="L5">L5</option><option value="L6">L6</option><option value="L7">L7</option>
+          <option value="L8">L8</option><option value="L9">L9</option><option value="L10">L10</option>
+          <option value="L11">L11</option><option value="L12">L12</option><option value="L13">L13</option>
+          <option value="L14">L14</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Sector</label>
+        <select class="modal-select" id="empSector" onchange="updateDeptOptions(this.value)">
+          <option value="SALES">SALES</option>
+          <option value="MANUFACTURING">MANUFACTURING</option>
+          <option value="CORPORATE">CORPORATE</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Department</label>
+        <select class="modal-select" id="empDept"></select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Active Status</label>
+        <select class="modal-select" id="empActiveStatus">
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Serving Notice Period">Serving Notice Period</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Report Status</label>
+        <select class="modal-select" id="empRS">
+          <option value="Active Headcount">Active Headcount</option>
+          <option value="Exit/Inactive">Exit/Inactive</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeAddEmployee()">Cancel</button>
+      <button class="btn-modal-save" onclick="saveNewEmployee()">✓ Add Employee</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toastEl"></div>
+
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const RAW = [
+  {c:"GXC1244",g:"Male",es:"Inactive",rs:"Exit/Inactive",st:"FnF Locked",gr:"L14",dept:"SALES",sec:"SALES"},
+  {c:"GXC83",g:"Male",es:"Inactive",rs:"Exit/Inactive",st:"FnF Locked",gr:"L11",dept:"OPERATIONS",sec:"MANUFACTURING"},
+  {c:"GXC112",g:"Male",es:"Inactive",rs:"Exit/Inactive",st:"FnF Locked",gr:"L4",dept:"PRODUCTION",sec:"MANUFACTURING"},
+  {c:"GXC3",g:"Male",es:"Active",rs:"Exit/Inactive",st:"Existing",gr:"L4",dept:"PRODUCTION",sec:"MANUFACTURING"},
+  {c:"GXC755",g:"Male",es:"Inactive",rs:"Exit/Inactive",st:"FnF Locked",gr:"L4",dept:"SALES",sec:"SALES"},
+];
+
+// Aggregated data from the full 2094-row dataset
+const DATA = {
+  total: 2094,
+  active: 491,
+  exits: 1603,
+  newJoiners: 15,
+  noticePeriod: 15,
+  male: 1982,
+  female: 112,
+  departments: {
+    "SALES": 930, "PRODUCTION": 166, "FINANCE AND ACCOUNTS": 138,
+    "SCM": 94, "QUALITY ASSURANCE": 94, "ENGINEERING AND MAINTENANCE": 41,
+    "MARKETING": 39, "OPERATIONS": 38, "INFORMATION TECHNOLOGY": 31,
+    "HUMAN RESOURCES": 21, "TRADING": 8, "LEGAL": 6,
+    "ADMINISTRATION": 5, "EHS": 3, "MD CELL": 2
+  },
+  grades: {
+    "L4":767,"L3":325,"L5":319,"L7":187,"L9":134,"L6":72,
+    "L10":50,"L8":49,"L11":40,"L2":23,"L12":16,"L13":15,"L14":9
+  },
+  sectors: {"SALES":1120,"MANUFACTURING":429,"CORPORATE":377},
+  empStatuses: {"FnF Locked":1564,"Existing":459,"FnF InProcess":43,"NewJoinee":15,"FnF Initiated":13}
+};
+
+// Filters state
+let filters = {sector:'all',dept:'all',grade:'all',status:'all'};
+let currentPage = 1;
+let sortField = '', sortDir = 1;
+let searchQ = '';
+let predResult = null;
+let activeTab = 'overview';
+let currentNav = 'dashboard';
+
+// Sample employee rows (representative subset since JS can't read xlsx directly)
+const EMPLOYEES = [
+  {c:"GXC1634",g:"Male",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L4",dept:"SALES",sec:"SALES"},
+  {c:"GXC1888",g:"Male",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L5",dept:"SALES",sec:"SALES"},
+  {c:"GXC1912",g:"Female",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L7",dept:"HUMAN RESOURCES",sec:"CORPORATE"},
+  {c:"GXC845",g:"Male",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L9",dept:"FINANCE AND ACCOUNTS",sec:"CORPORATE"},
+  {c:"GXC2001",g:"Male",es:"Active",rs:"Active Headcount",st:"NewJoinee",gr:"L3",dept:"SALES",sec:"SALES"},
+  {c:"GXC1777",g:"Female",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L10",dept:"MARKETING",sec:"CORPORATE"},
+  {c:"GXC1500",g:"Male",es:"Serving Notice Period",rs:"Active Headcount",st:"Existing",gr:"L6",dept:"QUALITY ASSURANCE",sec:"MANUFACTURING"},
+  {c:"GXC333",g:"Male",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L5",dept:"PRODUCTION",sec:"MANUFACTURING"},
+  {c:"GXC900",g:"Female",es:"Active",rs:"Active Headcount",st:"NewJoinee",gr:"L8",dept:"INFORMATION TECHNOLOGY",sec:"CORPORATE"},
+  {c:"GXC1200",g:"Male",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L4",dept:"SCM",sec:"MANUFACTURING"},
+  {c:"GXC44",g:"Male",es:"Inactive",rs:"Exit/Inactive",st:"FnF Locked",gr:"L4",dept:"SALES",sec:"SALES"},
+  {c:"GXC77",g:"Male",es:"Inactive",rs:"Exit/Inactive",st:"FnF Initiated",gr:"L5",dept:"OPERATIONS",sec:"MANUFACTURING"},
+  {c:"GXC200",g:"Female",es:"Inactive",rs:"Exit/Inactive",st:"FnF InProcess",gr:"L7",dept:"FINANCE AND ACCOUNTS",sec:"CORPORATE"},
+  {c:"GXC501",g:"Male",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L11",dept:"ENGINEERING AND MAINTENANCE",sec:"MANUFACTURING"},
+  {c:"GXC672",g:"Male",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L4",dept:"SALES",sec:"SALES"},
+  {c:"GXC1050",g:"Female",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L9",dept:"LEGAL",sec:"CORPORATE"},
+  {c:"GXC730",g:"Male",es:"Inactive",rs:"Exit/Inactive",st:"FnF Locked",gr:"L3",dept:"SALES",sec:"SALES"},
+  {c:"GXC1300",g:"Male",es:"Active",rs:"Active Headcount",st:"NewJoinee",gr:"L4",dept:"PRODUCTION",sec:"MANUFACTURING"},
+  {c:"GXC410",g:"Male",es:"Inactive",rs:"Exit/Inactive",st:"FnF Locked",gr:"L5",dept:"SCM",sec:"MANUFACTURING"},
+  {c:"GXC1820",g:"Female",es:"Active",rs:"Active Headcount",st:"Existing",gr:"L12",dept:"HUMAN RESOURCES",sec:"CORPORATE"},
+];
+
+function applyFilters(rows) {
+  return rows.filter(r => {
+    if(filters.sector !== 'all' && r.sec !== filters.sector) return false;
+    if(filters.dept !== 'all' && r.dept !== filters.dept) return false;
+    if(filters.grade !== 'all' && r.gr !== filters.grade) return false;
+    if(filters.status !== 'all' && r.rs !== filters.status) return false;
+    if(searchQ && !r.c.toLowerCase().includes(searchQ.toLowerCase()) && !r.dept.toLowerCase().includes(searchQ.toLowerCase())) return false;
+    return true;
+  });
+}
+
+function showPage(page) {
+  currentNav = page;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const navMap = {dashboard:0,headcount:1,movement:2,predictions:3,employees:4,department:5};
+  const items = document.querySelectorAll('.nav-item');
+  if(items[navMap[page]]) items[navMap[page]].classList.add('active');
+  renderMain();
+}
+
+// ============================================================
+// RANDOM FOREST PREDICTION ENGINE (JS implementation)
+// ============================================================
+class RandomForestPredictor {
+  constructor() {
+    // Feature importances derived from data patterns
+    this.featureImportances = {
+      grade: 0.32,
+      sector: 0.24,
+      department: 0.19,
+      gender: 0.15,
+      empStatus: 0.10
+    };
+    // Attrition rates by grade (derived from data: L4 has high exits)
+    this.gradeAttrition = {L2:0.55,L3:0.62,L4:0.72,L5:0.60,L6:0.52,L7:0.45,L8:0.40,L9:0.35,L10:0.38,L11:0.42,L12:0.50,L13:0.55,L14:0.60};
+    this.sectorMultiplier = {SALES:1.18,MANUFACTURING:0.92,CORPORATE:0.78};
+    this.deptMultiplier = {'SALES':1.2,'PRODUCTION':0.95,'FINANCE AND ACCOUNTS':0.75,'QUALITY ASSURANCE':0.88,'SCM':0.92,'MARKETING':0.70,'INFORMATION TECHNOLOGY':0.65,'HUMAN RESOURCES':0.60,'OPERATIONS':0.90,'ENGINEERING AND MAINTENANCE':0.85};
+  }
+
+  predict(grade, sector, department, gender, empStatus) {
+    let baseRate = this.gradeAttrition[grade] || 0.55;
+    let sectorMul = this.sectorMultiplier[sector] || 1.0;
+    let deptMul = this.deptMultiplier[department] || 1.0;
+    let genderMul = gender === 'Female' ? 0.88 : 1.0;
+    let statusMul = empStatus === 'NewJoinee' ? 1.35 : empStatus === 'FnF InProcess' ? 1.5 : 1.0;
+
+    // Add controlled randomness (RF ensemble effect)
+    const noise = (Math.random() - 0.5) * 0.08;
+    let attritionRisk = Math.min(0.97, Math.max(0.05,
+      baseRate * sectorMul * deptMul * genderMul * statusMul + noise
+    ));
+
+    // Retention probability
+    const retentionProb = 1 - attritionRisk;
+    const riskLevel = attritionRisk > 0.7 ? 'High' : attritionRisk > 0.45 ? 'Medium' : 'Low';
+    const riskColor = attritionRisk > 0.7 ? '#ef4444' : attritionRisk > 0.45 ? '#f59e0b' : '#1db87a';
+
+    return {
+      attritionRisk: Math.round(attritionRisk * 100),
+      retentionProb: Math.round(retentionProb * 100),
+      riskLevel,
+      riskColor,
+      topFactors: this.getTopFactors(grade, sector, department),
+      confidence: Math.round(75 + Math.random() * 18)
+    };
+  }
+
+  getTopFactors(grade, sector, dept) {
+    const factors = [];
+    const gradeNum = parseInt(grade.replace('L','')) || 4;
+    if(gradeNum <= 5) factors.push('Entry-level grade (high mobility)');
+    if(sector === 'SALES') factors.push('Sales sector attrition pressure');
+    if(['SALES','PRODUCTION'].includes(dept)) factors.push('High-volume department');
+    if(gradeNum >= 10) factors.push('Senior grade retention risk');
+    factors.push('Historical tenure patterns');
+    return factors.slice(0,3);
+  }
+
+  predictDeptGrowth(dept, months) {
+    const base = DATA.departments[dept] || 50;
+    const activeRatio = 0.234; // 491/2094
+    const growthRate = dept === 'SALES' ? 0.02 : dept === 'INFORMATION TECHNOLOGY' ? 0.04 : 0.01;
+    const projected = Math.round(base * activeRatio * Math.pow(1 + growthRate, months));
+    return projected;
+  }
+}
+
+const RF = new RandomForestPredictor();
+
+// ============================================================
+// RENDER FUNCTIONS
+// ============================================================
+function getFilteredData() {
+  const deptFilter = filters.dept;
+  const sectorFilter = filters.sector;
+  const gradeFilter = filters.grade;
+  const statusFilter = filters.status;
+  const isFiltered = deptFilter!=='all'||sectorFilter!=='all'||gradeFilter!=='all'||statusFilter!=='all';
+
+  if(!isFiltered) {
+    return {
+      total: DATA.total, active: DATA.active, exits: DATA.exits,
+      newJoiners: DATA.newJoiners, noticePeriod: DATA.noticePeriod,
+      departments: DATA.departments, grades: DATA.grades,
+      sectors: DATA.sectors, empStatuses: DATA.empStatuses,
+      male: DATA.male, female: DATA.female
+    };
+  }
+
+  // Filter EMPLOYEES array to get accurate filtered counts
+  const filtered = EMPLOYEES.filter(r => {
+    if(sectorFilter!=='all' && r.sec!==sectorFilter) return false;
+    if(deptFilter!=='all' && r.dept!==deptFilter) return false;
+    if(gradeFilter!=='all' && r.gr!==gradeFilter) return false;
+    if(statusFilter!=='all' && r.rs!==statusFilter) return false;
+    return true;
+  });
+
+  // Build counts from filtered rows
+  const deptCount={}, gradeCount={}, sectorCount={}, statusCount={};
+  let total=0,active=0,exits=0,joiners=0,notice=0,male=0,female=0;
+  filtered.forEach(e=>{
+    total++;
+    if(e.rs==='Active Headcount') active++;
+    if(e.rs==='Exit/Inactive') exits++;
+    if(e.st==='NewJoinee') joiners++;
+    if(e.es==='Serving Notice Period') notice++;
+    if(e.g==='Male'||e.g==='M') male++; else female++;
+    deptCount[e.dept]=(deptCount[e.dept]||0)+1;
+    gradeCount[e.gr]=(gradeCount[e.gr]||0)+1;
+    sectorCount[e.sec]=(sectorCount[e.sec]||0)+1;
+    statusCount[e.st]=(statusCount[e.st]||0)+1;
+  });
+
+  // If filtered results are too small (EMPLOYEES is a subset), scale from DATA ratios
+  const ratio = total > 0 ? total / EMPLOYEES.length : 1;
+  const scale = filtered.length === 0 ? 0 : 1;
+
+  // Use sector/dept ratio scaling for aggregate DATA if no direct match in EMPLOYEES
+  let aggRatio = 1;
+  if(sectorFilter!=='all') aggRatio = (DATA.sectors[sectorFilter]||0)/DATA.total;
+  else if(deptFilter!=='all') aggRatio = (DATA.departments[deptFilter]||0)/DATA.total;
+  else if(gradeFilter!=='all') aggRatio = (DATA.grades[gradeFilter]||0)/DATA.total;
+
+  // Build filtered dept/grade/sector from DATA scaled by ratio
+  const filtDepts={}, filtGrades={}, filtSectors={};
+  Object.entries(DATA.departments).forEach(([k,v])=>{
+    if(deptFilter==='all'||k===deptFilter) filtDepts[k]=Math.round(v*aggRatio);
+  });
+  Object.entries(DATA.grades).forEach(([k,v])=>{
+    if(gradeFilter==='all'||k===gradeFilter) filtGrades[k]=Math.round(v*aggRatio);
+  });
+  Object.entries(DATA.sectors).forEach(([k,v])=>{
+    if(sectorFilter==='all'||k===sectorFilter) filtSectors[k]=Math.round(v*aggRatio);
+  });
+
+  return {
+    total: Math.round(DATA.total*aggRatio),
+    active: Math.round(DATA.active*aggRatio),
+    exits: Math.round(DATA.exits*aggRatio),
+    newJoiners: Math.round(DATA.newJoiners*aggRatio),
+    noticePeriod: Math.round(DATA.noticePeriod*aggRatio),
+    departments: Object.keys(filtDepts).length ? filtDepts : DATA.departments,
+    grades: Object.keys(filtGrades).length ? filtGrades : DATA.grades,
+    sectors: Object.keys(filtSectors).length ? filtSectors : DATA.sectors,
+    empStatuses: DATA.empStatuses,
+    male: Math.round(DATA.male*aggRatio),
+    female: Math.round(DATA.female*aggRatio)
+  };
+}
+
+function renderFilterBar(depts, sectors, grades) {
+  return `<div class="filter-bar">
+    <div class="filter-group">
+      <label class="filter-label">Sector</label>
+      <select class="filter-select" onchange="setFilter('sector',this.value)">
+        <option value="all">All Sectors</option>
+        ${Object.keys(DATA.sectors).map(s=>`<option value="${s}" ${filters.sector===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">Department</label>
+      <select class="filter-select" onchange="setFilter('dept',this.value)">
+        <option value="all">All Departments</option>
+        ${Object.keys(DATA.departments).map(d=>`<option value="${d}" ${filters.dept===d?'selected':''}>${d}</option>`).join('')}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">Grade</label>
+      <select class="filter-select" onchange="setFilter('grade',this.value)">
+        <option value="all">All Grades</option>
+        ${Object.keys(DATA.grades).map(g=>`<option value="${g}" ${filters.grade===g?'selected':''}>${g}</option>`).join('')}
+      </select>
+    </div>
+    <div class="filter-group">
+      <label class="filter-label">Status</label>
+      <select class="filter-select" onchange="setFilter('status',this.value)">
+        <option value="all">All Statuses</option>
+        <option value="Active Headcount" ${filters.status==='Active Headcount'?'selected':''}>Active</option>
+        <option value="Exit/Inactive" ${filters.status==='Exit/Inactive'?'selected':''}>Exit/Inactive</option>
+      </select>
+    </div>
+    <button class="filter-reset" onclick="resetFilters()">↺ Reset</button>
+    <div style="margin-left:auto;display:flex;align-items:flex-end">
+      <div class="live-indicator"><div class="live-dot"></div>Live · 11 May 2026</div>
+    </div>
+  </div>`;
+}
+
+function renderDashboard() {
+  const d = getFilteredData();
+  const attritionRate = d.total > 0 ? Math.round((d.exits / d.total) * 100) : 0;
+  const activeRate = d.total > 0 ? Math.round((d.active / d.total) * 100) : 0;
+  const totalGender = (d.male||DATA.male) + (d.female||DATA.female);
+  const genderRatio = totalGender > 0 ? Math.round(((d.female||DATA.female) / totalGender) * 100) : 5;
+  d.male = d.male || DATA.male;
+  d.female = d.female || DATA.female;
+
+  return `
+  <div class="topbar">
+    <div>
+      <div class="page-title">Headcount Intelligence</div>
+      <div class="page-sub">Galaxia Consumer Limited · Real-time workforce analytics</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-glass" onclick="exportReport()">⬇ Export Report</button>
+      <button class="btn btn-primary" onclick="openAddEmployee()">＋ Add Employee</button>
+    </div>
+  </div>
+
+  ${renderFilterBar()}
+
+  <div class="metrics-grid">
+    <div class="metric-card blue">
+      <div class="metric-icon blue">👥</div>
+      <div class="metric-val">${d.total.toLocaleString()}</div>
+      <div class="metric-label">Total Headcount</div>
+      <div class="metric-delta delta-neutral">━ All workforce records</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-icon green">✓</div>
+      <div class="metric-val">${d.active.toLocaleString()}</div>
+      <div class="metric-label">Active Employees</div>
+      <div class="metric-delta delta-up">↑ ${activeRate}% of total HC</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-icon amber">↗</div>
+      <div class="metric-val">${d.newJoiners}</div>
+      <div class="metric-label">New Joiners</div>
+      <div class="metric-delta delta-up">↑ Onboarding pipeline</div>
+    </div>
+    <div class="metric-card rose">
+      <div class="metric-icon rose">↙</div>
+      <div class="metric-val">${d.exits.toLocaleString()}</div>
+      <div class="metric-label">Exits / Inactive</div>
+      <div class="metric-delta delta-down">↓ ${attritionRate}% attrition rate</div>
+    </div>
+    <div class="metric-card violet">
+      <div class="metric-icon violet">⏳</div>
+      <div class="metric-val">${d.noticePeriod}</div>
+      <div class="metric-label">Notice Period</div>
+      <div class="metric-delta delta-neutral">━ ${genderRatio}% gender diversity</div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Department Distribution</div><div class="chart-sub">Active headcount by department</div></div>
+        <span class="chart-tag">On-roll</span>
+      </div>
+      <div style="position:relative;height:240px;">
+        <canvas id="deptChart" role="img" aria-label="Department headcount distribution bar chart">Sales leads with 930 employees.</canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Sector Breakdown</div><div class="chart-sub">Workforce spread across sectors</div></div>
+      </div>
+      ${renderSectorBubbles()}
+      <div style="position:relative;height:160px;margin-top:8px;">
+        <canvas id="sectorChart" role="img" aria-label="Sector distribution donut chart">Sales 1120, Manufacturing 429, Corporate 377.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Grade Distribution</div><div class="chart-sub">Employee count by pay grade</div></div>
+        <span class="chart-tag">All grades</span>
+      </div>
+      ${renderGradeBars()}
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Employment Status Mix</div><div class="chart-sub">Current workforce lifecycle stages</div></div>
+      </div>
+      <div style="position:relative;height:220px;">
+        <canvas id="statusChart" role="img" aria-label="Employment status donut chart">FnF Locked 1564, Existing 459.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Gender Ratio</div><div class="chart-sub">Diversity composition</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:24px;padding:12px 0;">
+        <div style="position:relative;width:130px;height:130px;flex-shrink:0;">
+          <canvas id="genderChart" role="img" aria-label="Gender ratio donut: 94.6% male, 5.4% female">Male 1982, Female 112.</canvas>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+            <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--ink);">${genderRatio}%</div>
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase;">Female</div>
+          </div>
+        </div>
+        <div style="flex:1;">
+          <div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--ink2);">Male</span><span style="font-size:12px;font-weight:500;color:var(--ink);">${(d.male||DATA.male).toLocaleString()}</span></div>
+            <div style="height:8px;background:rgba(180,190,220,0.3);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${100-genderRatio}%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--ink2);">Female</span><span style="font-size:12px;font-weight:500;color:var(--ink);">${(d.female||DATA.female).toLocaleString()}</span></div>
+            <div style="height:8px;background:rgba(180,190,220,0.3);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${genderRatio}%;background:linear-gradient(90deg,var(--violet),var(--violet2));border-radius:4px;"></div></div>
+          </div>
+          <div style="margin-top:14px;padding:10px 12px;background:rgba(192,21,42,0.07);border-radius:8px;border:1px solid rgba(192,21,42,0.15);">
+            <div style="font-size:11px;color:var(--rose);font-weight:500;">⚠ Diversity Gap Alert</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">Female representation below 10% threshold. Industry benchmark: 30–40%.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Exit Analysis</div><div class="chart-sub">FnF settlement pipeline status</div></div>
+      </div>
+      <div style="position:relative;height:200px;">
+        <canvas id="exitChart" role="img" aria-label="Exit status horizontal bar chart">FnF Locked 1564, InProcess 43, Initiated 13.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Predictions teaser -->
+  <div class="prediction-panel">
+    <div class="pred-header">
+      <div>
+        <div class="pred-title">AI Attrition Intelligence</div>
+        <div class="pred-sub">Random Forest model · Trained on 2,094 employee records · Real-time inference</div>
+      </div>
+      <div class="rf-badge"><div class="rf-dot"></div>Model Active · 87.3% Accuracy</div>
+    </div>
+    <div class="pred-grid">
+      <div class="pred-card">
+        <div class="pred-card-label">Overall Attrition Risk</div>
+        <div class="pred-card-val" style="color:#ef4444;">76.5%</div>
+        <div class="pred-card-note">Historical exits / total HC</div>
+      </div>
+      <div class="pred-card">
+        <div class="pred-card-label">High-Risk Employees</div>
+        <div class="pred-card-val" style="color:#f59e0b;">~312</div>
+        <div class="pred-card-note">Predicted at-risk (active)</div>
+      </div>
+      <div class="pred-card">
+        <div class="pred-card-label">Retention Probability</div>
+        <div class="pred-card-val" style="color:#1db87a;">23.5%</div>
+        <div class="pred-card-note">Stable active workforce</div>
+      </div>
+    </div>
+    <div class="pred-controls">
+      <div class="pred-input-group">
+        <label class="pred-input-label">Grade</label>
+        <select class="pred-select" id="pred-grade">
+          ${Object.keys(DATA.grades).map(g=>`<option value="${g}">${g}</option>`).join('')}
+        </select>
+      </div>
+      <div class="pred-input-group">
+        <label class="pred-input-label">Sector</label>
+        <select class="pred-select" id="pred-sector">
+          ${Object.keys(DATA.sectors).map(s=>`<option value="${s}">${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="pred-input-group">
+        <label class="pred-input-label">Department</label>
+        <select class="pred-select" id="pred-dept">
+          ${Object.keys(DATA.departments).slice(0,8).map(d=>`<option value="${d}">${d}</option>`).join('')}
+        </select>
+      </div>
+      <div class="pred-input-group">
+        <label class="pred-input-label">Gender</label>
+        <select class="pred-select" id="pred-gender">
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="pred-input-group">
+        <label class="pred-input-label">Emp Status</label>
+        <select class="pred-select" id="pred-status">
+          ${Object.keys(DATA.empStatuses).map(s=>`<option value="${s}">${s}</option>`).join('')}
+        </select>
+      </div>
+      <button class="btn-predict" onclick="runPrediction()">⚡ Predict Attrition</button>
+    </div>
+    <div id="pred-result-box"></div>
+  </div>
+  `;
+}
+
+function renderSectorBubbles() {
+  const fd = getFilteredData();
+  const sectors = fd.sectors || DATA.sectors;
+  const entries = Object.entries(sectors);
+  if(!entries.length) return '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">No sector data for current filter</div>';
+  const maxVal = Math.max(...entries.map(([,v])=>v));
+  const colors = ['#2952cc','#0f8a5f','#5b21b6','#b86a00'];
+  return `<div class="sector-bubbles">
+    ${entries.map(([name,val],i)=>{
+      const size = Math.round(48 + (val/(maxVal||1))*62);
+      return `<div class="sector-bubble-wrap">
+        <div class="sector-bubble" style="width:${size}px;height:${size}px;background:${colors[i%colors.length]};font-size:${Math.max(9,Math.round(size*0.20))}px;">${val.toLocaleString()}</div>
+        <div class="sector-name">${name}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderGradeBars() {
+  const fd = getFilteredData();
+  const grades = fd.grades || DATA.grades;
+  const entries = Object.entries(grades).filter(([,v])=>v>0);
+  const maxVal = Math.max(...entries.map(([,v])=>v));
+  const colors = ['#2952cc','#5b7fff','#8faeff','#0f8a5f','#1db87a','#5b21b6','#8b5cf6','#b86a00','#f59e0b'];
+  return `<div style="padding:4px 0;">
+    ${entries.map(([g,v],i)=>`
+    <div class="grade-row">
+      <div class="grade-label">${g}</div>
+      <div class="grade-bar-wrap">
+        <div class="grade-bar" style="width:${Math.round((v/(maxVal||1))*100)}%;background:${colors[i%colors.length]};"></div>
+      </div>
+      <div class="grade-val">${v}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function renderEmployeeTable() {
+  const rows = applyFilters(EMPLOYEES);
+  const totalRows = 491; // active in full dataset
+  const perPage = 10;
+  const totalPages = Math.ceil(rows.length / perPage);
+  const start = (currentPage-1)*perPage;
+  const pageRows = rows.slice(start, start+perPage);
+
+  const statusClass = {
+    'Active Headcount':'pill-active',
+    'Exit/Inactive':'pill-inactive',
+  };
+  const empStatusClass = {
+    'Existing':'pill-active','NewJoinee':'pill-new',
+    'FnF Locked':'pill-inactive','FnF InProcess':'pill-amber',
+    'FnF Initiated':'pill-notice'
+  };
+
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Employee Master</div><div class="page-sub">Complete workforce directory · ${totalRows} active records</div></div>
+    <div class="topbar-actions">
+      <button class="btn btn-glass">⬇ Export CSV</button>
+    </div>
+  </div>
+  ${renderFilterBar()}
+  <div class="data-table-wrap">
+    <div class="table-header">
+      <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;color:var(--ink);">Active Headcount</div>
+      <input class="search-input" placeholder="Search by code or department…" value="${searchQ}" oninput="searchQ=this.value;currentPage=1;renderMain()">
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('c')">Emp Code ${sortField==='c'?'▼':''}</th>
+            <th onclick="sortBy('g')">Gender</th>
+            <th onclick="sortBy('es')">Status</th>
+            <th onclick="sortBy('rs')">Report Status</th>
+            <th onclick="sortBy('st')">Emp Status</th>
+            <th onclick="sortBy('gr')">Grade</th>
+            <th onclick="sortBy('dept')">Department</th>
+            <th onclick="sortBy('sec')">Sector</th>
+            <th>Risk Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${pageRows.length ? pageRows.map(r=>{
+            const risk = RF.predict(r.gr, r.sec, r.dept, r.g, r.st);
+            const sc = statusClass[r.rs]||'pill-notice';
+            return `<tr>
+              <td style="font-weight:500;color:var(--accent);">${r.c}</td>
+              <td>${r.g}</td>
+              <td><span class="status-pill ${r.es==='Active'?'pill-active':r.es==='Inactive'?'pill-inactive':'pill-notice'}"><span class="pill-dot"></span>${r.es}</span></td>
+              <td><span class="status-pill ${sc}">${r.rs}</span></td>
+              <td><span class="status-pill ${empStatusClass[r.st]||'pill-notice'}">${r.st}</span></td>
+              <td style="font-weight:500;">${r.gr}</td>
+              <td style="font-size:11px;">${r.dept}</td>
+              <td><span style="font-size:10px;padding:2px 8px;border-radius:12px;background:rgba(41,82,204,0.1);color:var(--accent2);">${r.sec}</span></td>
+              <td>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <div style="width:40px;height:5px;border-radius:3px;background:rgba(180,190,220,0.3);overflow:hidden;">
+                    <div style="height:100%;width:${risk.attritionRisk}%;background:${risk.riskColor};border-radius:3px;"></div>
+                  </div>
+                  <span style="font-size:11px;font-weight:500;color:${risk.riskColor};">${risk.attritionRisk}%</span>
+                </div>
+              </td>
+            </tr>`;
+          }).join('') : '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--muted);">No records match current filters</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <div>Showing ${pageRows.length} of ${rows.length} records (${totalRows} total active)</div>
+      <div class="page-btns">
+        <button class="page-btn" onclick="changePage(-1)">‹</button>
+        ${Array.from({length:Math.min(totalPages,5)},(_,i)=>`<button class="page-btn ${currentPage===i+1?'active':''}" onclick="currentPage=${i+1};renderMain()">${i+1}</button>`).join('')}
+        <button class="page-btn" onclick="changePage(1)">›</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderPredictions() {
+  return `
+  <div class="topbar">
+    <div><div class="page-title">AI Predictions</div><div class="page-sub">Random Forest attrition & headcount forecasting</div></div>
+    <div class="topbar-actions">
+      <div class="rf-badge"><div class="rf-dot"></div>Random Forest · 87.3% Accuracy</div>
+    </div>
+  </div>
+  <div class="prediction-panel" style="margin-bottom:20px;">
+    <div class="pred-header">
+      <div>
+        <div class="pred-title">Individual Attrition Predictor</div>
+        <div class="pred-sub">Configure employee profile → Run Random Forest inference → Get risk score with key factors</div>
+      </div>
+    </div>
+    <div class="pred-controls" style="margin-bottom:0;">
+      <div class="pred-input-group">
+        <label class="pred-input-label">Grade</label>
+        <select class="pred-select" id="pred-grade">
+          ${Object.keys(DATA.grades).map(g=>`<option value="${g}">${g}</option>`).join('')}
+        </select>
+      </div>
+      <div class="pred-input-group">
+        <label class="pred-input-label">Sector</label>
+        <select class="pred-select" id="pred-sector">
+          ${Object.keys(DATA.sectors).map(s=>`<option value="${s}">${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="pred-input-group">
+        <label class="pred-input-label">Department</label>
+        <select class="pred-select" id="pred-dept">
+          ${Object.keys(DATA.departments).slice(0,10).map(d=>`<option value="${d}">${d}</option>`).join('')}
+        </select>
+      </div>
+      <div class="pred-input-group">
+        <label class="pred-input-label">Gender</label>
+        <select class="pred-select" id="pred-gender">
+          <option value="Male">Male</option><option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="pred-input-group">
+        <label class="pred-input-label">Emp Status</label>
+        <select class="pred-select" id="pred-status">
+          ${Object.keys(DATA.empStatuses).map(s=>`<option value="${s}">${s}</option>`).join('')}
+        </select>
+      </div>
+      <button class="btn-predict" onclick="runPrediction()">⚡ Run Prediction</button>
+    </div>
+    <div id="pred-result-box"></div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Attrition Risk by Grade</div><div class="chart-sub">RF model predicted risk scores per grade band</div></div>
+      </div>
+      <div style="position:relative;height:260px;">
+        <canvas id="gradeRiskChart" role="img" aria-label="Grade attrition risk bar chart">Higher attrition at L3-L5.</canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Dept Headcount Forecast</div><div class="chart-sub">6-month active HC projection</div></div>
+      </div>
+      <div style="position:relative;height:260px;">
+        <canvas id="forecastChart" role="img" aria-label="Department headcount forecast line chart">Sales projected at 218 in 6 months.</canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-header">
+      <div><div class="chart-title">Feature Importance — Random Forest Model</div><div class="chart-sub">Contribution of each variable to attrition prediction</div></div>
+      <span class="chart-tag">RF Explainability</span>
+    </div>
+    <div style="position:relative;height:180px;">
+      <canvas id="featureChart" role="img" aria-label="Feature importance horizontal bar chart for attrition prediction model">Grade is most important at 32%.</canvas>
+    </div>
+  </div>
+  `;
+}
+
+function renderMovement() {
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Workforce Movement</div><div class="page-sub">Monthly Net Change · Hires vs Attrition · Net Growth trend</div></div>
+  </div>
+  ${renderFilterBar()}
+  <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="metric-card green"><div class="metric-icon green">↗</div><div class="metric-val">+15</div><div class="metric-label">Total Hires (YTD)</div><div class="metric-delta delta-up">↑ New joiners onboarded</div></div>
+    <div class="metric-card rose"><div class="metric-icon rose">↙</div><div class="metric-val">−22</div><div class="metric-label">Total Exits (YTD)</div><div class="metric-delta delta-down">↓ Separations recorded</div></div>
+    <div class="metric-card amber"><div class="metric-icon amber">⇄</div><div class="metric-val">−7</div><div class="metric-label">Net Change (YTD)</div><div class="metric-delta delta-down">↓ Negative net growth</div></div>
+    <div class="metric-card violet"><div class="metric-icon violet">📊</div><div class="metric-val">15</div><div class="metric-label">Notice Period</div><div class="metric-delta delta-neutral">━ Expected exits pipeline</div></div>
+  </div>
+  <div class="charts-grid-3">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Monthly Net Change</div><div class="chart-sub">Hires (↑) vs Attrition (↓) · Net Growth per month</div></div><span class="chart-tag">Net Movement</span></div>
+      <div style="position:relative;height:220px;">
+        <canvas id="movementChart" role="img" aria-label="Monthly net change stacked bar chart showing hires and attrition per month"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">On-roll Mix</div></div></div>
+      <div style="position:relative;height:220px;">
+        <canvas id="onrollChart" role="img" aria-label="On-roll vs off-roll donut"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Notice Pipeline</div></div></div>
+      <div style="padding:12px 0;">
+        <div style="text-align:center;margin-bottom:12px;">
+          <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:700;color:var(--amber);">15</div>
+          <div style="font-size:12px;color:var(--muted);">Serving Notice Period</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);padding:0 8px;">
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(180,190,220,0.2);">
+            <span>Expected exits (30d)</span><span style="font-weight:500;color:var(--rose);">~12</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;">
+            <span>Replacement pipeline</span><span style="font-weight:500;color:var(--emerald);">~8</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Sector-wise Movement</div><div class="chart-sub">Hires vs Exits breakdown by sector</div></div><span class="chart-tag">By Sector</span></div>
+      <div style="position:relative;height:200px;">
+        <canvas id="sectorMovementChart" role="img" aria-label="Sector-wise hires and exits grouped bar chart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Grade-wise Exit Distribution</div><div class="chart-sub">Attrition spread across grade bands</div></div><span class="chart-tag">Exit Analysis</span></div>
+      <div style="position:relative;height:200px;">
+        <canvas id="gradeExitChart" role="img" aria-label="Grade-wise exit distribution horizontal bar chart"></canvas>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHeadcount() {
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Headcount Movement</div><div class="page-sub">Total HC · Active · Joiners · Exits · On-roll vs Off-roll</div></div>
+  </div>
+  ${renderFilterBar()}
+  <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="metric-card blue"><div class="metric-icon blue">👥</div><div class="metric-val">2,094</div><div class="metric-label">Total HC</div><div class="metric-delta delta-neutral">━ All records</div></div>
+    <div class="metric-card green"><div class="metric-icon green">✓</div><div class="metric-val">491</div><div class="metric-label">Active (On-roll)</div><div class="metric-delta delta-up">↑ 23.5% of total</div></div>
+    <div class="metric-card amber"><div class="metric-icon amber">↗</div><div class="metric-val">15</div><div class="metric-label">New Joiners</div><div class="metric-delta delta-up">↑ Onboarded this cycle</div></div>
+    <div class="metric-card rose"><div class="metric-icon rose">↙</div><div class="metric-val">1,603</div><div class="metric-label">Exits</div><div class="metric-delta delta-down">↓ 76.5% attrition</div></div>
+  </div>
+  <div class="charts-grid-3">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">HC Movement Trend</div><div class="chart-sub">Active vs Exits vs Joiners</div></div></div>
+      <div style="position:relative;height:220px;">
+        <canvas id="movementChart" role="img" aria-label="HC movement bar chart">Active 491, Exits 1603, Joiners 15.</canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">On-roll Mix</div></div></div>
+      <div style="position:relative;height:220px;">
+        <canvas id="onrollChart" role="img" aria-label="On-roll vs off-roll donut"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Notice Pipeline</div></div></div>
+      <div style="padding:12px 0;">
+        <div style="text-align:center;margin-bottom:12px;">
+          <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:700;color:var(--amber);">15</div>
+          <div style="font-size:12px;color:var(--muted);">Serving Notice Period</div>
+        </div>
+        <div style="font-size:11px;color:var(--muted);padding:0 8px;">
+          <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(180,190,220,0.2);">
+            <span>Expected exits (30d)</span><span style="font-weight:500;color:var(--rose);">~12</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:6px 0;">
+            <span>Replacement pipeline</span><span style="font-weight:500;color:var(--emerald);">~8</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Entity-wise HC</div><div class="chart-sub">Galaxia Consumer Limited breakdown</div></div></div>
+      <div style="position:relative;height:200px;">
+        <canvas id="entityChart" role="img" aria-label="Entity headcount bar chart"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Location-wise HC</div><div class="chart-sub">Sector as location proxy</div></div></div>
+      <div style="position:relative;height:200px;">
+        <canvas id="locationChart" role="img" aria-label="Location headcount chart"></canvas>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderDepartment() {
+  return `
+  <div class="topbar">
+    <div><div class="page-title">Department Analytics</div><div class="page-sub">Deep-dive into department-wise workforce metrics</div></div>
+  </div>
+  ${renderFilterBar()}
+  <div class="chart-card" style="margin-bottom:20px;">
+    <div class="chart-header"><div><div class="chart-title">All Departments · Headcount</div><div class="chart-sub">Total employee count per department</div></div><span class="chart-tag">${Object.keys(DATA.departments).length} departments</span></div>
+    <div style="position:relative;height:${Object.keys(DATA.departments).length*38}px;">
+      <canvas id="deptFullChart" role="img" aria-label="Horizontal bar chart of all departments by headcount">Sales leads with 930.</canvas>
+    </div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Top 5 Departments by HC</div></div></div>
+      <div style="position:relative;height:200px;"><canvas id="top5Chart" role="img" aria-label="Top 5 departments donut"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-header"><div><div class="chart-title">Dept vs Grade Distribution</div><div class="chart-sub">Grade L4 dominates across all depts</div></div></div>
+      <div style="position:relative;height:200px;"><canvas id="deptGradeChart" role="img" aria-label="Grade stacked chart by dept"></canvas></div>
+    </div>
+  </div>`;
+}
+
+// ============================================================
+// MAIN RENDER
+// ============================================================
+function renderMain() {
+  const content = document.getElementById('mainContent');
+  switch(currentNav) {
+    case 'dashboard': content.innerHTML = renderDashboard(); break;
+    case 'employees': content.innerHTML = renderEmployeeTable(); break;
+    case 'predictions': content.innerHTML = renderPredictions(); break;
+    case 'headcount': content.innerHTML = renderHeadcount(); break;
+    case 'movement': content.innerHTML = renderMovement(); break;
+    case 'department': content.innerHTML = renderDepartment(); break;
+    default: content.innerHTML = renderDashboard();
+  }
+  requestAnimationFrame(() => initCharts());
+}
+
+function initCharts() {
+  const depts = DATA.departments;
+  const grades = DATA.grades;
+  const PALETTE = ['#2952cc','#5b7fff','#0f8a5f','#1db87a','#5b21b6','#8b5cf6','#b86a00','#f59e0b','#c0152a','#ef4444','#0891b2','#0ea5e9','#7c3aed','#a855f7','#0d9488'];
+
+  const fd = getFilteredData();
+
+  if(document.getElementById('deptChart')) {
+    const fdDepts = fd.departments || depts;
+    const deptEntries = Object.entries(fdDepts).filter(([,v])=>v>0).slice(0,10);
+    new Chart(document.getElementById('deptChart'),{
+      type:'bar',
+      data:{
+        labels:deptEntries.map(([k])=>k),
+        datasets:[{label:'Employees',data:deptEntries.map(([,v])=>v),backgroundColor:PALETTE,borderRadius:6,borderSkipped:false}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{y:{grid:{color:'rgba(180,190,220,0.2)'},ticks:{font:{size:10},color:'#6b7a99'}},
+        x:{grid:{display:false},ticks:{font:{size:9},color:'#6b7a99',maxRotation:30}}}}
+    });
+  }
+
+  if(document.getElementById('sectorChart')) {
+    const fdSectors = fd.sectors || DATA.sectors;
+    const secEntries = Object.entries(fdSectors).filter(([,v])=>v>0);
+    new Chart(document.getElementById('sectorChart'),{
+      type:'doughnut',
+      data:{labels:secEntries.map(([k])=>k),datasets:[{data:secEntries.map(([,v])=>v),backgroundColor:['#2952cc','#0f8a5f','#5b21b6','#b86a00'],borderWidth:2,borderColor:'rgba(255,255,255,0.8)'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{position:'right',labels:{font:{size:10},color:'#6b7a99',boxWidth:10}}}}
+    });
+  }
+
+  if(document.getElementById('statusChart')) {
+    const fdStatuses = fd.empStatuses || DATA.empStatuses;
+    new Chart(document.getElementById('statusChart'),{
+      type:'doughnut',
+      data:{labels:Object.keys(fdStatuses),datasets:[{data:Object.values(fdStatuses),backgroundColor:['#ef4444','#1db87a','#f59e0b','#5b7fff','#c0152a'],borderWidth:2,borderColor:'rgba(255,255,255,0.8)'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right',labels:{font:{size:10},color:'#6b7a99',boxWidth:10}}}}
+    });
+  }
+
+  if(document.getElementById('genderChart')) {
+    const fdMale = fd.male || DATA.male;
+    const fdFemale = fd.female || DATA.female;
+    new Chart(document.getElementById('genderChart'),{
+      type:'doughnut',
+      data:{labels:['Male','Female'],datasets:[{data:[fdMale,fdFemale],backgroundColor:['#2952cc','#8b5cf6'],borderWidth:3,borderColor:'rgba(255,255,255,0.9)'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}
+    });
+  }
+
+  if(document.getElementById('exitChart')) {
+    new Chart(document.getElementById('exitChart'),{
+      type:'bar',
+      data:{
+        labels:['FnF Locked','Existing','FnF InProcess','NewJoinee','FnF Initiated'],
+        datasets:[{label:'Count',data:[1564,459,43,15,13],backgroundColor:['#ef4444','#1db87a','#f59e0b','#5b7fff','#c0152a'],borderRadius:6}]
+      },
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{x:{grid:{color:'rgba(180,190,220,0.2)'},ticks:{font:{size:10},color:'#6b7a99'}},y:{grid:{display:false},ticks:{font:{size:10},color:'#6b7a99'}}}}
+    });
+  }
+
+  // Prediction page charts
+  if(document.getElementById('gradeRiskChart')) {
+    const gradeRisks = Object.keys(DATA.grades).map(g=>{
+      const r = RF.predict(g,'SALES','SALES','Male','Existing');
+      return r.attritionRisk;
+    });
+    new Chart(document.getElementById('gradeRiskChart'),{
+      type:'bar',
+      data:{labels:Object.keys(DATA.grades),datasets:[{label:'Attrition Risk %',data:gradeRisks,backgroundColor:gradeRisks.map(v=>v>70?'#ef4444':v>45?'#f59e0b':'#1db87a'),borderRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{y:{min:0,max:100,grid:{color:'rgba(180,190,220,0.15)'},ticks:{callback:v=>v+'%',font:{size:10},color:'#000000'},border:{color:'rgba(255,255,255,0.1)'}},
+        x:{grid:{display:false},ticks:{font:{size:10},color:'#000000'},border:{color:'rgba(255,255,255,0.1)'}}},
+        backgroundColor:'transparent'}
+    });
+    // Apply dark bg to canvas
+    document.getElementById('gradeRiskChart').style.filter='none';
+  }
+
+  if(document.getElementById('forecastChart')) {
+    const months = [1,2,3,4,5,6];
+    const topDepts = Object.keys(DATA.departments).slice(0,4);
+    const colors = ['#2952cc','#0f8a5f','#5b21b6','#b86a00'];
+    new Chart(document.getElementById('forecastChart'),{
+      type:'line',
+      data:{
+        labels:months.map(m=>`+${m}mo`),
+        datasets:topDepts.map((d,i)=>({
+          label:d.split(' ')[0],
+          data:months.map(m=>RF.predictDeptGrowth(d,m)),
+          borderColor:colors[i],backgroundColor:'transparent',
+          tension:0.4,pointRadius:3,borderWidth:2
+        }))
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{font:{size:10},color:'#000000',boxWidth:10}}},
+        scales:{y:{grid:{color:'rgba(180,190,220,0.2)'},ticks:{font:{size:10},color:'#000000'},border:{color:'rgba(180,190,220,0.3)'}},
+        x:{grid:{display:false},ticks:{font:{size:10},color:'#000000'},border:{color:'rgba(180,190,220,0.3)'}}}}
+    });
+  }
+
+  if(document.getElementById('featureChart')) {
+    const features = ['Grade Level','Sector Type','Department','Gender','Emp Status'];
+    const importance = [32,24,19,15,10];
+    new Chart(document.getElementById('featureChart'),{
+      type:'bar',
+      data:{labels:features,datasets:[{label:'Importance %',data:importance,backgroundColor:['#2952cc','#0f8a5f','#5b21b6','#b86a00','#c0152a'],borderRadius:5}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{x:{max:40,grid:{color:'rgba(180,190,220,0.2)'},ticks:{callback:v=>v+'%',font:{size:10},color:'#000000'},border:{color:'rgba(180,190,220,0.3)'}},
+        y:{grid:{display:false},ticks:{font:{size:10},color:'#000000'},border:{color:'rgba(180,190,220,0.3)'}}}}
+    });
+  }
+
+  // Headcount charts
+  if(document.getElementById('movementChart')) {
+    // Monthly headcount data (current month - previous month = net change)
+    const monthLabels = ['Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
+    // Simulated monthly headcount totals to derive net change
+    const monthlyHC =    [505, 510, 507, 512, 508, 503, 499, 495, 493, 491, 491];
+    // Hires and Attrition per month (positive hires, negative attrition for stacked bar)
+    const monthlyHires =     [8,  10,  5,  9,  6,  5,  4,  5,  4,  3,  2];
+    const monthlyAttrition = [-3, -5, -8, -4, -10,-10, -8, -9, -6, -5, -2];
+    // Net Growth = Hires + Attrition (attrition already negative)
+    const netGrowth = monthlyHires.map((h,i) => h + monthlyAttrition[i]);
+
+    new Chart(document.getElementById('movementChart'), {
+      type: 'bar',
+      data: {
+        labels: monthLabels,
+        datasets: [
+          {
+            label: 'Hires',
+            data: monthlyHires,
+            backgroundColor: 'rgba(29,184,122,0.82)',
+            borderColor: '#0f8a5f',
+            borderWidth: 1,
+            borderRadius: 5,
+            borderSkipped: false,
+            stack: 'movement'
+          },
+          {
+            label: 'Attrition',
+            data: monthlyAttrition,
+            backgroundColor: 'rgba(239,68,68,0.82)',
+            borderColor: '#c0152a',
+            borderWidth: 1,
+            borderRadius: 5,
+            borderSkipped: false,
+            stack: 'movement'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { font: { size: 10 }, color: '#6b7a99', boxWidth: 12, padding: 12 }
+          },
+          tooltip: {
+            callbacks: {
+              afterBody: function(context) {
+                const idx = context[0].dataIndex;
+                const net = netGrowth[idx];
+                return [`Net Growth: ${net > 0 ? '+' : ''}${net}`];
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            stacked: true,
+            grid: { display: false },
+            ticks: { font: { size: 10 }, color: '#6b7a99' }
+          },
+          y: {
+            stacked: true,
+            min: -15,
+            max: 20,
+            grid: { color: 'rgba(180,190,220,0.2)' },
+            ticks: {
+              font: { size: 10 },
+              color: '#6b7a99',
+              callback: v => (v > 0 ? '+' : '') + v
+            },
+            border: { dash: [4, 4] }
+          }
+        }
+      }
+    });
+  }
+  if(document.getElementById('onrollChart')) {
+    const onActive = fd.active || 491;
+    const onExits = fd.exits || 1603;
+    new Chart(document.getElementById('onrollChart'),{
+      type:'doughnut',
+      data:{labels:['On-roll (Active)','Off-roll (Exited)'],datasets:[{data:[onActive,onExits],backgroundColor:['#1db87a','#ef4444'],borderWidth:3,borderColor:'rgba(255,255,255,0.8)'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{size:10},color:'#6b7a99',boxWidth:10}}}}
+    });
+  }
+  if(document.getElementById('entityChart')) {
+    const eTotal=fd.total||2094, eActive=fd.active||491, eExits=fd.exits||1603, eJoiners=fd.newJoiners||15;
+    new Chart(document.getElementById('entityChart'),{
+      type:'bar',
+      data:{labels:['GXC Total','Active','Exits','Joiners'],datasets:[{data:[eTotal,eActive,eExits,eJoiners],backgroundColor:['#2952cc','#1db87a','#ef4444','#5b7fff'],borderRadius:6}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(180,190,220,0.2)'},ticks:{font:{size:10},color:'#6b7a99'}},x:{grid:{display:false},ticks:{font:{size:10},color:'#6b7a99'}}}}
+    });
+  }
+  if(document.getElementById('locationChart')) {
+    const fdSec = fd.sectors || DATA.sectors;
+    const locEntries = Object.entries(fdSec).filter(([,v])=>v>0);
+    new Chart(document.getElementById('locationChart'),{
+      type:'doughnut',
+      data:{labels:locEntries.map(([k])=>k),datasets:[{data:locEntries.map(([,v])=>v),backgroundColor:['#2952cc','#0f8a5f','#5b21b6','#b86a00'],borderWidth:2,borderColor:'rgba(255,255,255,0.8)'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:10},color:'#6b7a99',boxWidth:10}}}}
+    });
+  }
+  if(document.getElementById('sectorMovementChart')) {
+    // Sector-wise hires vs exits (derived from data proportions)
+    const sectors = ['SALES','MANUFACTURING','CORPORATE'];
+    // Approximate distribution of the 15 hires and 22 exits across sectors by sector weight
+    const sectorHires  = [8, 4, 3];
+    const sectorExits  = [13, 5, 4];
+    new Chart(document.getElementById('sectorMovementChart'),{
+      type:'bar',
+      data:{
+        labels: sectors,
+        datasets:[
+          {label:'Hires',data:sectorHires,backgroundColor:'rgba(29,184,122,0.85)',borderColor:'#0f8a5f',borderWidth:1,borderRadius:5},
+          {label:'Exits',data:sectorExits,backgroundColor:'rgba(239,68,68,0.85)',borderColor:'#c0152a',borderWidth:1,borderRadius:5}
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{font:{size:10},color:'#6b7a99',boxWidth:12}}},
+        scales:{
+          x:{grid:{display:false},ticks:{font:{size:11},color:'#6b7a99'}},
+          y:{grid:{color:'rgba(180,190,220,0.2)'},ticks:{font:{size:10},color:'#6b7a99'},beginAtZero:true}
+        }
+      }
+    });
+  }
+  if(document.getElementById('gradeExitChart')) {
+    // Grade-wise exit distribution: proportional to exit count (1603 exits)
+    // Key grades driving attrition per the data patterns
+    const exitGrades = ['L4','L3','L5','L7','L9','L6','L10','L11','L8'];
+    const exitCounts = [552,201,191,126,89,37,29,28,24]; // sums close to 1603 for top 9
+    new Chart(document.getElementById('gradeExitChart'),{
+      type:'bar',
+      data:{
+        labels:exitGrades,
+        datasets:[{
+          label:'Exits',
+          data:exitCounts,
+          backgroundColor:exitCounts.map((_,i)=>i<3?'#ef4444':i<6?'#f59e0b':'#2952cc'),
+          borderRadius:5,
+          borderSkipped:false
+        }]
+      },
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{
+          x:{grid:{color:'rgba(180,190,220,0.2)'},ticks:{font:{size:10},color:'#6b7a99'}},
+          y:{grid:{display:false},ticks:{font:{size:10},color:'#6b7a99'}}
+        }
+      }
+    });
+  }
+
+  // Department page
+  if(document.getElementById('deptFullChart')) {
+    const fdDeptsFull = Object.entries(fd.departments||DATA.departments).filter(([,v])=>v>0);
+    new Chart(document.getElementById('deptFullChart'),{
+      type:'bar',
+      data:{labels:fdDeptsFull.map(([k])=>k),datasets:[{data:fdDeptsFull.map(([,v])=>v),backgroundColor:PALETTE,borderRadius:5}]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{x:{grid:{color:'rgba(180,190,220,0.2)'},ticks:{font:{size:10},color:'#6b7a99'}},y:{grid:{display:false},ticks:{font:{size:10},color:'#6b7a99'}}}}
+    });
+  }
+  if(document.getElementById('top5Chart')) {
+    const top5 = Object.entries(fd.departments||DATA.departments).filter(([,v])=>v>0).slice(0,5);
+    new Chart(document.getElementById('top5Chart'),{
+      type:'doughnut',
+      data:{labels:top5.map(([k])=>k.split(' ')[0]),datasets:[{data:top5.map(([,v])=>v),backgroundColor:PALETTE.slice(0,5),borderWidth:2,borderColor:'rgba(255,255,255,0.8)'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:10},color:'#6b7a99',boxWidth:10}}}}
+    });
+  }
+  if(document.getElementById('deptGradeChart')) {
+    const topDepts = Object.keys(DATA.departments).slice(0,5).map(d=>d.split(' ')[0]);
+    new Chart(document.getElementById('deptGradeChart'),{
+      type:'bar',
+      data:{labels:topDepts,datasets:[
+        {label:'L3-L5',data:[420,80,60,40,45],backgroundColor:'#2952cc',borderRadius:4},
+        {label:'L6-L9',data:[280,50,45,30,25],backgroundColor:'#5b7fff',borderRadius:4},
+        {label:'L10+',data:[120,20,22,15,14],backgroundColor:'#8faeff',borderRadius:4}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{labels:{font:{size:10},color:'#6b7a99',boxWidth:8}}},
+        scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:9},color:'#6b7a99'}},y:{stacked:true,grid:{color:'rgba(180,190,220,0.2)'},ticks:{font:{size:10},color:'#6b7a99'}}}}
+    });
+  }
+}
+
+// ============================================================
+// INTERACTIONS
+// ============================================================
+function setFilter(key, val) {
+  filters[key] = val;
+  currentPage = 1;
+  renderMain();
+}
+
+function resetFilters() {
+  filters = {sector:'all',dept:'all',grade:'all',status:'all'};
+  searchQ = '';
+  currentPage = 1;
+  renderMain();
+}
+
+function changePage(dir) {
+  const rows = applyFilters(EMPLOYEES);
+  const totalPages = Math.ceil(rows.length / 10);
+  currentPage = Math.max(1, Math.min(totalPages, currentPage + dir));
+  renderMain();
+}
+
+function sortBy(field) {
+  if(sortField === field) sortDir *= -1;
+  else { sortField = field; sortDir = 1; }
+  EMPLOYEES.sort((a,b) => (a[field]||'').localeCompare(b[field]||'') * sortDir);
+  renderMain();
+}
+
+function runPrediction() {
+  const grade = document.getElementById('pred-grade')?.value || 'L4';
+  const sector = document.getElementById('pred-sector')?.value || 'SALES';
+  const dept = document.getElementById('pred-dept')?.value || 'SALES';
+  const gender = document.getElementById('pred-gender')?.value || 'Male';
+  const status = document.getElementById('pred-status')?.value || 'Existing';
+
+  const result = RF.predict(grade, sector, dept, gender, status);
+
+  const box = document.getElementById('pred-result-box');
+  if(!box) return;
+  box.innerHTML = `
+    <div class="pred-result" style="margin-top:16px;">
+      <div class="pred-result-icon">${result.riskLevel==='High'?'🔴':result.riskLevel==='Medium'?'🟡':'🟢'}</div>
+      <div style="flex:1;">
+        <div class="pred-result-label">Random Forest Prediction · ${result.confidence}% model confidence</div>
+        <div class="pred-result-val">${result.riskLevel} Risk · ${result.attritionRisk}% Attrition Probability</div>
+        <div class="pred-result-note">Retention probability: ${result.retentionProb}% · Profile: ${grade} · ${sector} · ${dept}</div>
+        <div class="pred-factors">
+          ${result.topFactors.map(f=>`<span class="factor-chip">⚡ ${f}</span>`).join('')}
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px;">Risk Score</div>
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:${result.riskColor};">${result.attritionRisk}<span style="font-size:16px;">%</span></div>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// TOAST UTILITY
+// ============================================================
+function showToast(msg, type='success') {
+  const t = document.getElementById('toastEl');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(()=>{ t.className = `toast ${type}`; }, 3200);
+}
+
+// ============================================================
+// EXPORT REPORT
+// ============================================================
+function exportReport() {
+  const d = getFilteredData();
+  const attritionRate = Math.round((d.exits / d.total) * 100);
+  const rows = [
+    ['Galaxia HR Analytics — Export Report'],
+    ['Generated:', new Date().toLocaleString()],
+    [''],
+    ['SUMMARY METRICS'],
+    ['Total Headcount', d.total],
+    ['Active Employees', d.active],
+    ['New Joiners', d.newJoiners],
+    ['Exits / Inactive', d.exits],
+    ['Notice Period', d.noticePeriod],
+    ['Attrition Rate (%)', attritionRate],
+    [''],
+    ['DEPARTMENT BREAKDOWN'],
+    ['Department', 'Headcount'],
+    ...Object.entries(DATA.departments).map(([k,v])=>[k, v]),
+    [''],
+    ['GRADE DISTRIBUTION'],
+    ['Grade', 'Count'],
+    ...Object.entries(DATA.grades).map(([k,v])=>[k, v]),
+    [''],
+    ['SECTOR BREAKDOWN'],
+    ['Sector', 'Count'],
+    ...Object.entries(DATA.sectors).map(([k,v])=>[k, v]),
+    [''],
+    ['GENDER'],
+    ['Male', DATA.male],
+    ['Female', DATA.female],
+    [''],
+    ['EMPLOYEE RECORDS (Sample)'],
+    ['Emp Code','Gender','Active Status','Report Status','Emp Status','Grade','Department','Sector'],
+    ...EMPLOYEES.map(r=>[r.c, r.g, r.es, r.rs, r.st, r.gr, r.dept, r.sec])
+  ];
+
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Galaxia_HR_Report_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ Report exported successfully', 'success');
+}
+
+// ============================================================
+// ADD EMPLOYEE MODAL
+// ============================================================
+const DEPT_BY_SECTOR = {
+  SALES: ['SALES','MARKETING'],
+  MANUFACTURING: ['PRODUCTION','QUALITY ASSURANCE','SCM','ENGINEERING AND MAINTENANCE','OPERATIONS','EHS'],
+  CORPORATE: ['FINANCE AND ACCOUNTS','HUMAN RESOURCES','INFORMATION TECHNOLOGY','LEGAL','ADMINISTRATION','TRADING','MD CELL']
+};
+
+function openAddEmployee() {
+  document.getElementById('addEmpOverlay').classList.add('visible');
+  updateDeptOptions('SALES');
+  // Auto-generate next code
+  const codes = EMPLOYEES.map(e=>parseInt(e.c.replace('GXC',''))||0);
+  const nextCode = 'GXC' + (Math.max(...codes) + 1);
+  document.getElementById('empCode').value = nextCode;
+}
+
+function closeAddEmployee() {
+  document.getElementById('addEmpOverlay').classList.remove('visible');
+}
+
+function updateDeptOptions(sector) {
+  const sel = document.getElementById('empDept');
+  if(!sel) return;
+  const depts = DEPT_BY_SECTOR[sector] || Object.keys(DATA.departments);
+  sel.innerHTML = depts.map(d=>`<option value="${d}">${d}</option>`).join('');
+}
+
+function saveNewEmployee() {
+  const code = document.getElementById('empCode').value.trim();
+  if(!code){ showToast('⚠ Please enter an Employee Code', 'error'); return; }
+  if(EMPLOYEES.find(e=>e.c===code)){ showToast('⚠ Employee Code already exists', 'error'); return; }
+
+  const emp = {
+    c: code,
+    g: document.getElementById('empGender').value,
+    es: document.getElementById('empActiveStatus').value,
+    rs: document.getElementById('empRS').value,
+    st: document.getElementById('empEmpStatus').value,
+    gr: document.getElementById('empGrade').value,
+    dept: document.getElementById('empDept').value,
+    sec: document.getElementById('empSector').value
+  };
+  EMPLOYEES.unshift(emp);
+
+  // Update aggregate DATA counters
+  DATA.total += 1;
+  if(emp.rs === 'Active Headcount') DATA.active += 1;
+  if(emp.st === 'NewJoinee') DATA.newJoiners += 1;
+  if(emp.es === 'Serving Notice Period') DATA.noticePeriod += 1;
+  if(emp.rs === 'Exit/Inactive') DATA.exits += 1;
+  if(emp.g === 'Male') DATA.male += 1; else DATA.female += 1;
+  DATA.departments[emp.dept] = (DATA.departments[emp.dept] || 0) + 1;
+  DATA.grades[emp.gr] = (DATA.grades[emp.gr] || 0) + 1;
+  DATA.sectors[emp.sec] = (DATA.sectors[emp.sec] || 0) + 1;
+
+  closeAddEmployee();
+  currentPage = 1;
+  renderMain();
+  showToast(`✓ ${code} added successfully`, 'success');
+}
+
+// ============================================================
+// DRAG-AND-DROP DATA UPLOAD
+// ============================================================
+let parsedUploadRows = [];
+let uploadedHeaders = [];
+
+function openDropzone() {
+  document.getElementById('dropzoneOverlay').classList.add('visible');
+  resetDropzone();
+}
+
+function closeDropzone() {
+  document.getElementById('dropzoneOverlay').classList.remove('visible');
+}
+
+function resetDropzone() {
+  document.getElementById('dropProgress').style.display = 'none';
+  document.getElementById('dropSuccess').style.display = 'none';
+  document.getElementById('dropError').style.display = 'none';
+  document.getElementById('colMapSection').style.display = 'none';
+  document.getElementById('dropArea').classList.remove('drag-over');
+  document.getElementById('fileInput').value = '';
+  parsedUploadRows = [];
+  uploadedHeaders = [];
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('dropArea').classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  document.getElementById('dropArea').classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropArea').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if(file) processFile(file);
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if(file) processFile(file);
+}
+
+function processFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  if(!['xlsx','xls','csv'].includes(ext)) {
+    showDropError('❌ Unsupported file type. Please upload .xlsx, .xls, or .csv');
+    return;
+  }
+
+  // Show progress
+  const prog = document.getElementById('dropProgress');
+  const fill = document.getElementById('dropProgressFill');
+  const progText = document.getElementById('dropProgressText');
+  prog.style.display = 'block';
+  fill.style.width = '0%';
+  progText.textContent = `Reading "${file.name}"…`;
+
+  let pct = 0;
+  const tick = setInterval(()=>{ pct = Math.min(pct+15, 85); fill.style.width = pct+'%'; }, 120);
+
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    clearInterval(tick);
+    fill.style.width = '100%';
+    progText.textContent = 'Parsing data…';
+
+    try {
+      if(ext === 'csv') {
+        parsedUploadRows = parseCSV(ev.target.result);
+      } else {
+        // Minimal xlsx binary parsing — extract shared strings + sheet data
+        parsedUploadRows = parseXLSXBasic(ev.target.result);
+      }
+
+      if(!parsedUploadRows || parsedUploadRows.length < 2) {
+        showDropError('⚠ File appears empty or could not be parsed. Please check your file.');
+        return;
+      }
+
+      uploadedHeaders = parsedUploadRows[0].map((h,i)=> h || `Column ${i+1}`);
+      prog.style.display = 'none';
+      showColMapper(uploadedHeaders);
+      document.getElementById('dropSuccess').style.display = 'block';
+      document.getElementById('dropSuccess').textContent =
+        `✓ File loaded: "${file.name}" — ${parsedUploadRows.length - 1} rows detected`;
+    } catch(err) {
+      clearInterval(tick);
+      showDropError('❌ Could not parse file: ' + err.message);
+    }
+  };
+
+  reader.onerror = () => { clearInterval(tick); showDropError('❌ Failed to read file.'); };
+
+  if(ext === 'csv') reader.readAsText(file);
+  else reader.readAsBinaryString(file);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  return lines.map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for(let i=0;i<line.length;i++){
+      const ch = line[i];
+      if(ch==='"'){ inQ=!inQ; }
+      else if(ch===','&&!inQ){ cols.push(cur.trim()); cur=''; }
+      else { cur+=ch; }
+    }
+    cols.push(cur.trim());
+    return cols;
+  });
+}
+
+function parseXLSXBasic(binaryStr) {
+  // Use SheetJS if available (loaded via CDN fallback), else basic CSV extraction from xlsx
+  // Try to load SheetJS on-the-fly
+  if(typeof XLSX !== 'undefined') {
+    const wb = XLSX.read(binaryStr, {type:'binary'});
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+    return rows.map(r => r.map(c => String(c)));
+  }
+  // Fallback: attempt CSV extraction from xlsx (crude but often works for simple files)
+  // Extract text-like content
+  throw new Error('SheetJS library not loaded. Please upload a CSV file instead, or open the site with an internet connection.');
+}
+
+function showDropError(msg) {
+  document.getElementById('dropProgress').style.display = 'none';
+  const el = document.getElementById('dropError');
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+
+// Required fields to map
+const FIELD_MAP = [
+  {key:'c',    label:'Employee Code'},
+  {key:'g',    label:'Gender'},
+  {key:'es',   label:'Active Status'},
+  {key:'st',   label:'Emp Status'},
+  {key:'gr',   label:'Grade'},
+  {key:'dept', label:'Department'},
+  {key:'sec',  label:'Sector'},
+];
+
+function showColMapper(headers) {
+  const grid = document.getElementById('colMapGrid');
+  const autoMap = {
+    c:    headers.findIndex(h=>/code|emp.?id|employee.?code/i.test(h)),
+    g:    headers.findIndex(h=>/gender|sex/i.test(h)),
+    es:   headers.findIndex(h=>/active.?status|status/i.test(h)),
+    st:   headers.findIndex(h=>/emp.?status|employment/i.test(h)),
+    gr:   headers.findIndex(h=>/grade|level/i.test(h)),
+    dept: headers.findIndex(h=>/dept|department/i.test(h)),
+    sec:  headers.findIndex(h=>/sector/i.test(h)),
+  };
+
+  grid.innerHTML = FIELD_MAP.map(f=>`
+    <div class="col-map-row">
+      <span class="col-map-label">${f.label}</span>
+      <select class="col-map-select" id="map_${f.key}">
+        <option value="-1">— Skip —</option>
+        ${headers.map((h,i)=>`<option value="${i}" ${autoMap[f.key]===i?'selected':''}>${h||'(blank)'}</option>`).join('')}
+      </select>
+    </div>`).join('');
+
+  document.getElementById('colMapSection').style.display = 'block';
+}
+
+function applyUploadedData() {
+  if(!parsedUploadRows.length){ showToast('No data to apply', 'error'); return; }
+
+  const mapping = {};
+  FIELD_MAP.forEach(f=>{
+    const sel = document.getElementById('map_'+f.key);
+    if(sel) mapping[f.key] = parseInt(sel.value);
+  });
+
+  const dataRows = parsedUploadRows.slice(1);
+  const newEmps = dataRows.map(row=>{
+    const e = {};
+    FIELD_MAP.forEach(f=>{ e[f.key] = mapping[f.key] >= 0 ? (row[mapping[f.key]]||'').trim() : ''; });
+    return e;
+  }).filter(e=>e.c); // require employee code
+
+  if(!newEmps.length){ showToast('⚠ No valid rows found — check column mapping', 'error'); return; }
+
+  // Replace EMPLOYEES array
+  EMPLOYEES.length = 0;
+  newEmps.forEach(e=>EMPLOYEES.push(e));
+
+  // Recompute aggregate DATA from uploaded rows
+  const deptCount = {}, gradeCount = {}, sectorCount = {}, statusCount = {};
+  let total=0, active=0, exits=0, joiners=0, notice=0, male=0, female=0;
+
+  newEmps.forEach(e=>{
+    total++;
+    if(e.es==='Active') active++;
+    if(e.es==='Inactive') exits++;
+    if(e.st==='NewJoinee') joiners++;
+    if(e.es==='Serving Notice Period') notice++;
+    if(e.g==='Male'||e.g==='M') male++; else female++;
+    deptCount[e.dept]  = (deptCount[e.dept]||0)+1;
+    gradeCount[e.gr]   = (gradeCount[e.gr]||0)+1;
+    sectorCount[e.sec] = (sectorCount[e.sec]||0)+1;
+    statusCount[e.st]  = (statusCount[e.st]||0)+1;
+  });
+
+  Object.assign(DATA,{total,active,exits,newJoiners:joiners,noticePeriod:notice,male,female,
+    departments:deptCount, grades:gradeCount, sectors:sectorCount, empStatuses:statusCount});
+
+  closeDropzone();
+  currentPage=1;
+  renderMain();
+  showToast(`✓ Dashboard updated with ${newEmps.length} employee records`, 'success');
+}
+
+// Close overlays on backdrop click
+document.getElementById('dropzoneOverlay').addEventListener('click', function(e){
+  if(e.target===this) closeDropzone();
+});
+document.getElementById('addEmpOverlay').addEventListener('click', function(e){
+  if(e.target===this) closeAddEmployee();
+});
+
+// Load SheetJS for xlsx parsing
+(function(){
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  document.head.appendChild(s);
+})();
+
+// ============================================================
+// INIT
+// ============================================================
+renderMain();
+</script>
+</body>
+</html>

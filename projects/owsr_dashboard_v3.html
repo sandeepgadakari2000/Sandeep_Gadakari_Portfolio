@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+<title>OWSR Intelligence Dashboard — Coolberg</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#0E6F73;--primary-rgb:14,111,115;
+  --primary-light:#149AA0;--primary-dark:#0A4D50;
+  --accent:#35C2B7;--accent-rgb:53,194,183;
+  --brand:#0072BB;--brand-rgb:0,114,187;
+  --success:#1FA66A;--warning:#D98916;--danger:#D94F45;--purple:#7A68D6;
+  --ink:#0B1B22;--text:#16242D;--muted:#647184;
+  --bg1:#E9F6F4;--bg2:#F2F6FF;--bg3:#FFF6EA;
+  --glass-strong:rgba(255,255,255,0.80);--glass:rgba(255,255,255,0.56);--glass-soft:rgba(255,255,255,0.34);
+  --border:rgba(255,255,255,0.82);--border-soft:rgba(255,255,255,0.5);
+  --line:rgba(16,38,45,0.08);
+  --shadow:0 10px 34px rgba(10,28,34,0.10),0 2px 8px rgba(10,28,34,0.05);
+  --shadow-hover:0 26px 64px rgba(10,28,34,0.16),0 8px 20px rgba(10,28,34,0.08);
+  --shadow-press:0 4px 14px rgba(10,28,34,0.10);
+  --radius:18px;--radius-sm:13px;--radius-lg:26px;--radius-pill:999px;
+  --ease:cubic-bezier(.22,1,.36,1);--ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --dur-s:.22s;--dur-m:.42s;--dur-l:.7s;
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:
+    radial-gradient(1100px 620px at 8% -8%,rgba(var(--primary-rgb),0.14),transparent 60%),
+    radial-gradient(900px 560px at 108% 6%,rgba(var(--brand-rgb),0.12),transparent 58%),
+    radial-gradient(1000px 700px at 50% 118%,rgba(217,137,22,0.10),transparent 60%),
+    linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 48%,var(--bg3) 100%);
+  background-attachment:fixed;
+  min-height:100vh;color:var(--text);font-size:14px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  position:relative;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:-2;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,0.5) 0 1px,transparent 1px 100%),
+    linear-gradient(180deg,rgba(255,255,255,0.38) 0 1px,transparent 1px 100%);
+  background-size:56px 56px;
+  mask-image:radial-gradient(1200px 800px at 50% 0%,rgba(0,0,0,0.30),transparent 68%);
+}
+::selection{background:rgba(var(--accent-rgb),0.32);color:var(--ink)}
+
+/* ── AMBIENT LIQUID ORBS ── */
+.liquid-orbs{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;will-change:transform}
+.orb-a{width:520px;height:520px;left:-160px;top:-180px;
+  background:radial-gradient(circle at 35% 35%,rgba(var(--primary-rgb),0.40),rgba(var(--primary-rgb),0) 70%);
+  animation:driftA 26s var(--ease) infinite alternate}
+.orb-b{width:460px;height:460px;right:-140px;top:8%;
+  background:radial-gradient(circle at 60% 40%,rgba(var(--brand-rgb),0.34),rgba(var(--brand-rgb),0) 70%);
+  animation:driftB 32s var(--ease) infinite alternate}
+.orb-c{width:560px;height:560px;left:38%;bottom:-220px;
+  background:radial-gradient(circle at 50% 50%,rgba(217,137,22,0.22),rgba(217,137,22,0) 70%);
+  animation:driftC 36s var(--ease) infinite alternate}
+@keyframes driftA{0%{transform:translate(0,0) scale(1)}100%{transform:translate(60px,40px) scale(1.12)}}
+@keyframes driftB{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-50px,60px) scale(1.08)}}
+@keyframes driftC{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-40px,-50px) scale(1.1)}}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(var(--primary-rgb),0.45),rgba(var(--accent-rgb),0.45));border-radius:999px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(var(--primary-rgb),0.7),rgba(var(--accent-rgb),0.7));background-clip:padding-box}
+*{scrollbar-width:thin;scrollbar-color:rgba(var(--primary-rgb),0.45) transparent}
+
+/* ── FOCUS STATES ── */
+a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid rgba(var(--brand-rgb),0.65);outline-offset:2px;border-radius:6px;
+}
+
+/* ── GENERIC GLASS SURFACE ── */
+.upload-zone,.file-bar,.filter-panel,.kpi-card,.chart-card,.loading-card,.action-stat{
+  position:relative;isolation:isolate;border-radius:var(--radius);
+  background:linear-gradient(160deg,var(--glass-strong),var(--glass-soft));
+  border:1px solid var(--border);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 0 0 1px rgba(255,255,255,0.05),var(--shadow);
+  backdrop-filter:blur(26px) saturate(1.5);-webkit-backdrop-filter:blur(26px) saturate(1.5);
+  transition:transform var(--dur-m) var(--ease),box-shadow var(--dur-m) var(--ease),border-color var(--dur-m) var(--ease);
+}
+.upload-zone::before,.file-bar::before,.filter-panel::before,.kpi-card::before,.chart-card::before,.loading-card::before,.action-stat::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  background:linear-gradient(165deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0) 38%);
+  opacity:.9;
+}
+.upload-zone>*,.file-bar>*,.filter-panel>*,.kpi-card>*,.chart-card>*,.loading-card>*,.action-stat>*{position:relative;z-index:1}
+
+/* ── HEADER ── */
+.header{
+  margin:16px auto 0;max-width:1400px;
+  background:linear-gradient(120deg,rgba(255,255,255,0.80),rgba(255,255,255,0.46));
+  border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:14px 22px;box-shadow:var(--shadow);
+  backdrop-filter:blur(32px) saturate(1.4);-webkit-backdrop-filter:blur(32px) saturate(1.4);
+  position:sticky;top:12px;z-index:30;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  animation:headerIn .65s var(--ease) both;
+}
+@keyframes headerIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+.header-left{display:flex;align-items:center;gap:15px;min-width:0}
+.header-icon{display:none}
+.brand-logo{
+  flex:0 0 auto;width:58px;height:58px;border-radius:14px;
+  background:radial-gradient(circle at 30% 28%,#ffffff,#fbfdff 60%);
+  background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDcgNDUyIiB3aWR0aD0iNDQ3IiBoZWlnaHQ9IjQ1MiI+CiAgPHJlY3QgeD0iNS41IiB5PSI1LjUiIHdpZHRoPSI0MzYiIGhlaWdodD0iNDQxIiByeD0iNTQiIHJ5PSI1NCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMjMxZjIwIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSIyMjMiIGN5PSIxNDgiIHI9Ijk5IiBmaWxsPSIjMDA3MWJjIi8+CiAgPHRleHQgeD0iMjIzIiB5PSIyMDMiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkc8L3RleHQ+CiAgPHRleHQgeD0iMjE3IiB5PSIzMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0NyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzIzMWYyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjExIj5HQUxBWElBPC90ZXh0PgogIDx0ZXh0IHg9IjIxNyIgeT0iMzk4IiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDciIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyMzFmMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIxMSI+R1JPVVA8L3RleHQ+Cjwvc3ZnPgo=");
+  background-size:78%;background-position:center;background-repeat:no-repeat;
+  border:1px solid rgba(255,255,255,0.9);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.8),0 10px 26px rgba(var(--brand-rgb),0.22),0 2px 6px rgba(10,28,34,0.10);
+  position:relative;overflow:hidden;transition:transform var(--dur-m) var(--ease-spring),box-shadow var(--dur-m) var(--ease);
+}
+.brand-logo::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(125deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0) 30%,rgba(255,255,255,0) 70%,rgba(255,255,255,0.30) 100%);
+  pointer-events:none;
+}
+.header-left:hover .brand-logo{transform:translateY(-2px) scale(1.045);box-shadow:inset 0 1px 0 rgba(255,255,255,0.85),0 16px 36px rgba(var(--brand-rgb),0.30),0 4px 10px rgba(10,28,34,0.12)}
+.header-title{
+  color:var(--ink);font-size:20px;font-weight:800;letter-spacing:-.2px;line-height:1.15;
+  font-family:'Manrope','Inter',sans-serif;
+}
+.header-sub{color:var(--muted);font-size:12px;margin-top:3px;font-weight:500}
+.header-badge{
+  flex:0 0 auto;background:linear-gradient(135deg,rgba(var(--primary-rgb),0.14),rgba(var(--accent-rgb),0.14));
+  border:1px solid rgba(var(--primary-rgb),0.22);color:var(--primary-dark);
+  padding:7px 14px;border-radius:var(--radius-pill);font-size:11px;font-weight:800;
+  letter-spacing:.4px;text-transform:uppercase;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.header-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.25);animation:pulseDot 2.2s ease-in-out infinite}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.55}}
+
+/* ── CONTAINER ── */
+.container{max-width:1400px;margin:0 auto;padding:20px 24px 48px}
+
+/* ── UPLOAD ZONE ── */
+.upload-section{margin-bottom:28px}
+.upload-zone{
+  border:1.5px dashed rgba(var(--primary-rgb),0.34);padding:46px 32px;text-align:center;cursor:pointer;overflow:hidden;
+}
+.upload-zone:hover,.upload-zone.drag-over{
+  border-color:var(--primary);transform:translateY(-3px);box-shadow:var(--shadow-hover);
+  background:linear-gradient(160deg,rgba(255,255,255,0.92),rgba(255,255,255,0.6));
+}
+.upload-zone.drag-over{border-style:solid;animation:pulseRing 1.1s var(--ease) infinite}
+@keyframes pulseRing{0%{box-shadow:var(--shadow-hover),0 0 0 0 rgba(var(--accent-rgb),0.35)}100%{box-shadow:var(--shadow-hover),0 0 0 14px rgba(var(--accent-rgb),0)}}
+.upload-icon{
+  font-size:22px;display:inline-flex;align-items:center;justify-content:center;width:58px;height:44px;
+  border-radius:var(--radius-sm);background:linear-gradient(135deg,rgba(var(--primary-rgb),0.14),rgba(var(--accent-rgb),0.12));
+  color:var(--primary);margin-bottom:16px;transition:transform var(--dur-m) var(--ease-spring);
+}
+.upload-zone:hover .upload-icon{transform:translateY(-3px) rotate(-4deg) scale(1.06)}
+.upload-title{font-size:18px;font-weight:800;color:var(--ink);margin-bottom:6px;letter-spacing:-.1px}
+.upload-sub{color:var(--muted);font-size:13px}
+.upload-btn{
+  display:inline-block;margin-top:18px;padding:11px 30px;border-radius:var(--radius-pill);
+  background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;font-weight:700;font-size:13px;
+  cursor:pointer;box-shadow:0 12px 28px rgba(var(--primary-rgb),0.30),inset 0 1px 0 rgba(255,255,255,0.3);
+  transition:transform var(--dur-s) var(--ease),box-shadow var(--dur-s) var(--ease),filter var(--dur-s) ease;
+  border:1px solid rgba(255,255,255,0.2);
+}
+.upload-btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(var(--primary-rgb),0.38),inset 0 1px 0 rgba(255,255,255,0.35);filter:brightness(1.04)}
+.upload-btn:active{transform:translateY(0px) scale(.98);box-shadow:var(--shadow-press)}
+#fileInput{display:none}
+
+/* ── DASHBOARD ── */
+#dashboard{display:none}
+#dashboard>.fade-in{animation:fadeIn var(--dur-l) var(--ease) both}
+#dashboard>div:nth-of-type(1){animation-delay:.02s}
+#dashboard>div:nth-of-type(2){animation-delay:.06s}
+#dashboard>div:nth-of-type(3){animation-delay:.10s}
+#dashboard>div:nth-of-type(4){animation-delay:.14s}
+#dashboard>div:nth-of-type(5){animation-delay:.18s}
+#dashboard>div:nth-of-type(6){animation-delay:.22s}
+#dashboard>div:nth-of-type(7){animation-delay:.26s}
+#dashboard>div:nth-of-type(8){animation-delay:.30s}
+#dashboard>div:nth-of-type(9){animation-delay:.32s}
+#dashboard>div:nth-of-type(10){animation-delay:.34s}
+#dashboard>div:nth-of-type(11){animation-delay:.36s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+/* ── FILE BAR ── */
+.file-bar{padding:11px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.file-bar-left{display:flex;align-items:center;gap:9px;color:var(--primary-dark);font-weight:700;font-size:13px}
+.file-meta{color:var(--muted);font-size:12px;font-weight:500}
+
+/* ── FILTER PANEL ── */
+.filter-panel{padding:16px;margin-bottom:20px}
+.filter-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.filter-title{font-size:13px;font-weight:850;color:var(--ink);text-transform:uppercase;letter-spacing:.5px}
+.filter-note{font-size:12px;color:var(--muted);margin-top:3px}
+.filter-grid{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:11px}
+.filter-control label{display:block;font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.filter-control select,.filter-control input{
+  width:100%;height:37px;border-radius:var(--radius-sm);border:1px solid rgba(var(--primary-rgb),0.18);
+  background:rgba(255,255,255,0.65);color:var(--ink);font:inherit;font-size:12px;padding:0 11px;outline:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.7);transition:border-color var(--dur-s) ease,box-shadow var(--dur-s) ease,background var(--dur-s) ease;
+}
+.filter-control select:hover,.filter-control input:hover{background:rgba(255,255,255,0.82)}
+.filter-control select:focus,.filter-control input:focus{border-color:rgba(var(--primary-rgb),0.6);box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.18);background:#fff}
+.reset-btn{
+  height:35px;border:1px solid rgba(var(--primary-rgb),0.24);background:rgba(255,255,255,0.55);color:var(--primary-dark);
+  border-radius:var(--radius-sm);padding:0 14px;font-size:12px;font-weight:800;cursor:pointer;
+  transition:background var(--dur-s) ease,transform var(--dur-s) var(--ease),box-shadow var(--dur-s) ease;
+}
+.reset-btn:hover{background:#fff;box-shadow:var(--shadow);transform:translateY(-1px)}
+.reset-btn:active{transform:translateY(0) scale(.97)}
+.filter-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.filter-chip{
+  display:inline-flex;align-items:center;border-radius:var(--radius-pill);background:rgba(var(--primary-rgb),0.10);
+  color:var(--primary-dark);font-size:11px;font-weight:750;padding:5px 10px;border:1px solid rgba(var(--primary-rgb),0.16);
+  animation:chipIn var(--dur-m) var(--ease-spring) both;
+}
+@keyframes chipIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:20px}
+.kpi-card{padding:17px 16px;animation:cardPop var(--dur-m) var(--ease-spring) both}
+.kpi-card:nth-child(1){animation-delay:.02s}.kpi-card:nth-child(2){animation-delay:.06s}
+.kpi-card:nth-child(3){animation-delay:.10s}.kpi-card:nth-child(4){animation-delay:.14s}
+.kpi-card:nth-child(5){animation-delay:.18s}.kpi-card:nth-child(n+6){animation-delay:.20s}
+@keyframes cardPop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.kpi-card::after{
+  content:'';position:absolute;top:0;left:14px;right:14px;height:2.5px;border-radius:2px;z-index:1;
+  background:linear-gradient(90deg,var(--accent-color,var(--primary)),rgba(255,255,255,0));
+  opacity:.9;
+}
+.kpi-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover);border-color:rgba(255,255,255,0.95)}
+.kpi-label{color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:9px}
+.kpi-value{font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.4px;line-height:1.1;font-family:'Manrope','Inter',sans-serif}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.kpi-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:var(--radius-pill);margin-top:7px}
+.kpi-delta.up{background:rgba(31,166,106,0.13);color:#16834F}
+.kpi-delta.down{background:rgba(217,79,69,0.13);color:#B5392F}
+.kpi-delta.neutral{background:rgba(100,116,139,0.13);color:var(--muted)}
+
+/* ── SECTION TITLES ── */
+.section-title{font-size:14.5px;font-weight:800;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:9px;letter-spacing:-.1px}
+.section-title::before{content:'';display:block;width:4px;height:18px;border-radius:3px;background:linear-gradient(180deg,var(--primary),var(--accent));box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.12)}
+
+/* ── CHART CARDS ── */
+.chart-card{padding:20px}
+.chart-card:hover{box-shadow:var(--shadow-hover)}
+.chart-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.chart-full{margin-bottom:16px}
+.chart-wrap{position:relative;height:260px}
+.chart-wrap-lg{position:relative;height:300px}
+.chart-wrap-sm{position:relative;height:220px}
+
+/* ── SEGMENT BADGES ── */
+.seg-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.seg-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;transition:transform var(--dur-s) var(--ease)}
+.seg-pill:hover{transform:translateY(-1px)}
+.seg-dot{width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 2.5px rgba(255,255,255,0.6)}
+
+/* ── HEATMAP ── */
+.heatmap-section{margin-bottom:16px}
+.heatmap-wrap{overflow-x:auto;border-radius:var(--radius-sm)}
+.heatmap-table{width:100%;border-collapse:separate;border-spacing:2px;font-size:11px}
+.heatmap-table th{padding:5px 6px;text-align:center;color:var(--muted);font-weight:700;letter-spacing:.4px;font-size:10px;white-space:nowrap}
+.heatmap-table td.outlet-name{padding:4px 8px 4px 0;color:var(--text);font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.heatmap-table td.outlet-seg{padding:4px 6px;text-align:center}
+.hm-cell{width:36px;height:28px;border-radius:7px;text-align:center;font-size:9px;font-weight:700;color:rgba(255,255,255,0.92);vertical-align:middle;cursor:default;transition:transform var(--dur-s) var(--ease),opacity var(--dur-s) ease,box-shadow var(--dur-s) ease}
+.hm-cell:hover{opacity:.92;transform:scale(1.12);box-shadow:0 6px 14px rgba(10,28,34,0.22);z-index:2;position:relative}
+.hm-cell.inactive{background:rgba(100,116,139,0.10);color:transparent}
+
+/* ── TOP TABLE ── */
+.top-table,.flag-table,.cat-table{width:100%;border-collapse:collapse;font-size:12px}
+.top-table th,.flag-table th,.cat-table th{
+  padding:11px 12px;text-align:left;color:var(--muted);font-weight:700;font-size:10px;letter-spacing:.5px;text-transform:uppercase;
+  border-bottom:1px solid var(--line);background:rgba(255,255,255,0.65);
+}
+.flag-table th{position:sticky;top:0;backdrop-filter:blur(10px);z-index:1}
+.top-table td,.cat-table td{padding:10px 12px;border-bottom:1px solid var(--line);transition:background var(--dur-s) ease}
+.flag-table td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;transition:background var(--dur-s) ease}
+.top-table tr:hover td,.flag-table tr:hover td,.cat-table tr:hover td{background:rgba(var(--primary-rgb),0.05)}
+.top-table tr:last-child td,.cat-table tr:last-child td{border-bottom:none}
+.flag-table tr.flag-hidden{display:none}
+.health-bar-wrap{width:80px;height:7px;background:rgba(100,116,139,0.14);border-radius:var(--radius-pill);overflow:hidden}
+.health-bar{height:100%;border-radius:var(--radius-pill);transition:width .6s var(--ease)}
+.outlet-rank{width:25px;height:25px;border-radius:8px;background:linear-gradient(145deg,var(--primary),var(--primary-light));color:#fff;font-size:10px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(var(--primary-rgb),0.30)}
+.zone-badge{display:inline-block;padding:3px 9px;border-radius:var(--radius-pill);font-size:10px;font-weight:700}
+
+/* ── INSIGHT CARDS ── */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:16px}
+.insight-card{
+  position:relative;border-radius:var(--radius-sm);padding:15px 16px 15px 18px;overflow:hidden;
+  background:linear-gradient(150deg,rgba(var(--primary-rgb),0.10),rgba(var(--accent-rgb),0.07));
+  border:1px solid rgba(var(--primary-rgb),0.14);
+  box-shadow:0 6px 18px rgba(var(--primary-rgb),0.08);
+  transition:transform var(--dur-m) var(--ease),box-shadow var(--dur-m) var(--ease);
+  animation:cardPop var(--dur-m) var(--ease-spring) both;
+}
+.insight-card:nth-child(1){animation-delay:.02s}.insight-card:nth-child(2){animation-delay:.08s}.insight-card:nth-child(3){animation-delay:.14s}
+.insight-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--primary),var(--accent))}
+.insight-card:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(var(--primary-rgb),0.16)}
+.insight-icon{font-size:20px;margin-bottom:6px}
+.insight-title{font-size:11px;font-weight:800;color:var(--primary-dark);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.insight-text{font-size:12.5px;color:var(--text);line-height:1.55}
+
+/* ── ACTION CENTER ── */
+.action-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.action-stat{padding:15px 17px 15px 19px}
+.action-stat::before{background:linear-gradient(165deg,rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 38%)}
+.action-stat::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;z-index:1}
+.action-stat.risk::after{background:linear-gradient(180deg,var(--danger),#f08177)}
+.action-stat.opp::after{background:linear-gradient(180deg,var(--success),#5cd49a)}
+.action-stat-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.action-stat-value{font-size:21px;font-weight:800;color:var(--ink);font-family:'Manrope','Inter',sans-serif}
+.action-stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.flag-filters{display:flex;gap:8px;margin-bottom:14px}
+.flag-filter-btn{
+  padding:7px 17px;border-radius:var(--radius-pill);font-size:12px;font-weight:700;cursor:pointer;
+  border:1px solid rgba(var(--primary-rgb),0.20);background:rgba(255,255,255,0.55);color:var(--muted);
+  transition:all var(--dur-s) var(--ease);user-select:none;
+}
+.flag-filter-btn:hover{background:rgba(255,255,255,0.92);transform:translateY(-1px)}
+.flag-filter-btn.active{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(var(--primary-rgb),0.28)}
+.flag-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--radius-pill);font-size:10px;font-weight:800;white-space:nowrap}
+.flag-badge.risk{background:rgba(217,79,69,0.13);color:#B5392F}
+.flag-badge.opportunity{background:rgba(31,166,106,0.13);color:#16834F}
+.flag-entity{font-weight:700;color:var(--ink)}
+.flag-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.flag-detail{color:var(--text);font-size:11.5px;line-height:1.5;max-width:300px}
+.flag-action{font-size:11.5px;color:var(--primary-dark);font-weight:600;max-width:220px;line-height:1.45}
+.flag-impact{font-weight:800;color:var(--ink);white-space:nowrap;text-align:right}
+
+/* ── CATEGORY ── */
+.cat-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;box-shadow:0 0 0 2.5px rgba(255,255,255,0.55)}
+
+/* ── EMPTY STATE ── */
+.empty-state{grid-column:1/-1;padding:28px;border-radius:var(--radius);border:1.5px dashed rgba(var(--primary-rgb),0.26);background:rgba(255,255,255,0.45);color:var(--muted);font-size:13px;text-align:center;font-weight:500}
+
+/* ── LOADING OVERLAY ── */
+.loading-overlay{
+  position:fixed;inset:0;background:rgba(8,20,26,0.50);backdrop-filter:blur(8px) saturate(1.2);-webkit-backdrop-filter:blur(8px) saturate(1.2);
+  display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;pointer-events:none;transition:opacity var(--dur-m) ease;
+}
+.loading-overlay.show{opacity:1;pointer-events:all}
+.loading-card{padding:36px 44px;text-align:center;min-width:320px;box-shadow:0 30px 80px rgba(8,20,26,0.40);animation:popIn var(--dur-m) var(--ease-spring) both}
+@keyframes popIn{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.loading-brand{width:40px;height:40px;margin:0 auto 14px;border-radius:11px;
+  background:#fff url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDcgNDUyIiB3aWR0aD0iNDQ3IiBoZWlnaHQ9IjQ1MiI+CiAgPHJlY3QgeD0iNS41IiB5PSI1LjUiIHdpZHRoPSI0MzYiIGhlaWdodD0iNDQxIiByeD0iNTQiIHJ5PSI1NCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMjMxZjIwIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSIyMjMiIGN5PSIxNDgiIHI9Ijk5IiBmaWxsPSIjMDA3MWJjIi8+CiAgPHRleHQgeD0iMjIzIiB5PSIyMDMiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkc8L3RleHQ+CiAgPHRleHQgeD0iMjE3IiB5PSIzMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0NyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzIzMWYyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjExIj5HQUxBWElBPC90ZXh0PgogIDx0ZXh0IHg9IjIxNyIgeT0iMzk4IiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDciIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyMzFmMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIxMSI+R1JPVVA8L3RleHQ+Cjwvc3ZnPgo=") center/74% no-repeat;
+  border:1px solid rgba(255,255,255,0.9);box-shadow:0 8px 20px rgba(var(--brand-rgb),0.22)}
+.loading-spinner-lg{width:40px;height:40px;border:3px solid rgba(var(--primary-rgb),0.15);border-top-color:var(--primary);border-radius:50%;animation:spin .85s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-stage{font-size:14px;font-weight:800;color:var(--ink);margin-bottom:6px}
+.loading-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.loading-bar-wrap{width:100%;height:6px;background:rgba(var(--primary-rgb),0.12);border-radius:var(--radius-pill);overflow:hidden}
+.loading-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));border-radius:var(--radius-pill);transition:width var(--dur-m) ease;width:0%;position:relative}
+.loading-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.55),transparent);animation:shimmer 1.3s linear infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1180px){.filter-grid{grid-template-columns:repeat(3,1fr)}.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){
+  .header{margin:10px 10px 0;top:8px;padding:12px 14px}
+  .header-badge{display:none}
+  .container{padding:14px 12px 36px}
+  .filter-top{flex-direction:column}
+  .filter-grid{grid-template-columns:1fr 1fr}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .action-summary{grid-template-columns:1fr 1fr}
+  .chart-grid-2,.chart-grid-3{grid-template-columns:1fr}
+  .insight-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .filter-grid,.kpi-grid,.action-summary{grid-template-columns:1fr}
+  .header-title{font-size:17px}
+  .brand-logo{width:44px;height:44px;border-radius:11px}
+  .orb{display:none}
+}
+
+</style>
+</head>
+<body>
+<div class="liquid-orbs" aria-hidden="true"><span class="orb orb-a"></span><span class="orb orb-b"></span><span class="orb orb-c"></span></div>
+
+
+<!-- LOADING OVERLAY: shown while the Web Worker parses the file off the main thread -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-card">
+    <div class="loading-brand" aria-hidden="true"></div>
+    <div class="loading-spinner-lg"></div>
+    <div class="loading-stage" id="loadingStage">Reading file…</div>
+    <div class="loading-sub" id="loadingSub">UI stays responsive — parsing runs in a background worker</div>
+    <div class="loading-bar-wrap"><div class="loading-bar" id="loadingBar"></div></div>
+  </div>
+</div>
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand-logo" role="img" aria-label="Galaxia Group"></div>
+    <div>
+      <div class="header-title">Coolberg OWSR Control Tower</div>
+      <div class="header-sub">A Galaxia Group Enterprise &middot; Impulse outlet performance analytics</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- UPLOAD -->
+  <div class="upload-section" id="uploadSection">
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-icon">📂</div>
+      <div class="upload-title">Drop OWSR Excel File Here</div>
+      <div class="upload-sub">Upload the output from OWSR Calculator v2 (Impulse_OWSR_*.xlsx)</div>
+      <label class="upload-btn" for="fileInput">Browse File</label>
+      <input type="file" id="fileInput" accept=".xlsx,.xls">
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard">
+
+    <!-- FILE BAR -->
+    <div class="file-bar fade-in">
+      <div class="file-bar-left">📄 <span id="fileNameDisplay"></span></div>
+      <span class="file-meta" id="fileMetaDisplay"></span>
+    </div>
+
+
+
+    <!-- FILTERS -->
+    <div class="filter-panel fade-in" id="filterPanel">
+      <div class="filter-top">
+        <div>
+          <div class="filter-title">Interactive Slicers</div>
+          <div class="filter-note" id="filterSummary">All workbook rows in view</div>
+        </div>
+        <button class="reset-btn" type="button" id="resetFiltersBtn">Reset filters</button>
+      </div>
+      <div class="filter-grid">
+        <div class="filter-control"><label for="fPeriod">Period</label><select id="fPeriod"></select></div>
+        <div class="filter-control"><label for="fMonth">Focus Month</label><select id="fMonth"></select></div>
+        <div class="filter-control"><label for="fZone">Zone</label><select id="fZone"></select></div>
+        <div class="filter-control"><label for="fRegion">Region / State</label><select id="fRegion"></select></div>
+        <div class="filter-control"><label for="fStatus">Market Type</label><select id="fStatus"></select></div>
+        <div class="filter-control"><label for="fTerritory">Territory</label><select id="fTerritory"></select></div>
+        <div class="filter-control"><label for="fBeat">Beat</label><select id="fBeat"></select></div>
+        <div class="filter-control"><label for="fSegment">Outlet Segment</label><select id="fSegment"></select></div>
+        <div class="filter-control"><label for="fCategory">Category</label><select id="fCategory"></select></div>
+        <div class="filter-control"><label for="fSearch">Outlet Search</label><input id="fSearch" type="search" placeholder="Name, ERP ID, territory"></div>
+      </div>
+      <div class="filter-chips" id="activeFilterChips"></div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid fade-in" id="kpiGrid"></div>
+
+    <!-- AUTO INSIGHTS -->
+    <div class="insight-grid fade-in" id="insightGrid"></div>
+
+    <!-- ACTION CENTER: RISK & OPPORTUNITY FLAGS -->
+    <div class="chart-full fade-in" id="actionCenterSection">
+      <div class="chart-card">
+        <div class="section-title">🎯 Action Center — Risk &amp; Opportunity Flags</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px;margin-left:20px">
+          Auto-detected signals ranked by ₹ impact, for RSM / territory follow-up
+        </div>
+        <div class="action-summary" id="actionSummary"></div>
+        <div class="flag-filters" id="flagFilters">
+          <div class="flag-filter-btn active" data-filter="all">All Flags</div>
+          <div class="flag-filter-btn" data-filter="risk">⚠️ Risk</div>
+          <div class="flag-filter-btn" data-filter="opportunity">🚀 Opportunity</div>
+        </div>
+        <div id="flagCountNote" style="font-size:11px;color:var(--muted);margin-bottom:8px"></div>
+        <div style="overflow-x:auto;max-height:520px;overflow-y:auto">
+          <table class="flag-table" id="flagTable"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TREND + SEGMENTS ROW -->
+    <div class="chart-grid-2 fade-in">
+      <div class="chart-card">
+        <div class="section-title">Monthly Active Outlets & Revenue Trend</div>
+        <div class="chart-wrap-lg"><canvas id="trendChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="section-title">Outlet Segments</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="segmentChart"></canvas></div>
+        <div class="seg-legend" id="segLegend"></div>
+      </div>
+    </div>
+
+    <!-- ZONE + RETENTION ROW -->
+    <div class="chart-grid-3 fade-in">
+      <div class="chart-card">
+        <div class="section-title">Zone-wise Sale Value</div>
+        <div class="chart-wrap-sm"><canvas id="zoneChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="section-title">Repeat Billed Rate %</div>
+        <div class="chart-wrap-sm"><canvas id="repeatChart"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="section-title">Metro vs Non-Metro (UPC)</div>
+        <div class="chart-wrap-sm"><canvas id="metroChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- CATEGORY PERFORMANCE -->
+    <div class="chart-full fade-in" id="categorySection" style="display:none">
+      <div class="chart-card">
+        <div class="section-title">📦 Category Performance — <span id="catMonthLabel"></span></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px;margin-left:20px">
+          Bottles · Cans · Coconut Water · Snacks breakdown for the latest billing month
+        </div>
+        <div class="chart-grid-2">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">Sale Value by Category</div>
+            <div class="chart-wrap-sm"><canvas id="catSVChart"></canvas></div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px">Repeat Billed % by Category</div>
+            <div class="chart-wrap-sm"><canvas id="catRepeatChart"></canvas></div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;margin-top:6px">
+          <table class="cat-table" id="catTable"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERRITORY QUADRANT -->
+    <div class="chart-full fade-in">
+      <div class="chart-card">
+        <div class="section-title">Territory Intelligence Quadrant — Active Rate vs Avg Sale Value/Outlet</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:10px;margin-left:20px">Bubble size = Total Case Box · Stars (top-right): High frequency + High value</div>
+        <div class="chart-wrap-lg"><canvas id="quadrantChart"></canvas></div>
+      </div>
+    </div>
+
+    <!-- BUYING PATTERN HEATMAP -->
+    <div class="heatmap-section fade-in">
+      <div class="chart-card">
+        <div class="section-title">Outlet Buying Pattern Heatmap — Top 40 Outlets by Sale Value</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px;margin-left:20px">Darker cell = Higher sale value · Grey = No purchase · Each column = one month</div>
+        <div class="heatmap-wrap"><table class="heatmap-table" id="heatmapTable"></table></div>
+      </div>
+    </div>
+
+    <!-- TOP OUTLETS TABLE -->
+    <div class="chart-full fade-in">
+      <div class="chart-card">
+        <div class="section-title">Top 25 Outlets by Total Sale Value</div>
+        <div style="overflow-x:auto">
+          <table class="top-table" id="topTable"></table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /dashboard -->
+</div><!-- /container -->
+
+<!--
+  Web Worker source. type="text/js-worker" is intentionally non-executable in the main
+  document — the browser ignores it. At runtime we read its textContent, wrap it in a
+  Blob, and spin it up as a real dedicated Worker (see getOWSRWorker() below). This keeps
+  XLSX parsing + per-outlet processing for 49K+ rows off the main thread.
+-->
+<script type="text/js-worker" id="owsrWorkerSrc">
+self.importScripts('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+
+var MONTH_NUM = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,July:7,Aug:8,Sept:9,Oct:10,Nov:11,Dec:12};
+var MONTH_TOKEN = "(?:Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sept|Oct|Nov|Dec)'\\d{2}";
+var CATEGORIES = ['Bottles','Cans','Coconut Water','Snacks'];
+
+function monthSortKey(label) {
+  var m = label.match(/^(Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sept|Oct|Nov|Dec)'(\d{2})$/);
+  if (!m) return 0;
+  return (2000 + parseInt(m[2], 10)) * 100 + MONTH_NUM[m[1]];
+}
+
+function parseHeaders(headers) {
+  var months = {};
+  var reMain = new RegExp("^(" + MONTH_TOKEN + ") (PC|UPC|Case Box|Sale Value)$");
+  var reRB   = new RegExp("^Repeat Billed in (" + MONTH_TOKEN + ")$");
+  var reRBS  = new RegExp("^Repeat Billed Sales Value in (" + MONTH_TOKEN + ")$");
+  headers.forEach(function(h, i) {
+    var s = String(h || '').trim();
+    var m;
+    if ((m = s.match(reMain))) {
+      var ml = m[1];
+      if (!months[ml]) months[ml] = {label:ml,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+      if (m[2]==='PC') months[ml].pc = i;
+      else if (m[2]==='UPC') months[ml].upc = i;
+      else if (m[2]==='Case Box') months[ml].cb = i;
+      else if (m[2]==='Sale Value') months[ml].sv = i;
+    } else if ((m = s.match(reRB))) {
+      var ml2 = m[1];
+      if (!months[ml2]) months[ml2] = {label:ml2,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+      months[ml2].rb = i;
+    } else if ((m = s.match(reRBS))) {
+      var ml3 = m[1];
+      if (!months[ml3]) months[ml3] = {label:ml3,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+      months[ml3].rbs = i;
+    }
+  });
+  return Object.values(months).sort(function(a,b) { return monthSortKey(a.label) - monthSortKey(b.label); });
+}
+
+function escapeRe(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function parseCategoryHeaders(headers) {
+  var perCat = {};
+  CATEGORIES.forEach(function(cat) {
+    var esc = escapeRe(cat);
+    var reMain = new RegExp("^" + esc + " (" + MONTH_TOKEN + ") (PC|UPC|Case Box|Sale Value)$");
+    var reRB   = new RegExp("^" + esc + " Repeat Billed in (" + MONTH_TOKEN + ")$");
+    var reRBS  = new RegExp("^" + esc + " Repeat Billed Sales Value in (" + MONTH_TOKEN + ")$");
+    headers.forEach(function(h, i) {
+      var s = String(h || '').trim();
+      var m;
+      if ((m = s.match(reMain))) {
+        var ml = m[1];
+        if (!perCat[cat]) perCat[cat] = {};
+        if (!perCat[cat][ml]) perCat[cat][ml] = {label:ml,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+        if (m[2]==='PC') perCat[cat][ml].pc = i;
+        else if (m[2]==='UPC') perCat[cat][ml].upc = i;
+        else if (m[2]==='Case Box') perCat[cat][ml].cb = i;
+        else if (m[2]==='Sale Value') perCat[cat][ml].sv = i;
+      } else if ((m = s.match(reRB))) {
+        var ml2 = m[1];
+        if (!perCat[cat]) perCat[cat] = {};
+        if (!perCat[cat][ml2]) perCat[cat][ml2] = {label:ml2,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+        perCat[cat][ml2].rb = i;
+      } else if ((m = s.match(reRBS))) {
+        var ml3 = m[1];
+        if (!perCat[cat]) perCat[cat] = {};
+        if (!perCat[cat][ml3]) perCat[cat][ml3] = {label:ml3,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+        perCat[cat][ml3].rbs = i;
+      }
+    });
+  });
+
+  // Pick the most recent month that actually has category columns
+  var catMonth = null;
+  CATEGORIES.forEach(function(cat) {
+    if (!perCat[cat]) return;
+    var ms = Object.keys(perCat[cat]).sort(function(a,b) { return monthSortKey(b) - monthSortKey(a); });
+    if (ms.length && (!catMonth || monthSortKey(ms[0]) > monthSortKey(catMonth))) catMonth = ms[0];
+  });
+
+  var cols = {};
+  if (catMonth) {
+    CATEGORIES.forEach(function(cat) {
+      if (perCat[cat] && perCat[cat][catMonth]) cols[cat] = perCat[cat][catMonth];
+    });
+  }
+  return { month: catMonth, cols: cols };
+}
+
+function parseMeta(headers) {
+  function find(keys) {
+    for (var k = 0; k < keys.length; k++) {
+      var i = headers.findIndex(function(h) { return String(h||'').trim() === keys[k]; });
+      if (i >= 0) return i;
+    }
+    return -1;
+  }
+  return {
+    id:        find(['Outlet Erp Id','Row Labels']),
+    name:      find(['Outlets Name','Outlet Name']),
+    zone:      find(['Zone']),
+    region:    find(['Region']),
+    territory: find(['Territory']),
+    beats:     find(['Beats','Beat']),
+    status:    find(['Status']),
+  };
+}
+
+function processRows(rows, meta, months, catInfo) {
+  var n = months.length;
+  var lastThree = {};
+  months.slice(-3).forEach(function(m) { lastThree[m.label] = true; });
+  function g(row, idx) { return idx >= 0 ? (parseFloat(row[idx]) || 0) : 0; }
+  var catKeys = (catInfo && catInfo.cols) ? Object.keys(catInfo.cols) : [];
+  var total = rows.length;
+  var out = [];
+  var processed = 0;
+
+  for (var ri = 0; ri < rows.length; ri++) {
+    var r = rows[ri];
+    var idRaw = r[meta.id];
+    if (!idRaw || !String(idRaw).trim() || String(idRaw).trim() === 'Outlet Erp Id') continue;
+
+    var totalSV = 0, totalCB = 0, activeMonths = 0, recentActive = 0, totalRepeat = 0;
+    var md = {};
+    for (var mi = 0; mi < months.length; mi++) {
+      var m = months[mi];
+      var upc = g(r, m.upc);
+      var sv  = g(r, m.sv);
+      var cb  = g(r, m.cb);
+      var rb  = g(r, m.rb);
+      md[m.label] = { pc: g(r,m.pc), upc: upc, sv: sv, cb: cb, rb: rb, rbs: g(r,m.rbs) };
+      totalSV += sv;
+      totalCB += cb;
+      if (upc > 0) { activeMonths++; if (lastThree[m.label]) recentActive++; }
+      totalRepeat += rb;
+    }
+
+    var cat = null;
+    if (catKeys.length) {
+      cat = {};
+      for (var ci = 0; ci < catKeys.length; ci++) {
+        var ck = catKeys[ci];
+        var c = catInfo.cols[ck];
+        cat[ck] = { pc:g(r,c.pc), upc:g(r,c.upc), cb:g(r,c.cb), sv:g(r,c.sv), rb:g(r,c.rb), rbs:g(r,c.rbs) };
+      }
+    }
+
+    var activeRatio = n > 0 ? activeMonths / n : 0;
+    var isRecent = recentActive > 0;
+    var seg;
+    if (isRecent && activeRatio >= 0.70)        seg = 'Champion';
+    else if (isRecent && activeRatio >= 0.40)   seg = 'Loyal';
+    else if (isRecent && activeMonths <= 3)     seg = 'New';
+    else if (!isRecent && activeMonths >= 4)    seg = 'At Risk';
+    else if (activeMonths >= 2)                 seg = 'Occasional';
+    else                                        seg = 'Dormant';
+
+    var healthScore = Math.round((recentActive/Math.max(1,Math.min(3,n)))*50 + activeRatio*50);
+
+    out.push({
+      id:        String(r[meta.id]||'').trim(),
+      name:      String(r[meta.name]||'').trim() || 'Unnamed Outlet',
+      zone:      String(r[meta.zone]||'').trim()      || 'Unknown',
+      region:    String(r[meta.region]||'').trim()    || 'Unknown',
+      territory: String(r[meta.territory]||'').trim() || 'Unknown',
+      status:    String(r[meta.status]||'').trim()    || 'Non Metro',
+      beat:      String(r[meta.beats]||'').trim()     || 'Unknown',
+      md: md, totalSV: totalSV, totalCB: totalCB, activeMonths: activeMonths,
+      recentActive: recentActive, seg: seg, healthScore: healthScore, totalRepeat: totalRepeat, cat: cat,
+    });
+
+    processed++;
+    if (processed % 5000 === 0) {
+      self.postMessage({ type:'progress', stage:'processing', pct: 55 + Math.min(40, Math.round((processed/total)*40)) });
+    }
+  }
+  return out;
+}
+
+self.onmessage = function(e) {
+  try {
+    var buffer = e.data.buffer;
+    var fileName = e.data.fileName;
+    self.postMessage({ type:'progress', stage:'reading', pct:8 });
+
+    var wb = XLSX.read(buffer, { type:'array', cellDates:true });
+    var sheetName = wb.SheetNames[0];
+    var ws = wb.Sheets[sheetName];
+
+    self.postMessage({ type:'progress', stage:'parsing', pct:25 });
+    var raw = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+
+    var hIdx = -1;
+    for (var i = 0; i < Math.min(5, raw.length); i++) {
+      if (raw[i].some(function(c) { return String(c||'').trim() === 'Outlet Erp Id'; })) { hIdx = i; break; }
+    }
+    if (hIdx < 0) {
+      self.postMessage({ type:'error', message:'Could not find header row with "Outlet Erp Id". Please upload the OWSR output file.' });
+      return;
+    }
+
+    var headers = raw[hIdx].map(function(h) { return String(h||'').trim(); });
+    var dataRows = raw.slice(hIdx + 1).filter(function(r) { return r.some(function(c) { return c !== '' && c !== null; }); });
+
+    self.postMessage({ type:'progress', stage:'parsing', pct:45 });
+    var months  = parseHeaders(headers);
+    var catInfo = parseCategoryHeaders(headers);
+    var meta    = parseMeta(headers);
+
+    if (months.length === 0) {
+      self.postMessage({ type:'error', message:'No month columns found. Please check the file format.' });
+      return;
+    }
+
+    self.postMessage({ type:'progress', stage:'processing', pct:55 });
+    var outlets = processRows(dataRows, meta, months, catInfo);
+
+    if (outlets.length === 0) {
+      self.postMessage({ type:'error', message:'No outlet data found. Please check the file format.' });
+      return;
+    }
+
+    self.postMessage({ type:'progress', stage:'finishing', pct:98 });
+    self.postMessage({ type:'done', outlets: outlets, months: months, catInfo: catInfo, fileName: fileName, rowCount: dataRows.length });
+  } catch (err) {
+    self.postMessage({ type:'error', message: err.message });
+  }
+};
+</script>
+
+<script>
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+const MONTH_NUM = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,July:7,Aug:8,Sept:9,Oct:10,Nov:11,Dec:12};
+const MONTH_RE  = /^(Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sept|Oct|Nov|Dec)'\d{2}$/;
+
+const ZONE_COLORS = {
+  South:'#1B4F9B',North:'#00B4D8',West:'#8B5CF6',Central:'#F59E0B',East:'#22C55E',Unknown:'#94A3B8'
+};
+const SEG_COLORS = {
+  Champion:'#1B4F9B',Loyal:'#22C55E','At Risk':'#F59E0B',New:'#00B4D8',Occasional:'#8B5CF6',Dormant:'#94A3B8'
+};
+const CATEGORIES = ['Bottles','Cans','Coconut Water','Snacks'];
+const CAT_COLORS = {Bottles:'#1B4F9B',Cans:'#00B4D8','Coconut Water':'#22C55E',Snacks:'#F59E0B'};
+
+let charts = {};
+
+const FILTER_ALL = '__all__';
+const SEGMENT_ORDER = ['Champion','Loyal','New','At Risk','Occasional','Dormant'];
+let appState = {
+  allOutlets: [], allMonths: [], catInfo: null, fileName: '', rowCount: 0,
+  filters: { period:'all', month:'latest', zone:FILTER_ALL, region:FILTER_ALL, status:FILTER_ALL, territory:FILTER_ALL, beat:FILTER_ALL, segment:FILTER_ALL, category:FILTER_ALL, search:'' }
+};
+
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function byName(a,b) { return String(a).localeCompare(String(b), 'en', {numeric:true, sensitivity:'base'}); }
+function currentFiltersFromDom() {
+  const get = id => document.getElementById(id)?.value || FILTER_ALL;
+  appState.filters = {
+    period: get('fPeriod') || 'all', month: get('fMonth') || 'latest',
+    zone: get('fZone'), region: get('fRegion'), status: get('fStatus'),
+    territory: get('fTerritory'), beat: get('fBeat'), segment: get('fSegment'), category: get('fCategory'),
+    search: (document.getElementById('fSearch')?.value || '').trim().toLowerCase(),
+  };
+}
+function countedOptions(outlets, key) {
+  const map = new Map();
+  outlets.forEach(o => {
+    const value = String(o[key] || 'Unknown').trim() || 'Unknown';
+    map.set(value, (map.get(value) || 0) + 1);
+  });
+  return [...map.entries()].sort((a,b)=>byName(a[0],b[0])).map(([value,count]) => ({ value, label: `${value} (${fmt.n(count)})` }));
+}
+function fillSelect(id, options, allLabel, selected) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const valid = new Set(options.map(o => o.value));
+  const safeSelected = selected && (selected === FILTER_ALL || valid.has(selected) || selected === 'latest') ? selected : FILTER_ALL;
+  el.innerHTML = `<option value="${FILTER_ALL}">${esc(allLabel)}</option>` + options.map(o => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('');
+  el.value = safeSelected;
+}
+function initFilters() {
+  const months = appState.allMonths;
+  const monthOptions = [{value:'latest', label:`Latest (${months[months.length-1]?.label || 'n/a'})`}].concat(
+    [...months].reverse().map(m => ({value:m.label, label:m.label}))
+  );
+  fillSelect('fPeriod', [
+    {value:'all', label:'All months to focus'},
+    {value:'last12', label:'Last 12 months'},
+    {value:'last6', label:'Last 6 months'},
+    {value:'last3', label:'Last 3 months'},
+    {value:'focus', label:'Focus month only'},
+  ], 'All months to focus', appState.filters.period);
+  document.getElementById('fPeriod').value = appState.filters.period || 'all';
+  fillSelect('fMonth', monthOptions, 'Latest month', appState.filters.month || 'latest');
+  document.getElementById('fMonth').value = appState.filters.month || 'latest';
+  fillSelect('fZone', countedOptions(appState.allOutlets, 'zone'), 'All zones', appState.filters.zone);
+  fillSelect('fRegion', countedOptions(appState.allOutlets, 'region'), 'All regions / states', appState.filters.region);
+  fillSelect('fStatus', countedOptions(appState.allOutlets, 'status'), 'All market types', appState.filters.status);
+  fillSelect('fTerritory', countedOptions(appState.allOutlets, 'territory'), 'All territories', appState.filters.territory);
+  fillSelect('fBeat', countedOptions(appState.allOutlets, 'beat'), 'All beats', appState.filters.beat);
+  fillSelect('fSegment', SEGMENT_ORDER.map(s => ({value:s,label:s})), 'All segments', appState.filters.segment);
+  const cats = (appState.catInfo && appState.catInfo.cols) ? Object.keys(appState.catInfo.cols) : [];
+  fillSelect('fCategory', cats.map(c => ({value:c,label:c})).concat([
+    {value:'multi', label:'Multi-category buyers'},
+    {value:'single', label:'Single-category buyers'},
+    {value:'none', label:'No category billed'},
+  ]), 'All categories', appState.filters.category);
+  const search = document.getElementById('fSearch');
+  if (search) search.value = appState.filters.search || '';
+}
+function resetDashboardFilters() {
+  appState.filters = { period:'all', month:'latest', zone:FILTER_ALL, region:FILTER_ALL, status:FILTER_ALL, territory:FILTER_ALL, beat:FILTER_ALL, segment:FILTER_ALL, category:FILTER_ALL, search:'' };
+  initFilters();
+  renderDashboardFromState();
+}
+function resolveMonths() {
+  const all = appState.allMonths;
+  if (!all.length) return [];
+  const f = appState.filters;
+  let focusIndex = all.length - 1;
+  if (f.month && f.month !== 'latest' && f.month !== FILTER_ALL) {
+    const idx = all.findIndex(m => m.label === f.month);
+    if (idx >= 0) focusIndex = idx;
+  }
+  let months = all.slice(0, focusIndex + 1);
+  if (f.period === 'focus') months = all.slice(focusIndex, focusIndex + 1);
+  else if (f.period === 'last3') months = months.slice(-3);
+  else if (f.period === 'last6') months = months.slice(-6);
+  else if (f.period === 'last12') months = months.slice(-12);
+  return months.length ? months : [all[focusIndex]];
+}
+function projectOutletForMonths(o, months) {
+  const lastThree = new Set(months.slice(-3).map(m => m.label));
+  let totalSV = 0, totalCB = 0, activeMonths = 0, recentActive = 0, totalRepeat = 0;
+  months.forEach(m => {
+    const d = o.md[m.label] || {};
+    totalSV += d.sv || 0; totalCB += d.cb || 0; totalRepeat += d.rb || 0;
+    if ((d.upc || 0) > 0) { activeMonths++; if (lastThree.has(m.label)) recentActive++; }
+  });
+  const n = months.length;
+  const activeRatio = n > 0 ? activeMonths / n : 0;
+  const isRecent = recentActive > 0;
+  let seg;
+  if (isRecent && activeRatio >= 0.70) seg = 'Champion';
+  else if (isRecent && activeRatio >= 0.40) seg = 'Loyal';
+  else if (isRecent && activeMonths <= 3) seg = 'New';
+  else if (!isRecent && activeMonths >= 4) seg = 'At Risk';
+  else if (activeMonths >= 2) seg = 'Occasional';
+  else seg = 'Dormant';
+  const healthScore = Math.round((recentActive / Math.max(1, Math.min(3, n))) * 50 + activeRatio * 50);
+  return {...o, totalSV, totalCB, activeMonths, recentActive, totalRepeat, seg, healthScore};
+}
+function categoryMatch(o, selected) {
+  if (!selected || selected === FILTER_ALL) return true;
+  const cat = o.cat || {};
+  const active = Object.entries(cat).filter(([,d]) => (d.upc || 0) > 0).map(([name]) => name);
+  if (selected === 'multi') return active.length > 1;
+  if (selected === 'single') return active.length === 1;
+  if (selected === 'none') return active.length === 0;
+  return !!(cat[selected] && cat[selected].upc > 0);
+}
+function dimensionFilteredOutlets() {
+  const f = appState.filters;
+  return appState.allOutlets.filter(o => {
+    if (f.zone !== FILTER_ALL && o.zone !== f.zone) return false;
+    if (f.region !== FILTER_ALL && o.region !== f.region) return false;
+    if (f.status !== FILTER_ALL && o.status !== f.status) return false;
+    if (f.territory !== FILTER_ALL && o.territory !== f.territory) return false;
+    if (f.beat !== FILTER_ALL && o.beat !== f.beat) return false;
+    if (!categoryMatch(o, f.category)) return false;
+    if (f.search) {
+      const hay = `${o.name} ${o.id} ${o.territory} ${o.region} ${o.beat}`.toLowerCase();
+      if (!hay.includes(f.search)) return false;
+    }
+    return true;
+  });
+}
+function renderFilterChrome(outlets, months) {
+  const first = months[0]?.label || '';
+  const last = months[months.length-1]?.label || '';
+  document.getElementById('filterSummary').textContent = `${fmt.n(outlets.length)} outlets in view | ${months.length} month${months.length===1?'':'s'} (${first}${first!==last?' to '+last:''})`;
+  const f = appState.filters;
+  const chips = [];
+  const add = (label, value, all=FILTER_ALL) => { if (value && value !== all && value !== 'latest') chips.push(`<span class="filter-chip">${esc(label)}: ${esc(value)}</span>`); };
+  add('Period', f.period === 'all' ? '' : f.period);
+  add('Month', f.month);
+  add('Zone', f.zone); add('Region', f.region); add('Market', f.status); add('Territory', f.territory); add('Beat', f.beat); add('Segment', f.segment); add('Category', f.category);
+  if (f.search) chips.push(`<span class="filter-chip">Search: ${esc(f.search)}</span>`);
+  document.getElementById('activeFilterChips').innerHTML = chips.length ? chips.join('') : '<span class="filter-chip">All filters clear</span>';
+}
+function renderEmptyDashboard(months) {
+  Object.keys(charts).forEach(destroyChart);
+  document.getElementById('kpiGrid').innerHTML = '<div class="empty-state">No outlets match the selected filters. Adjust a slicer or reset filters.</div>';
+  document.getElementById('insightGrid').innerHTML = '';
+  document.getElementById('actionSummary').innerHTML = '';
+  document.getElementById('flagTable').innerHTML = '';
+  document.getElementById('flagCountNote').textContent = '';
+  document.getElementById('segLegend').innerHTML = '';
+  document.getElementById('heatmapTable').innerHTML = '';
+  document.getElementById('topTable').innerHTML = '';
+  document.getElementById('catTable').innerHTML = '';
+  renderFilterChrome([], months);
+}
+function renderDashboardFromState() {
+  if (!appState.allOutlets.length || !appState.allMonths.length) return;
+  currentFiltersFromDom();
+  const months = resolveMonths();
+  let outlets = dimensionFilteredOutlets().map(o => projectOutletForMonths(o, months));
+  if (appState.filters.segment !== FILTER_ALL) outlets = outlets.filter(o => o.seg === appState.filters.segment);
+  renderFilterChrome(outlets, months);
+  document.getElementById('fileMetaDisplay').textContent = `${fmt.n(appState.allOutlets.length)} outlets loaded | ${fmt.n(outlets.length)} filtered | ${appState.allMonths[0].label} to ${appState.allMonths[appState.allMonths.length-1].label}`;
+  if (!outlets.length) { renderEmptyDashboard(months); return; }
+  const monthly   = monthlyTotals(outlets, months);
+  const zones     = zoneTotals(outlets, months);
+  const segs      = segmentCounts(outlets);
+  const metro     = metroSplit(outlets, months);
+  const terrs     = territoryTotals(outlets, months);
+  const terrMonth = territoryMonthly(outlets, months);
+  const flags     = computeFlags(outlets, months, terrMonth, appState.catInfo, monthly);
+  renderKPIs(outlets, months, monthly);
+  renderInsights(outlets, months, monthly, segs, zones);
+  renderActionCenter(flags);
+  renderTrendChart(monthly);
+  renderSegmentChart(segs);
+  renderRepeatChart(monthly);
+  renderZoneChart(zones);
+  renderMetroChart(metro);
+  renderCategorySection(appState.catInfo, outlets);
+  renderQuadrantChart(terrs);
+  renderHeatmap(outlets, months);
+  renderTopTable(outlets, months);
+}
+
+
+// ─── MONTH HELPERS ───────────────────────────────────────────────────────────
+function monthSortKey(label) {
+  const m = label.match(/^(Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sept|Oct|Nov|Dec)'(\d{2})$/);
+  if (!m) return 0;
+  return (2000 + parseInt(m[2])) * 100 + MONTH_NUM[m[1]];
+}
+
+// ─── PARSE HEADERS ───────────────────────────────────────────────────────────
+function parseHeaders(headers) {
+  const months = {};
+  headers.forEach((h, i) => {
+    const s = String(h||'').trim();
+    // Pattern: "Mar'25 PC" / "Mar'25 UPC" / "Mar'25 Case Box" / "Mar'25 Sale Value"
+    const reg = s.match(/^((?:Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sept|Oct|Nov|Dec)'\d{2}) (PC|UPC|Case Box|Sale Value)$/);
+    if (reg) {
+      const ml = reg[1];
+      if (!months[ml]) months[ml] = {label:ml,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+      if(reg[2]==='PC')         months[ml].pc = i;
+      else if(reg[2]==='UPC')   months[ml].upc = i;
+      else if(reg[2]==='Case Box') months[ml].cb = i;
+      else if(reg[2]==='Sale Value') months[ml].sv = i;
+    }
+    // Pattern: "Repeat Billed in Mar'25"
+    const rb = s.match(/^Repeat Billed in ((?:Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sept|Oct|Nov|Dec)'\d{2})$/);
+    if (rb) {
+      const ml = rb[1];
+      if (!months[ml]) months[ml] = {label:ml,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+      months[ml].rb = i;
+    }
+    // Pattern: "Repeat Billed Sales Value in Mar'25"
+    const rbs = s.match(/^Repeat Billed Sales Value in ((?:Jan|Feb|Mar|Apr|May|Jun|July|Aug|Sept|Oct|Nov|Dec)'\d{2})$/);
+    if (rbs) {
+      const ml = rbs[1];
+      if (!months[ml]) months[ml] = {label:ml,pc:-1,upc:-1,cb:-1,sv:-1,rb:-1,rbs:-1};
+      months[ml].rbs = i;
+    }
+  });
+  return Object.values(months).sort((a,b) => monthSortKey(a.label) - monthSortKey(b.label));
+}
+
+// ─── PARSE META INDICES ───────────────────────────────────────────────────────
+function parseMeta(headers) {
+  const find = (keys) => {
+    for (const k of keys) {
+      const i = headers.findIndex(h => String(h||'').trim() === k);
+      if (i >= 0) return i;
+    }
+    return -1;
+  };
+  return {
+    id:        find(['Outlet Erp Id','Row Labels']),
+    name:      find(['Outlets Name','Outlet Name']),
+    zone:      find(['Zone']),
+    region:    find(['Region']),
+    territory: find(['Territory']),
+    beats:     find(['Beats','Beat']),
+    status:    find(['Status']),
+  };
+}
+
+// ─── PROCESS ROWS ────────────────────────────────────────────────────────────
+function processRows(rows, meta, months) {
+  const n = months.length;
+  const lastThree = new Set(months.slice(-3).map(m => m.label));
+  const g = (row, idx) => idx >= 0 ? (parseFloat(row[idx]) || 0) : 0;
+
+  return rows
+    .filter(r => r[meta.id] && String(r[meta.id]).trim() && String(r[meta.id]).trim() !== 'Outlet Erp Id')
+    .map(r => {
+      let totalSV = 0, totalCB = 0, activeMonths = 0, recentActive = 0, totalRepeat = 0;
+      const md = {};
+      months.forEach(m => {
+        const upc = g(r, m.upc);
+        const sv  = g(r, m.sv);
+        const cb  = g(r, m.cb);
+        const rb  = g(r, m.rb);
+        md[m.label] = { pc: g(r,m.pc), upc, sv, cb, rb, rbs: g(r,m.rbs) };
+        totalSV += sv;
+        totalCB += cb;
+        if (upc > 0) { activeMonths++; if (lastThree.has(m.label)) recentActive++; }
+        totalRepeat += rb;
+      });
+
+      const activeRatio = n > 0 ? activeMonths / n : 0;
+      const isRecent    = recentActive > 0;
+      let seg;
+      if (isRecent && activeRatio >= 0.70)                    seg = 'Champion';
+      else if (isRecent && activeRatio >= 0.40)               seg = 'Loyal';
+      else if (isRecent && activeMonths <= 3)                  seg = 'New';
+      else if (!isRecent && activeMonths >= 4)                 seg = 'At Risk';
+      else if (activeMonths >= 2)                              seg = 'Occasional';
+      else                                                     seg = 'Dormant';
+
+      const healthScore = Math.round((recentActive/Math.max(1,Math.min(3,n)))*50 + activeRatio*50);
+
+      return {
+        id:        String(r[meta.id]||'').trim(),
+        name:      String(r[meta.name]||'').trim() || 'Unnamed Outlet',
+        zone:      String(r[meta.zone]||'').trim()      || 'Unknown',
+        region:    String(r[meta.region]||'').trim()    || 'Unknown',
+        territory: String(r[meta.territory]||'').trim() || 'Unknown',
+        status:    String(r[meta.status]||'').trim()    || 'Non Metro',
+        beat:      String(r[meta.beats]||'').trim()     || 'Unknown',
+        md, totalSV, totalCB, activeMonths, recentActive, seg, healthScore, totalRepeat,
+      };
+    });
+}
+
+// ─── AGGREGATIONS ────────────────────────────────────────────────────────────
+function monthlyTotals(outlets, months) {
+  return months.map(m => {
+    let upc=0, sv=0, rb=0, pc=0, cb=0, rbs=0;
+    outlets.forEach(o => {
+      const d = o.md[m.label];
+      if (!d) return;
+      upc += d.upc || 0; sv += d.sv || 0; pc += d.pc || 0; cb += d.cb || 0;
+      rb += d.rb || 0; rbs += d.rbs || 0;
+    });
+    const repeatPct = upc > 0 ? Math.round((rb/upc)*100) : 0;
+    return {label:m.label, upc, sv, pc, cb, rb, rbs, repeatPct};
+  });
+}
+function zoneTotals(outlets, months) {
+  const map = {};
+  outlets.forEach(o => {
+    const z = o.zone;
+    if (!map[z]) map[z] = {sv:0, upc:0, outlets:0, cb:0};
+    map[z].outlets++;
+    months.forEach(m => {
+      const d = o.md[m.label];
+      if (d) { map[z].sv += d.sv; map[z].upc += d.upc; map[z].cb += d.cb; }
+    });
+  });
+  return map;
+}
+
+function territoryTotals(outlets, months) {
+  const map = {};
+  const n = months.length;
+  outlets.forEach(o => {
+    const t = o.territory;
+    const z = o.zone;
+    if (!map[t]) map[t] = {territory:t, zone:z, sv:0, upc:0, outlets:0, cb:0};
+    map[t].outlets++;
+    map[t].sv += o.totalSV;
+    map[t].cb += o.totalCB;
+    map[t].upc += o.activeMonths;
+  });
+  return Object.values(map).map(d => ({
+    ...d,
+    activeRate: n > 0 ? (d.upc / Math.max(1, d.outlets) / n) * 100 : 0,
+    avgSVPerMonth: d.upc > 0 ? d.sv / d.upc : 0,
+  }));
+}
+
+// Per-territory, per-month Sale Value / UPC — used to detect MoM swings for the Action Center
+function territoryMonthly(outlets, months) {
+  const map = {};
+  outlets.forEach(o => {
+    const t = o.territory;
+    if (!map[t]) map[t] = {};
+    months.forEach(m => {
+      const d = o.md[m.label];
+      if (!d) return;
+      if (!map[t][m.label]) map[t][m.label] = { sv:0, upc:0 };
+      map[t][m.label].sv  += d.sv;
+      map[t][m.label].upc += d.upc;
+    });
+  });
+  return map;
+}
+
+function segmentCounts(outlets) {
+  const counts = {Champion:0,Loyal:0,New:0,'At Risk':0,Occasional:0,Dormant:0};
+  outlets.forEach(o => counts[o.seg]++);
+  return counts;
+}
+
+function metroSplit(outlets, months) {
+  const split = {Metro:{upc:0,outlets:0},NonMetro:{upc:0,outlets:0}};
+  outlets.forEach(o => {
+    const key = o.status === 'Metro' ? 'Metro' : 'NonMetro';
+    split[key].outlets++;
+    months.forEach(m => { const d = o.md[m.label]; if(d) split[key].upc += d.upc; });
+  });
+  return split;
+}
+
+// Picks the most recent pair of months safe to use for month-on-month comparisons.
+// Some OWSR exports are pulled mid-cycle, so the latest column can be a small fraction
+// of a normal month (billing still in progress) — comparing against that would falsely
+// flag almost every outlet/territory as "dropped". When that's detected, MoM-sensitive
+// flags fall back to the last two fully-closed months instead.
+function findMoMComparisonMonths(monthly) {
+  if (monthly.length < 2) return { curLabel: monthly[0] ? monthly[0].label : null, prevLabel: null, partialLatest:false };
+  const last = monthly[monthly.length - 1];
+  const prev = monthly[monthly.length - 2];
+  const partialLatest = prev.upc > 0 && (last.upc / prev.upc) < 0.3;
+  if (partialLatest && monthly.length >= 3) {
+    return { curLabel: prev.label, prevLabel: monthly[monthly.length - 3].label, partialLatest:true, partialLabel:last.label };
+  }
+  return { curLabel: last.label, prevLabel: prev.label, partialLatest:false };
+}
+
+// ─── ACTION CENTER: RISK / OPPORTUNITY FLAG ENGINE ───────────────────────────
+function computeFlags(outlets, months, terrMonthly, catInfo, monthly) {
+  const flags = [];
+  if (!months.length) return flags;
+  const latest = months[months.length - 1].label; // true latest column (used for "currently active" checks)
+
+  // Month-on-month comparisons use a guarded pair that skips a partial in-progress latest month
+  const mom = findMoMComparisonMonths(monthly || []);
+  const curLabel  = mom.curLabel;
+  const prevLabel = mom.prevLabel;
+
+  // Distribution thresholds (computed once, used for "high value" / "median" comparisons)
+  const svPositive = outlets.filter(o => o.totalSV > 0).map(o => o.totalSV).sort((a,b) => a-b);
+  const p75    = svPositive.length ? svPositive[Math.floor(svPositive.length * 0.75)] : 0;
+  const median = svPositive.length ? svPositive[Math.floor(svPositive.length * 0.50)] : 0;
+
+  const availableCats = catInfo && catInfo.cols ? Object.keys(catInfo.cols).length : 0;
+
+  outlets.forEach(o => {
+    const lastD = o.md[latest];
+    const curD  = curLabel ? o.md[curLabel] : null;
+    const prevD = prevLabel ? o.md[prevLabel] : null;
+
+    // RISK 1 — High-value outlet has gone silent (no orders in last 3 months)
+    if (o.recentActive === 0 && o.totalSV > 0 && o.totalSV >= p75) {
+      flags.push({
+        type:'risk', code:'churn_highvalue', title:'High-value outlet gone silent',
+        entity:o.name, sub:`${o.territory} · ${o.zone}`,
+        detail:`No orders in the last 3 months. Historical total ${fmt.c(o.totalSV)} across ${o.activeMonths} active months.`,
+        impact:o.totalSV, action:'Immediate RSM/SR visit before the account is lost for good.'
+      });
+    }
+
+    // RISK 2 — Was buying in the prior closed month, zero in the current one, and was a strong-segment outlet
+    if (prevD && prevD.upc > 0 && curD && curD.upc === 0 && (o.seg === 'Champion' || o.seg === 'Loyal')) {
+      flags.push({
+        type:'risk', code:'dropped_month', title:'Active outlet dropped to zero',
+        entity:o.name, sub:`${o.territory} · ${o.zone}`,
+        detail:`Was buying ${fmt.c(prevD.sv)} in ${prevLabel}, zero in ${curLabel}.`,
+        impact:prevD.sv, action:'Call this week — check stock-outs or competitor activity.'
+      });
+    }
+
+    // OPPORTUNITY 1 — Dormant outlet with above-median lifetime value: win-back candidate
+    if (o.seg === 'Dormant' && o.totalSV > 0 && o.totalSV >= median) {
+      flags.push({
+        type:'opportunity', code:'winback_dormant', title:'Dormant outlet with strong purchase history',
+        entity:o.name, sub:`${o.territory} · ${o.zone}`,
+        detail:`${fmt.c(o.totalSV)} lifetime value, currently inactive.`,
+        impact:o.totalSV * 0.5, action:'Win-back outreach — past behaviour shows real demand.'
+      });
+    }
+
+    // OPPORTUNITY 2 — New outlet ramping fast (strong health score early on)
+    if (o.seg === 'New' && o.healthScore >= 60) {
+      flags.push({
+        type:'opportunity', code:'rising_new', title:'New outlet ramping fast',
+        entity:o.name, sub:`${o.territory} · ${o.zone}`,
+        detail:`Health score ${o.healthScore}/100 within its first ${o.activeMonths} active month(s).`,
+        impact:o.totalSV, action:'Lock in loyalty early — assign regular beat coverage.'
+      });
+    }
+
+    // OPPORTUNITY 3 — Active this month but only buying one category: cross-sell whitespace
+    if (catInfo && catInfo.month && o.cat && lastD && lastD.upc > 0 && availableCats > 1) {
+      const activeCats = Object.values(o.cat).filter(d => d.upc > 0).length;
+      if (activeCats === 1 && o.totalSV >= median) {
+        const bought = Object.entries(o.cat).find(([,d]) => d.upc > 0);
+        const catName = bought ? bought[0] : 'one category';
+        const otherCount = availableCats - 1;
+        flags.push({
+          type:'opportunity', code:'cross_sell', title:'Single-category buyer — cross-sell opening',
+          entity:o.name, sub:`${o.territory} · ${o.zone}`,
+          detail:`Only buying ${catName} in ${catInfo.month}; ${otherCount} other categor${otherCount===1?'y':'ies'} untapped.`,
+          impact:o.totalSV * 0.3, action:'Pitch complementary categories to grow basket size.'
+        });
+      }
+    }
+  });
+
+  // Territory-level month-on-month swings (uses the same guarded comparison pair)
+  if (terrMonthly && prevLabel && curLabel) {
+    Object.entries(terrMonthly).forEach(([t, byMonth]) => {
+      const cur = byMonth[curLabel], prev = byMonth[prevLabel];
+      if (!cur || !prev || prev.sv < 5000) return; // floor avoids noise from tiny territories
+      const change = (cur.sv - prev.sv) / prev.sv;
+      if (change <= -0.25) {
+        flags.push({
+          type:'risk', code:'territory_decline', title:'Territory sale value dropped sharply',
+          entity:t, sub:'Territory-level',
+          detail:`${fmt.c(prev.sv)} → ${fmt.c(cur.sv)} (${(change*100).toFixed(0)}%) from ${prevLabel} to ${curLabel}.`,
+          impact:Math.abs(cur.sv - prev.sv), action:'Investigate distribution gap — review with territory RSM.'
+        });
+      } else if (change >= 0.25) {
+        flags.push({
+          type:'opportunity', code:'territory_surge', title:'Territory sale value surged',
+          entity:t, sub:'Territory-level',
+          detail:`${fmt.c(prev.sv)} → ${fmt.c(cur.sv)} (+${(change*100).toFixed(0)}%) from ${prevLabel} to ${curLabel}.`,
+          impact:cur.sv - prev.sv, action:"Identify what's working and replicate in similar territories."
+        });
+      }
+    });
+  }
+
+  flags.sort((a,b) => b.impact - a.impact);
+  flags.momMeta = mom; // attach for the UI note (non-enumerable concerns don't matter here)
+  return flags;
+}
+
+// ─── FORMAT HELPERS ───────────────────────────────────────────────────────────
+const fmt = {
+  n: v => Math.round(v || 0).toLocaleString('en-IN'),
+  c: v => 'INR ' + ((v || 0) >= 1e7 ? ((v || 0)/1e7).toFixed(2)+'Cr' : (v || 0) >= 1e5 ? ((v || 0)/1e5).toFixed(2)+'L' : (v || 0) >= 1e3 ? ((v || 0)/1e3).toFixed(1)+'K' : (v || 0).toFixed(0)),
+  pct: v => (v || 0).toFixed(1) + '%',
+  cb: v => (v || 0).toFixed(1),
+};
+
+// ─── RENDER KPI CARDS ────────────────────────────────────────────────────────
+function renderKPIs(outlets, months, monthly) {
+  const latest = monthly[monthly.length - 1] || {label:'n/a',pc:0,upc:0,rb:0,repeatPct:0,cb:0,sv:0,rbs:0};
+  const prev   = monthly.length >= 2 ? monthly[monthly.length - 2] : null;
+  const period = monthly.reduce((s,m) => ({pc:s.pc+m.pc, upc:s.upc+m.upc, rb:s.rb+m.rb, cb:s.cb+m.cb, sv:s.sv+m.sv, rbs:s.rbs+m.rbs}), {pc:0,upc:0,rb:0,cb:0,sv:0,rbs:0});
+  const totalOutlets = outlets.length;
+  const avgSVPerActive = latest.upc > 0 ? latest.sv / latest.upc : 0;
+  const avgCBPerActive = latest.upc > 0 ? latest.cb / latest.upc : 0;
+  const atRisk = outlets.filter(o => o.seg === 'At Risk' || o.seg === 'Dormant').length;
+
+  const delta = (cur, prevVal, fmt2) => {
+    if (!prev || prevVal === undefined || prevVal === null) return '';
+    const d = cur - prevVal;
+    const cls = d > 0 ? 'up' : d < 0 ? 'down' : 'neutral';
+    const sym = d > 0 ? '+' : d < 0 ? '-' : '0';
+    return `<div class="kpi-delta ${cls}">${sym} ${fmt2(Math.abs(d))} vs prev</div>`;
+  };
+
+  const cards = [
+    {label:'Filtered Outlets', value:fmt.n(totalOutlets), sub:'current slicer base', deltaHtml:'', accentColor:'#0E6F73'},
+    {label:`PC (${latest.label})`, value:fmt.n(latest.pc), sub:'productive calls', deltaHtml:delta(latest.pc, prev?.pc, fmt.n), accentColor:'#35C2B7'},
+    {label:`UPC (${latest.label})`, value:fmt.n(latest.upc), sub:`${((latest.upc/Math.max(1,totalOutlets))*100).toFixed(1)}% outlet activation`, deltaHtml:delta(latest.upc, prev?.upc, fmt.n), accentColor:'#1FA66A'},
+    {label:`Repeat Billed (${latest.label})`, value:fmt.n(latest.rb), sub:`${latest.repeatPct}% repeat billed rate`, deltaHtml:delta(latest.repeatPct, prev?.repeatPct, v => v.toFixed(0)+'pp'), accentColor:'#7A68D6'},
+    {label:`Case Box (${latest.label})`, value:fmt.cb(latest.cb), sub:`${fmt.cb(avgCBPerActive)} per active outlet`, deltaHtml:delta(latest.cb, prev?.cb, fmt.cb), accentColor:'#D98916'},
+    {label:`Sale Value (${latest.label})`, value:fmt.c(latest.sv), sub:'focus month revenue', deltaHtml:delta(latest.sv, prev?.sv, fmt.c), accentColor:'#D94F45'},
+    {label:`RB Sale Value (${latest.label})`, value:fmt.c(latest.rbs), sub:'repeat billed revenue', deltaHtml:delta(latest.rbs, prev?.rbs, fmt.c), accentColor:'#1297A0'},
+    {label:'Period Sale Value', value:fmt.c(period.sv), sub:`${months.length} month${months.length===1?'':'s'} selected`, deltaHtml:'', accentColor:'#0E6F73'},
+    {label:'Avg Sale / Active Outlet', value:fmt.c(avgSVPerActive), sub:`${latest.label} productivity`, deltaHtml:prev ? delta(avgSVPerActive, prev.upc > 0 ? prev.sv/prev.upc : 0, fmt.c) : '', accentColor:'#35C2B7'},
+    {label:'Risk Pool', value:fmt.n(atRisk), sub:'At Risk + Dormant outlets', deltaHtml:'', accentColor:'#D94F45'},
+  ];
+
+  document.getElementById('kpiGrid').innerHTML = cards.map(c => `
+    <div class="kpi-card" style="--accent-color:${c.accentColor}">
+      <div class="kpi-label">${c.label}</div>
+      <div class="kpi-value">${c.value}</div>
+      <div class="kpi-sub">${c.sub}</div>
+      ${c.deltaHtml}
+    </div>
+  `).join('');
+}
+
+function renderInsights(outlets, months, monthly, segs, zones) {
+  const latest = monthly[monthly.length-1] || {upc:0,sv:0,label:'n/a'};
+  const prev   = monthly.length >= 2 ? monthly[monthly.length-2] : latest;
+  const upcChange = latest.upc - prev.upc;
+  const svChange  = latest.sv - prev.sv;
+  const zoneArr = Object.entries(zones).sort((a,b) => b[1].sv - a[1].sv);
+  const bestZone = zoneArr[0] || ['No zone', {sv:0}];
+  const atRisk = (segs['At Risk'] || 0) + (segs.Dormant || 0);
+  const churn  = (atRisk / Math.max(1,outlets.length) * 100).toFixed(1);
+  const activeRate = (latest.upc / Math.max(1,outlets.length) * 100).toFixed(1);
+
+  const insights = [
+    {title:'Outlet Activity', text:`${latest.label}: ${fmt.n(latest.upc)} active outlets (${activeRate}% of filtered base), ${upcChange >= 0 ? '+' : ''}${fmt.n(upcChange)} vs previous month.`},
+    {title:'Revenue Movement', text:`Sale value is ${fmt.c(latest.sv)} in ${latest.label}, ${svChange >= 0 ? 'up' : 'down'} ${fmt.c(Math.abs(svChange))} vs previous month.`},
+    {title:'Best Zone', text:`${bestZone[0]} leads the filtered view with ${fmt.c(bestZone[1].sv)} period sale value.`},
+    {title:'Risk Watch', text:`${fmt.n(atRisk)} outlets (${churn}% of base) are At Risk or Dormant in the selected period.`},
+  ];
+
+  document.getElementById('insightGrid').innerHTML = insights.map(ins => `
+    <div class="insight-card">
+      <div class="insight-title">${ins.title}</div>
+      <div class="insight-text">${ins.text}</div>
+    </div>
+  `).join('');
+}
+
+function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function renderTrendChart(monthly) {
+  destroyChart('trend');
+  const ctx = document.getElementById('trendChart').getContext('2d');
+  charts.trend = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: monthly.map(m => m.label),
+      datasets:[
+        {
+          type:'bar', label:'Active Outlets (UPC)', data: monthly.map(m=>m.upc),
+          backgroundColor:'rgba(27,79,155,0.18)', borderColor:'rgba(27,79,155,0.5)',
+          borderWidth:1, borderRadius:4, yAxisID:'y',
+        },
+        {
+          type:'line', label:'Sale Value (₹)', data: monthly.map(m=>m.sv),
+          borderColor:'#00B4D8', backgroundColor:'rgba(0,180,216,0.08)',
+          borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#00B4D8',
+          tension:0.35, fill:true, yAxisID:'y1',
+        },
+      ],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{font:{size:11},boxWidth:10,padding:14}},
+        tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.datasetIndex===1?fmt.c(ctx.raw):fmt.n(ctx.raw))}},
+      },
+      scales:{
+        y:{position:'left',grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10},callback:v=>fmt.n(v)}},
+        y1:{position:'right',grid:{display:false},ticks:{font:{size:10},callback:v=>fmt.c(v)}},
+        x:{grid:{display:false},ticks:{font:{size:10}}},
+      },
+    },
+  });
+}
+
+function renderSegmentChart(segs) {
+  destroyChart('segment');
+  const labels = Object.keys(segs).filter(k=>segs[k]>0);
+  const data   = labels.map(k=>segs[k]);
+  const colors = labels.map(k=>SEG_COLORS[k]||'#94A3B8');
+
+  const ctx = document.getElementById('segmentChart').getContext('2d');
+  charts.segment = new Chart(ctx, {
+    type:'doughnut',
+    data:{labels, datasets:[{data, backgroundColor:colors, borderWidth:2, borderColor:'#fff', hoverOffset:6}]},
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'65%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} outlets (${((c.raw/data.reduce((a,b)=>a+b,0))*100).toFixed(1)}%)`}},
+      },
+    },
+  });
+
+  // Legend
+  const legend = document.getElementById('segLegend');
+  legend.innerHTML = labels.map(k=>`
+    <div class="seg-pill" style="background:${SEG_COLORS[k]}1A;color:${SEG_COLORS[k]}">
+      <span class="seg-dot" style="background:${SEG_COLORS[k]}"></span>
+      ${k}: ${segs[k]}
+    </div>
+  `).join('');
+}
+
+function renderRepeatChart(monthly) {
+  destroyChart('repeat');
+  const ctx = document.getElementById('repeatChart').getContext('2d');
+  const hasRepeat = monthly.some(m => m.rb > 0);
+  charts.repeat = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: monthly.map(m=>m.label),
+      datasets:[{
+        label: hasRepeat ? 'Repeat Billed %' : '(No repeat data yet)',
+        data: monthly.map(m => hasRepeat ? m.repeatPct : 0),
+        borderColor:'#22C55E', backgroundColor:'rgba(34,197,94,0.08)',
+        borderWidth:2.5, pointRadius:4, pointBackgroundColor:'#22C55E',
+        tension:0.35, fill:true,
+      }],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{font:{size:10},boxWidth:8}},
+        tooltip:{callbacks:{label:c=>`Repeat Rate: ${c.raw}%`}},
+      },
+      scales:{
+        y:{min:0,max:100,grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10},callback:v=>v+'%'}},
+        x:{grid:{display:false},ticks:{font:{size:9}}},
+      },
+    },
+  });
+}
+
+function renderZoneChart(zones) {
+  destroyChart('zone');
+  const labels = Object.keys(zones).sort((a,b)=>zones[b].sv-zones[a].sv);
+  const ctx = document.getElementById('zoneChart').getContext('2d');
+  charts.zone = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label:'Sale Value',
+        data: labels.map(z=>zones[z].sv),
+        backgroundColor: labels.map(z=>(ZONE_COLORS[z]||'#94A3B8')+'CC'),
+        borderColor:     labels.map(z=>ZONE_COLORS[z]||'#94A3B8'),
+        borderWidth:1, borderRadius:6,
+      }],
+    },
+    options:{
+      indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>'₹'+c.raw.toLocaleString('en-IN',{maximumFractionDigits:0})}},
+      },
+      scales:{
+        x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:9},callback:v=>fmt.c(v)}},
+        y:{grid:{display:false},ticks:{font:{size:10}}},
+      },
+    },
+  });
+}
+
+function renderMetroChart(metro) {
+  destroyChart('metro');
+  const ctx = document.getElementById('metroChart').getContext('2d');
+  const totalUPC = (metro.Metro?.upc||0) + (metro.NonMetro?.upc||0);
+  charts.metro = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels:['Metro','Non Metro'],
+      datasets:[
+        {
+          label:'Active Outlet-Months (UPC)',
+          data:[metro.Metro?.upc||0, metro.NonMetro?.upc||0],
+          backgroundColor:['rgba(27,79,155,0.8)','rgba(0,180,216,0.8)'],
+          borderWidth:0, borderRadius:6,
+        },
+        {
+          label:'Outlets',
+          data:[metro.Metro?.outlets||0, metro.NonMetro?.outlets||0],
+          backgroundColor:['rgba(27,79,155,0.25)','rgba(0,180,216,0.25)'],
+          borderWidth:0, borderRadius:6,
+        },
+      ],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{font:{size:10},boxWidth:8}},
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:11}}},
+        y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:9}}},
+      },
+    },
+  });
+}
+
+function renderQuadrantChart(territories) {
+  destroyChart('quadrant');
+  // Top 40 territories by outlet count (enough data to be meaningful)
+  const filtered = territories.filter(t => t.outlets >= 2).slice(0,45);
+
+  const maxCB = Math.max(...filtered.map(t=>t.cb), 1);
+
+  const ctx = document.getElementById('quadrantChart').getContext('2d');
+  charts.quadrant = new Chart(ctx, {
+    type:'bubble',
+    data:{
+      datasets:[{
+        label:'Territories',
+        data: filtered.map(t => ({
+          x: parseFloat(t.activeRate.toFixed(1)),
+          y: parseFloat((t.sv/Math.max(1,t.outlets)).toFixed(0)),
+          r: Math.max(4, Math.round((t.cb/maxCB)*22)),
+          territory: t.territory,
+          zone: t.zone,
+          outlets: t.outlets,
+        })),
+        backgroundColor: filtered.map(t => (ZONE_COLORS[t.zone]||'#94A3B8')+'99'),
+        borderColor:     filtered.map(t => ZONE_COLORS[t.zone]||'#94A3B8'),
+        borderWidth:1.5,
+      }],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label: ctx => [
+              `Territory: ${ctx.raw.territory}`,
+              `Zone: ${ctx.raw.zone}`,
+              `Active Rate: ${ctx.raw.x}%`,
+              `Avg Sale/Outlet: ${fmt.c(ctx.raw.y)}`,
+              `Outlets: ${ctx.raw.outlets}`,
+            ],
+          },
+        },
+      },
+      scales:{
+        x:{
+          title:{display:true,text:'Outlet Active Rate (%)',font:{size:11},color:'#64748B'},
+          grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10},callback:v=>v+'%'},
+        },
+        y:{
+          title:{display:true,text:'Avg Sale Value per Outlet (₹)',font:{size:11},color:'#64748B'},
+          grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10},callback:v=>fmt.c(v)},
+        },
+      },
+    },
+  });
+}
+
+// ─── HEATMAP ─────────────────────────────────────────────────────────────────
+function renderHeatmap(outlets, months) {
+  const top40 = [...outlets].sort((a,b)=>b.totalSV-a.totalSV).slice(0,40);
+  const maxSV = Math.max(...top40.flatMap(o => months.map(m => o.md[m.label]?.sv||0)), 1);
+
+  const svToColor = (sv) => {
+    if (sv <= 0) return null;
+    const intensity = Math.min(1, sv / (maxSV * 0.4));
+    const r = Math.round(27  + (0   - 27 ) * intensity);
+    const g = Math.round(79  + (90  - 79 ) * intensity);
+    const b = Math.round(155 + (180 - 155) * intensity);
+    return `rgb(${27 + Math.round((0-27)*intensity)},${79 + Math.round((100-79)*intensity)},${155 + Math.round((200-155)*intensity)})`;
+  };
+
+  // Simple blue scale
+  const colorScale = (sv) => {
+    if (sv <= 0) return null;
+    const t = Math.min(1, sv / (maxSV * 0.5));
+    const blue  = Math.round(27 + (15 - 27) * t + 155 * (1-t));
+    const green = Math.round(79 + (100 - 79) * t);
+    const r     = Math.round(27 * (1-t) + 5 * t);
+    const bVal  = Math.round(155 + (220 - 155) * t);
+    // Simple: from light blue to dark navy
+    const lightR = 147, lightG = 197, lightB = 253; // sky blue
+    const darkR  = 15,  darkG  = 35,  darkB  = 90;  // dark navy
+    return `rgb(${Math.round(lightR+(darkR-lightR)*t)},${Math.round(lightG+(darkG-lightG)*t)},${Math.round(lightB+(darkB-lightB)*t)})`;
+  };
+
+  const table = document.getElementById('heatmapTable');
+  const shortLabel = l => l.replace("'", "'").replace('July','Jul').replace('Sept','Sep');
+
+  let html = '<thead><tr><th style="text-align:left">Outlet</th><th>Seg</th>';
+  months.forEach(m => { html += `<th>${shortLabel(m.label)}</th>`; });
+  html += '<th>Active</th><th>Total ₹</th></tr></thead><tbody>';
+
+  top40.forEach((o, idx) => {
+    const segColor = SEG_COLORS[o.seg]||'#94A3B8';
+    html += `<tr>
+      <td class="outlet-name" title="${o.name} · ${o.territory}">${o.name||o.id.slice(-6)}</td>
+      <td class="outlet-seg"><span style="font-size:9px;font-weight:700;color:${segColor}">${o.seg.toUpperCase().slice(0,3)}</span></td>`;
+    months.forEach(m => {
+      const sv = o.md[m.label]?.sv || 0;
+      const col = colorScale(sv);
+      if (col) {
+        const label = sv >= 1000 ? (sv/1000).toFixed(1)+'K' : Math.round(sv).toString();
+        html += `<td><div class="hm-cell" style="background:${col}" title="${m.label}: ₹${sv.toFixed(0)}">${label}</div></td>`;
+      } else {
+        html += `<td><div class="hm-cell inactive"></div></td>`;
+      }
+    });
+    html += `<td style="text-align:center;font-weight:700;color:var(--primary)">${o.activeMonths}/${months.length}</td>`;
+    html += `<td style="text-align:right;font-weight:700;font-size:11px">${fmt.c(o.totalSV)}</td>`;
+    html += '</tr>';
+  });
+
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+// ─── TOP TABLE ───────────────────────────────────────────────────────────────
+function renderTopTable(outlets, months) {
+  const top25 = [...outlets].sort((a,b)=>b.totalSV-a.totalSV).slice(0,25);
+  const table = document.getElementById('topTable');
+
+  const zoneColor = (z) => {
+    const c = ZONE_COLORS[z]||'#94A3B8';
+    return `background:${c}1A;color:${c}`;
+  };
+  const healthColor = (s) => s>=70?'#22C55E':s>=40?'#F59E0B':'#EF4444';
+
+  let html = `
+    <thead><tr>
+      <th>#</th><th>Outlet Name</th><th>Territory</th><th>Zone</th><th>Status</th>
+      <th>Segment</th><th>Active Months</th><th>Total Sale Value</th><th>Avg/Month</th><th>Health</th>
+    </tr></thead><tbody>`;
+
+  top25.forEach((o,i) => {
+    const avgMo = o.activeMonths > 0 ? o.totalSV/o.activeMonths : 0;
+    const hc = healthColor(o.healthScore);
+    const sc = SEG_COLORS[o.seg]||'#94A3B8';
+    html += `<tr>
+      <td><span class="outlet-rank">${i+1}</span></td>
+      <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${o.name}">${o.name}</td>
+      <td style="color:var(--muted);font-size:11px">${o.territory}</td>
+      <td><span class="zone-badge" style="${zoneColor(o.zone)}">${o.zone}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${o.status}</td>
+      <td><span style="font-size:10px;font-weight:700;color:${sc}">${o.seg}</span></td>
+      <td style="text-align:center;font-weight:700">${o.activeMonths}<span style="color:var(--muted);font-weight:400">/${months.length}</span></td>
+      <td style="font-weight:700;color:var(--primary)">${fmt.c(o.totalSV)}</td>
+      <td style="color:var(--muted)">${fmt.c(avgMo)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="health-bar-wrap">
+            <div class="health-bar" style="width:${o.healthScore}%;background:${hc}"></div>
+          </div>
+          <span style="font-size:10px;font-weight:700;color:${hc}">${o.healthScore}</span>
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+// ─── CATEGORY PERFORMANCE ─────────────────────────────────────────────────────
+function renderCategorySection(catInfo, outlets) {
+  const section = document.getElementById('categorySection');
+  if (!catInfo || !catInfo.month || Object.keys(catInfo.cols||{}).length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  document.getElementById('catMonthLabel').textContent = catInfo.month;
+
+  const cats = Object.keys(catInfo.cols);
+  const totals = {};
+  cats.forEach(c => totals[c] = {pc:0, upc:0, cb:0, sv:0, rb:0, rbs:0});
+
+  let baseActive = 0; // outlets active (any purchase) in the category month, for penetration %
+  outlets.forEach(o => {
+    const md = o.md[catInfo.month];
+    if (md && md.upc > 0) baseActive++;
+    if (!o.cat) return;
+    cats.forEach(c => {
+      const d = o.cat[c];
+      if (!d) return;
+      totals[c].pc += d.pc; totals[c].upc += d.upc; totals[c].cb += d.cb;
+      totals[c].sv += d.sv; totals[c].rb += d.rb; totals[c].rbs += d.rbs;
+    });
+  });
+
+  // Sale Value by category (doughnut)
+  destroyChart('catSV');
+  charts.catSV = new Chart(document.getElementById('catSVChart').getContext('2d'), {
+    type:'doughnut',
+    data:{
+      labels: cats,
+      datasets:[{ data: cats.map(c=>totals[c].sv), backgroundColor: cats.map(c=>CAT_COLORS[c]||'#94A3B8'),
+        borderWidth:2, borderColor:'#fff', hoverOffset:6 }],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, cutout:'60%',
+      plugins:{
+        legend:{position:'bottom', labels:{font:{size:10}, boxWidth:8, padding:10}},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${fmt.c(c.raw)}`}},
+      },
+    },
+  });
+
+  // Repeat Billed % by category (bar)
+  destroyChart('catRepeat');
+  const repeatPctArr = cats.map(c => totals[c].upc > 0 ? Math.round((totals[c].rb/totals[c].upc)*100) : 0);
+  charts.catRepeat = new Chart(document.getElementById('catRepeatChart').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels: cats,
+      datasets:[{ label:'Repeat %', data: repeatPctArr,
+        backgroundColor: cats.map(c=>(CAT_COLORS[c]||'#94A3B8')+'CC'),
+        borderColor: cats.map(c=>CAT_COLORS[c]||'#94A3B8'), borderWidth:1, borderRadius:6 }],
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`Repeat Rate: ${c.raw}%`}} },
+      scales:{
+        y:{min:0, max:100, grid:{color:'rgba(0,0,0,0.05)'}, ticks:{font:{size:10}, callback:v=>v+'%'}},
+        x:{grid:{display:false}, ticks:{font:{size:10}}},
+      },
+    },
+  });
+
+  // Summary table
+  const table = document.getElementById('catTable');
+  let html = `<thead><tr>
+    <th>Category</th><th style="text-align:right">PC</th><th style="text-align:right">Active Outlets</th>
+    <th style="text-align:right">Case Box</th><th style="text-align:right">Sale Value</th>
+    <th style="text-align:right">Repeat %</th><th style="text-align:right">Penetration</th>
+  </tr></thead><tbody>`;
+  [...cats].sort((a,b)=>totals[b].sv-totals[a].sv).forEach(c => {
+    const t = totals[c];
+    const rp  = t.upc > 0 ? Math.round((t.rb/t.upc)*100) : 0;
+    const pen = baseActive > 0 ? ((t.upc/baseActive)*100).toFixed(1) : '0.0';
+    html += `<tr>
+      <td><span class="cat-dot" style="background:${CAT_COLORS[c]||'#94A3B8'}"></span>${c}</td>
+      <td style="text-align:right">${fmt.n(t.pc)}</td>
+      <td style="text-align:right;font-weight:700;color:var(--primary)">${fmt.n(t.upc)}</td>
+      <td style="text-align:right">${fmt.cb(t.cb)}</td>
+      <td style="text-align:right;font-weight:700">${fmt.c(t.sv)}</td>
+      <td style="text-align:right">${rp}%</td>
+      <td style="text-align:right" title="${fmt.n(t.upc)} of ${fmt.n(baseActive)} active outlets bought this category">${pen}%</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+// ─── ACTION CENTER ────────────────────────────────────────────────────────────
+const FLAG_TABLE_CAP = 150; // render cap for table rows; summary stats use the full flag set
+
+function renderActionCenter(flags) {
+  const riskFlags = flags.filter(f => f.type === 'risk');
+  const oppFlags  = flags.filter(f => f.type === 'opportunity');
+  const riskImpact = riskFlags.reduce((s,f) => s+f.impact, 0);
+  const oppImpact  = oppFlags.reduce((s,f) => s+f.impact, 0);
+
+  document.getElementById('actionSummary').innerHTML = `
+    <div class="action-stat risk">
+      <div class="action-stat-label">⚠️ Risk Flags</div>
+      <div class="action-stat-value" style="color:var(--danger)">${riskFlags.length.toLocaleString()}</div>
+      <div class="action-stat-sub">outlets &amp; territories needing attention</div>
+    </div>
+    <div class="action-stat risk">
+      <div class="action-stat-label">₹ At Risk</div>
+      <div class="action-stat-value" style="color:var(--danger)">${fmt.c(riskImpact)}</div>
+      <div class="action-stat-sub">potential revenue exposure</div>
+    </div>
+    <div class="action-stat opp">
+      <div class="action-stat-label">🚀 Opportunity Flags</div>
+      <div class="action-stat-value" style="color:var(--success)">${oppFlags.length.toLocaleString()}</div>
+      <div class="action-stat-sub">actionable growth signals</div>
+    </div>
+    <div class="action-stat opp">
+      <div class="action-stat-label">₹ Opportunity</div>
+      <div class="action-stat-value" style="color:var(--success)">${fmt.c(oppImpact)}</div>
+      <div class="action-stat-sub">potential upside if acted on</div>
+    </div>
+  `;
+
+  const top = flags.slice(0, FLAG_TABLE_CAP); // already sorted by impact desc in computeFlags
+  const noteEl = document.getElementById('flagCountNote');
+  noteEl.textContent = flags.length > top.length
+    ? `Showing top ${top.length.toLocaleString()} of ${flags.length.toLocaleString()} flags, ranked by ₹ impact.`
+    : `${flags.length.toLocaleString()} flags found, ranked by ₹ impact.`;
+
+  const table = document.getElementById('flagTable');
+  let html = `<thead><tr>
+    <th>Flag</th><th>Outlet / Territory</th><th>Detail</th><th>Recommended Action</th>
+    <th style="text-align:right">Impact (₹)</th>
+  </tr></thead><tbody>`;
+  top.forEach(f => {
+    const badgeLabel = f.type === 'risk' ? '⚠️ Risk' : '🚀 Opportunity';
+    html += `<tr data-type="${f.type}">
+      <td>
+        <span class="flag-badge ${f.type}">${badgeLabel}</span>
+        <div style="margin-top:5px;font-size:11px;font-weight:600;color:var(--text)">${f.title}</div>
+      </td>
+      <td><div class="flag-entity">${f.entity}</div><div class="flag-sub">${f.sub}</div></td>
+      <td class="flag-detail">${f.detail}</td>
+      <td class="flag-action">${f.action}</td>
+      <td class="flag-impact">${fmt.c(f.impact)}</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+
+  applyFlagFilter(document.querySelector('.flag-filter-btn.active')?.dataset.filter || 'all');
+}
+
+function applyFlagFilter(filter) {
+  document.querySelectorAll('#flagTable tbody tr').forEach(tr => {
+    const show = filter === 'all' || tr.dataset.type === filter;
+    tr.classList.toggle('flag-hidden', !show);
+  });
+}
+
+// ─── MAIN PIPELINE ────────────────────────────────────────────────────────────
+
+// Lazily build the parsing Web Worker from the inert <script type="text/js-worker"> block
+// below, via a Blob URL — keeps the 49K-row XLSX parse + outlet processing off the main
+// thread so the UI (drag zone, scrolling, etc.) stays responsive while it runs.
+let owsrWorker = null;
+function getOWSRWorker() {
+  if (owsrWorker) return owsrWorker;
+  const src  = document.getElementById('owsrWorkerSrc').textContent;
+  const blob = new Blob([src], { type:'application/javascript' });
+  owsrWorker = new Worker(URL.createObjectURL(blob));
+  return owsrWorker;
+}
+
+const STAGE_LABELS = {
+  reading:    'Reading file…',
+  parsing:    'Parsing rows…',
+  processing: 'Crunching outlet metrics…',
+  finishing:  'Almost there…',
+};
+
+function setLoading(show) {
+  document.getElementById('loadingOverlay').classList.toggle('show', show);
+  if (show) setLoadingProgress(2, 'Reading file…');
+}
+function setLoadingProgress(pct, stageLabel) {
+  document.getElementById('loadingBar').style.width = Math.max(0, Math.min(100, pct)) + '%';
+  if (stageLabel) document.getElementById('loadingStage').textContent = stageLabel;
+}
+
+function loadWorkbook(file) {
+  setLoading(true);
+
+  const reader = new FileReader();
+  reader.onerror = () => { setLoading(false); alert('Could not read the file.'); };
+  reader.onload = (e) => {
+    const buffer = e.target.result; // ArrayBuffer
+    const worker = getOWSRWorker();
+
+    worker.onmessage = (ev) => {
+      const msg = ev.data;
+      if (msg.type === 'progress') {
+        setLoadingProgress(msg.pct, STAGE_LABELS[msg.stage] || 'Working…');
+      } else if (msg.type === 'error') {
+        setLoading(false);
+        alert(msg.message);
+      } else if (msg.type === 'done') {
+        setLoadingProgress(100, 'Rendering dashboard…');
+        // Small delay so the progress bar visibly reaches 100% before the (separate)
+        // chart-rendering work begins on the main thread.
+        setTimeout(() => {
+          try {
+            finishLoad(file, msg.outlets, msg.months, msg.catInfo);
+          } catch (err) {
+            console.error(err);
+            alert('Error rendering dashboard: ' + err.message);
+          } finally {
+            setLoading(false);
+          }
+        }, 150);
+      }
+    };
+    worker.onerror = (err) => {
+      setLoading(false);
+      console.error(err);
+      alert('Worker error: ' + (err.message || 'Unknown error while parsing the file.'));
+    };
+
+    worker.postMessage({ buffer, fileName: file.name }, [buffer]);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function finishLoad(file, outlets, months, catInfo) {
+  if (!outlets || outlets.length === 0) { alert('No outlet data found. Please check the file format.'); return; }
+  if (!months || months.length === 0)   { alert('No month columns found. Please check the file format.'); return; }
+
+  appState.allOutlets = outlets;
+  appState.allMonths = months;
+  appState.catInfo = catInfo;
+  appState.fileName = file.name;
+  appState.rowCount = outlets.length;
+  appState.filters = { period:'all', month:'latest', zone:FILTER_ALL, region:FILTER_ALL, status:FILTER_ALL, territory:FILTER_ALL, beat:FILTER_ALL, segment:FILTER_ALL, category:FILTER_ALL, search:'' };
+
+  document.getElementById('fileNameDisplay').textContent = file.name;
+  document.getElementById('uploadSection').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  initFilters();
+  renderDashboardFromState();
+}
+
+['fPeriod','fMonth','fZone','fRegion','fStatus','fTerritory','fBeat','fSegment','fCategory'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('change', renderDashboardFromState);
+});
+const searchEl = document.getElementById('fSearch');
+if (searchEl) searchEl.addEventListener('input', () => {
+  window.clearTimeout(searchEl._renderTimer);
+  searchEl._renderTimer = window.setTimeout(renderDashboardFromState, 120);
+});
+const resetBtn = document.getElementById('resetFiltersBtn');
+if (resetBtn) resetBtn.addEventListener('click', resetDashboardFilters);
+
+const zone = document.getElementById('uploadZone');
+const inp  = document.getElementById('fileInput');
+
+zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) loadWorkbook(f);
+});
+inp.addEventListener('change', () => { if(inp.files[0]) loadWorkbook(inp.files[0]); });
+
+// ─── ACTION CENTER FILTER BUTTONS ──────────────────────────────────────────────
+document.querySelectorAll('.flag-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.flag-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFlagFilter(btn.dataset.filter);
+  });
+});
+
+</script>
+
+<!-- Portfolio demo boot: ?demo=1 loads a synthetic sample workbook through the
+     normal upload path. No client data — invented outlets, territories and figures.
+     Dropping your own OWSR file still works exactly as before. -->
+<script id="owsrDemoData" type="application/octet-stream">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</script>
+<script>
+/* Opened straight off the disk (file://), the parsing worker cannot importScripts()
+   its CDN parser, so it stalls. Same page, same parsing code — just run in-page,
+   reusing the XLSX build the document already loaded. Served over http:// the
+   original worker is used untouched. */
+(function(){
+  if (location.protocol !== 'file:') return;
+  if (typeof getOWSRWorker !== 'function') return;
+  getOWSRWorker = function(){
+    var src = document.getElementById('owsrWorkerSrc').textContent;
+    var fake = { onmessage:null, onerror:null };
+    var ctx = {
+      importScripts:function(){},
+      postMessage:function(msg){ if (fake.onmessage) fake.onmessage({data:msg}); }
+    };
+    new Function('self','XLSX', src)(ctx, window.XLSX);
+    fake.postMessage = function(payload){
+      setTimeout(function(){
+        try { ctx.onmessage({data:payload}); }
+        catch(e){ if (fake.onerror) fake.onerror(e); else console.error(e); }
+      }, 0);
+    };
+    return fake;
+  };
+})();
+(function(){
+  if (!/[?&]demo=1\b/.test(location.search)) return;
+  function boot(){
+    try{
+      var b64 = document.getElementById('owsrDemoData').textContent.trim();
+      var bin = atob(b64);
+      var buf = new Uint8Array(bin.length);
+      for (var i=0;i<bin.length;i++) buf[i] = bin.charCodeAt(i);
+      var file = new File([buf], 'OWSR_Sample_Jan_Jun26 (synthetic demo data).xlsx',
+        {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      loadWorkbook(file);
+    }catch(e){ console.error('demo load failed', e); }
+  }
+  if (document.readyState === 'complete') setTimeout(boot, 60);
+  else window.addEventListener('load', function(){ setTimeout(boot, 60); });
+})();
+</script>
+</body>
+</html>

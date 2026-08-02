@@ -1,0 +1,11 @@
+# Pre-anonymisation backup — still contains the real client entity codes.
+# Never commit: git history is permanent.
+*original backup*.html
+
+# Local noise
+.DS_Store
+Thumbs.db
+desktop.ini
+_probe_tmp.html
+_phase_tmp.html
+_diag_tmp.html

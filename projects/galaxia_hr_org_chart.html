@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GXC – HR Department Organization Chart | Galaxia Consumer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0a1628;
+  --navy-mid:#0f2040;
+  --blue:#1565C0;
+  --blue-bright:#2196F3;
+  --blue-glow:rgba(21,101,192,0.18);
+  --cyan:#00BCD4;
+  --teal:#009688;
+  --gold:#F59E0B;
+  --active:#10b981;
+  --active-glow:rgba(16,185,129,0.2);
+  --terminated:#ef4444;
+  --terminated-glow:rgba(239,68,68,0.15);
+  --tbi:#94a3b8;
+  --card-bg:rgba(255,255,255,0.92);
+  --card-border:rgba(21,101,192,0.12);
+  --line-color:rgba(21,101,192,0.25);
+  --text-dark:#0d1f3c;
+  --text-mid:#2d4a70;
+  --text-soft:#5a7a9e;
+  --surface:#f0f6ff;
+  --shadow-sm:0 2px 8px rgba(10,22,40,0.08);
+  --shadow-md:0 6px 24px rgba(10,22,40,0.12);
+  --shadow-lg:0 16px 48px rgba(10,22,40,0.16);
+}
+
+html,body{width:100%;min-height:100vh;overflow-x:auto}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:linear-gradient(160deg,#e8f2fd 0%,#f4f9ff 40%,#eaf4f8 70%,#f0f8f4 100%);
+  min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 800px 600px at 10% 15%,rgba(21,101,192,0.07),transparent 65%),
+    radial-gradient(ellipse 600px 500px at 90% 85%,rgba(0,150,136,0.06),transparent 60%),
+    radial-gradient(ellipse 400px 300px at 60% 5%,rgba(255,255,255,0.7),transparent 55%);
+}
+
+/* ══════════ LAYOUT ══════════ */
+.page{position:relative;z-index:1;padding:28px 24px 80px;min-width:1200px}
+
+/* ══════════ HEADER ══════════ */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:32px;flex-wrap:wrap;gap:16px;
+}
+.header-left{display:flex;align-items:center;gap:18px}
+.logo-box{
+  width:72px;height:72px;background:#fff;border-radius:14px;
+  box-shadow:0 4px 20px rgba(21,101,192,0.18);
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px solid rgba(255,255,255,0.9);padding:6px;overflow:hidden;
+}
+.logo-box svg{width:100%;height:auto}
+.hdr-eyebrow{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue);margin-bottom:4px;font-family:'DM Mono',monospace}
+.hdr-title{font-size:clamp(16px,2.4vw,24px);font-weight:700;color:var(--text-dark);letter-spacing:-.3px;line-height:1.15}
+.hdr-title span{background:linear-gradient(120deg,#1565C0,#00BCD4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-sub{font-size:11px;color:var(--text-soft);margin-top:3px}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stat-pill{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,0.85);border:1px solid var(--card-border);
+  border-radius:20px;padding:6px 14px;
+  font-size:11px;font-weight:600;color:var(--text-mid);font-family:'DM Mono',monospace;
+}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot.active{background:var(--active);box-shadow:0 0 6px var(--active)}
+.dot.terminated{background:var(--terminated)}
+.dot.blue{background:var(--blue-bright);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ══════════ CONTROLS BAR ══════════ */
+.controls-bar{
+  display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;
+}
+.filter-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:10px;border:1.5px solid transparent;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;
+  transition:all .2s;background:rgba(255,255,255,0.8);color:var(--text-mid);
+  border-color:rgba(21,101,192,0.12);
+}
+.filter-btn:hover{background:rgba(255,255,255,1);border-color:rgba(21,101,192,0.25);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+.filter-btn.active-f{background:var(--active-glow);border-color:var(--active);color:#065f46}
+.filter-btn.terminated-f{background:var(--terminated-glow);border-color:var(--terminated);color:#991b1b}
+.filter-btn.all-f{background:var(--blue-glow);border-color:var(--blue);color:var(--blue)}
+.search-box{
+  flex:1;min-width:200px;max-width:300px;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.9);border:1.5px solid rgba(21,101,192,0.15);
+  border-radius:10px;padding:7px 14px;
+}
+.search-box input{border:none;outline:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text-dark);width:100%}
+.search-box input::placeholder{color:var(--text-soft)}
+.upload-btn{
+  display:flex;align-items:center;gap:7px;
+  padding:8px 18px;border-radius:10px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-bright));
+  color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 14px rgba(21,101,192,0.3);
+}
+.upload-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(21,101,192,0.4)}
+
+/* ══════════ DRAG DROP ZONE ══════════ */
+.drop-zone-wrap{margin-bottom:28px;border-radius:16px;overflow:hidden;transition:all .3s}
+.drop-zone-wrap.hidden{display:none}
+.drop-zone{
+  border:2px dashed rgba(21,101,192,0.3);border-radius:16px;
+  background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);
+  padding:32px 24px;text-align:center;transition:all .3s;cursor:pointer;
+}
+.drop-zone.drag-over{border-color:var(--blue-bright);background:rgba(33,150,243,0.06);box-shadow:0 0 0 4px rgba(33,150,243,0.1)}
+.drop-icon{font-size:36px;margin-bottom:12px;display:block}
+.drop-title{font-size:15px;font-weight:700;color:var(--text-dark);margin-bottom:6px}
+.drop-sub{font-size:12px;color:var(--text-soft);margin-bottom:16px}
+.drop-format{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(21,101,192,0.07);border:1px solid rgba(21,101,192,0.15);
+  border-radius:8px;padding:4px 12px;
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--blue);font-family:'DM Mono',monospace;
+}
+.file-input{display:none}
+.drop-preview{
+  margin-top:16px;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
+  border-radius:10px;padding:12px 16px;font-size:12px;color:#065f46;text-align:left;display:none;
+}
+.drop-preview.show{display:block}
+.drop-preview strong{font-weight:700}
+.drop-preview .preview-list{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.preview-chip{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:600;color:#065f46}
+.drop-actions{display:flex;gap:10px;margin-top:14px;justify-content:flex-end}
+.drop-apply{padding:7px 18px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:700;background:var(--active);color:#fff;font-family:'DM Sans',sans-serif;box-shadow:0 3px 10px rgba(16,185,129,0.3);transition:all .2s}
+.drop-apply:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(16,185,129,0.4)}
+.drop-cancel{padding:7px 14px;border-radius:8px;border:1.5px solid rgba(100,116,139,.25);background:transparent;cursor:pointer;font-size:12px;font-weight:600;color:var(--text-soft);font-family:'DM Sans',sans-serif;transition:all .2s}
+.drop-cancel:hover{border-color:rgba(239,68,68,.4);color:var(--terminated)}
+.template-link{margin-top:10px;font-size:11px;color:var(--blue);cursor:pointer;text-decoration:underline;text-underline-offset:3px;display:inline-block}
+
+/* ══════════ CARD ══════════ */
+.node{display:flex;flex-direction:column;align-items:center;transition:opacity .3s}
+.node.hidden-node{display:none}
+
+.card{
+  background:var(--card-bg);backdrop-filter:blur(12px);
+  border:1.5px solid var(--card-border);border-radius:14px;
+  padding:14px 16px;min-width:150px;max-width:190px;
+  text-align:center;box-shadow:var(--shadow-sm);
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);cursor:default;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  border-radius:14px 14px 0 0;
+}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:rgba(21,101,192,0.28)}
+
+/* VP card – gold accent */
+.card.vp-card::before{background:linear-gradient(90deg,#F59E0B,#FBBF24)}
+.card.vp-card{border-color:rgba(245,158,11,0.25);background:linear-gradient(to bottom,rgba(254,252,232,0.95),rgba(255,255,255,0.95))}
+
+/* HRBP Lead – dark blue */
+.card.lead-card::before{background:linear-gradient(90deg,#1565C0,#42A5F5)}
+
+/* Sales HRBP – teal */
+.card.sales-card::before{background:linear-gradient(90deg,#0ea5e9,#38bdf8)}
+
+/* TA Lead – purple */
+.card.ta-card::before{background:linear-gradient(90deg,#7C3AED,#8B5CF6)}
+.card.ta-card{border-color:rgba(124,58,237,0.2)}
+
+/* HR Ops – green-teal */
+.card.ops-card::before{background:linear-gradient(90deg,#059669,#10b981)}
+
+/* TBI / Pending */
+.card.tbi-card{border-style:dashed;border-color:rgba(148,163,184,.4);background:rgba(248,250,252,0.9)}
+.card.tbi-card::before{background:linear-gradient(90deg,#94a3b8,#cbd5e1)}
+
+/* Terminated */
+.card.terminated-card{opacity:.65}
+.card.terminated-card::before{background:linear-gradient(90deg,#ef4444,#f87171)}
+.card.terminated-card::after{
+  content:'TERMINATED';position:absolute;bottom:5px;right:6px;
+  font-size:7px;font-weight:800;letter-spacing:1.2px;color:var(--terminated);
+  font-family:'DM Mono',monospace;opacity:.7;
+}
+
+.avatar{
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#fff;
+  margin:0 auto 10px;font-family:'DM Mono',monospace;flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);border:2px solid rgba(255,255,255,0.7);
+}
+.avatar.large{width:56px;height:56px;font-size:16px;margin-bottom:12px}
+
+.card-role{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-soft);margin-bottom:4px;font-family:'DM Mono',monospace}
+.card-name{font-size:13px;font-weight:700;color:var(--text-dark);line-height:1.25}
+.card-title{font-size:10px;color:var(--text-soft);margin-top:3px;line-height:1.4}
+
+.status-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  margin-top:8px;padding:2px 8px;border-radius:20px;
+  font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;font-family:'DM Mono',monospace;
+  cursor:pointer;transition:all .2s;
+}
+.status-badge.active-s{background:var(--active-glow);color:#065f46;border:1px solid rgba(16,185,129,.3)}
+.status-badge.terminated-s{background:var(--terminated-glow);color:#991b1b;border:1px solid rgba(239,68,68,.3)}
+.status-badge.tbi-s{background:rgba(148,163,184,.1);color:#475569;border:1px solid rgba(148,163,184,.25)}
+.status-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
+.status-badge.active-s::before{background:var(--active);box-shadow:0 0 5px var(--active)}
+.status-badge.terminated-s::before{background:var(--terminated)}
+
+/* ══════════ CONNECTORS ══════════ */
+.v-line{width:2px;height:28px;background:linear-gradient(to bottom,rgba(21,101,192,0.25),rgba(21,101,192,0.15));margin:0 auto;flex-shrink:0}
+.v-line-tall{width:2px;height:36px;background:linear-gradient(to bottom,rgba(21,101,192,0.25),rgba(21,101,192,0.12));margin:0 auto;flex-shrink:0}
+.h-line{height:2px;background:rgba(21,101,192,0.2);margin:0 auto}
+.branch-connector{width:2px;height:28px;background:linear-gradient(to bottom,rgba(21,101,192,.25),rgba(21,101,192,.1));flex-shrink:0}
+
+/* ══════════ TREE STRUCTURE ══════════ */
+.tree-center{display:flex;flex-direction:column;align-items:center;gap:0;width:100%}
+.org-tree{display:flex;flex-direction:column;align-items:center;gap:0;width:100%}
+
+/* ══════════ DEPT SECTIONS ══════════ */
+.dept-strip{
+  width:100%;background:linear-gradient(135deg,rgba(21,101,192,.08),rgba(21,101,192,.03));
+  border:1.5px solid rgba(21,101,192,.15);border-radius:10px;
+  padding:7px 20px;text-align:center;
+  font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--blue);font-family:'DM Mono',monospace;
+}
+.dept-strip.hrbp{background:linear-gradient(135deg,rgba(21,101,192,.1),rgba(21,101,192,.04));border-color:rgba(21,101,192,.2);color:#1565C0}
+.dept-strip.ta{background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(124,58,237,.04));border-color:rgba(124,58,237,.2);color:#7C3AED}
+.dept-strip.hrops{background:linear-gradient(135deg,rgba(5,150,105,.1),rgba(5,150,105,.04));border-color:rgba(5,150,105,.2);color:#059669}
+
+/* SECTIONS 3-column layout */
+.sections-row{
+  display:flex;align-items:flex-start;justify-content:center;gap:0;
+  width:100%;max-width:1400px;margin:0 auto;
+  position:relative;
+}
+.section-col{
+  display:flex;flex-direction:column;align-items:center;
+  flex:1;padding:0 12px;
+  border-right:1.5px dashed rgba(21,101,192,0.15);
+}
+.section-col:last-child{border-right:none}
+
+/* Row of children cards */
+.children-row{display:flex;align-items:flex-start;justify-content:center;gap:10px;width:100%}
+.child-branch{display:flex;flex-direction:column;align-items:center;gap:0}
+
+/* Member row compact card */
+.member-row-card{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  min-width:160px;max-width:220px;width:100%;text-align:left;
+}
+.member-row-card .avatar{margin:0;width:38px;height:38px;font-size:11px;flex-shrink:0}
+.member-row-card .card-name{font-size:12px}
+.member-row-card .card-title{font-size:9px}
+
+/* ══════════ WORKFORCE TABLE ══════════ */
+.workforce-table{
+  background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);
+  border:1.5px solid var(--card-border);border-radius:14px;
+  overflow:hidden;box-shadow:var(--shadow-sm);
+  margin-bottom:32px;width:fit-content;
+}
+.wf-header{
+  display:grid;grid-template-columns:200px 110px;
+  background:linear-gradient(90deg,#1565C0,#1976D2);
+  padding:10px 16px;
+  font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:#fff;font-family:'DM Mono',monospace;gap:0;
+}
+.wf-row{
+  display:grid;grid-template-columns:200px 110px;
+  padding:8px 16px;border-bottom:1px solid rgba(21,101,192,0.07);
+  font-size:12px;color:var(--text-dark);transition:background .15s;
+}
+.wf-row:hover{background:rgba(21,101,192,0.03)}
+.wf-row:last-child{border-bottom:none}
+.wf-row.total{background:rgba(21,101,192,.05);font-weight:700;color:var(--blue)}
+.wf-cell{font-family:'DM Mono',monospace;font-size:11px}
+.wf-label{font-size:11px;color:var(--text-mid)}
+
+/* ══════════ EDIT MODAL ══════════ */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(10,22,40,.5);backdrop-filter:blur(6px);
+  z-index:1000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{
+  background:#fff;border-radius:20px;padding:28px 32px;min-width:340px;max-width:460px;width:90%;
+  box-shadow:0 24px 80px rgba(10,22,40,.25);
+  transform:scale(.94) translateY(16px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.open .modal{transform:scale(1) translateY(0)}
+.modal-title{font-size:16px;font-weight:800;color:var(--text-dark);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.modal-title span{font-size:20px}
+.form-row{margin-bottom:14px}
+.form-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-soft);margin-bottom:5px;font-family:'DM Mono',monospace}
+.form-input{width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid rgba(21,101,192,.2);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-dark);outline:none;transition:border .2s;background:#fafcff}
+.form-input:focus{border-color:var(--blue-bright)}
+.form-select{width:100%;padding:9px 12px;border-radius:9px;border:1.5px solid rgba(21,101,192,.2);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-dark);outline:none;background:#fafcff;cursor:pointer}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.btn-save{padding:9px 22px;border-radius:9px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--blue),var(--blue-bright));color:#fff;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;box-shadow:0 4px 14px rgba(21,101,192,.3);transition:all .2s}
+.btn-save:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(21,101,192,.4)}
+.btn-cancel{padding:9px 16px;border-radius:9px;border:1.5px solid rgba(100,116,139,.25);background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-soft);font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-cancel:hover{border-color:rgba(239,68,68,.4);color:var(--terminated)}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:2000;
+  background:var(--text-dark);color:#fff;padding:12px 20px;border-radius:12px;
+  font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;
+  box-shadow:0 8px 24px rgba(0,0,0,.2);
+  transform:translateY(80px);opacity:0;transition:all .35s cubic-bezier(.34,1.56,.64,1);
+  display:flex;align-items:center;gap:8px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:3px solid var(--active)}
+.toast.info{border-left:3px solid var(--blue-bright)}
+
+/* LEGEND */
+.legend{
+  display:flex;gap:20px;align-items:center;flex-wrap:wrap;
+  background:rgba(255,255,255,0.75);border:1px solid var(--card-border);
+  border-radius:12px;padding:10px 18px;
+}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--text-mid)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.legend-dot.a{background:var(--active);box-shadow:0 0 6px var(--active)}
+.legend-dot.t{background:var(--terminated)}
+.legend-dot.p{background:var(--tbi);opacity:.6}
+.legend-line{width:20px;height:2px;background:rgba(21,101,192,.25);border-radius:2px}
+
+/* RESPONSIVE */
+@media(max-width:900px){.page{min-width:1100px}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ══ HEADER ══ -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-box">
+        <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <rect width="80" height="80" rx="12" fill="#1565C0"/>
+          <text x="40" y="52" font-family="Arial Black,sans-serif" font-size="32" font-weight="900" fill="#fff" text-anchor="middle">G</text>
+          <text x="40" y="68" font-family="Arial,sans-serif" font-size="8" fill="rgba(255,255,255,.7)" text-anchor="middle" letter-spacing="2">GALAXIA</text>
+        </svg>
+      </div>
+      <div>
+        <div class="hdr-eyebrow">Galaxia Consumer Limited</div>
+        <div class="hdr-title">HR Department – <span>Organization Chart</span></div>
+        <div class="hdr-sub">Human Resources Hierarchy · Live Status Tracking · 5X5Y Vision</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="stat-pill"><div class="dot active"></div><span id="activeCount">0</span> Active</div>
+      <div class="stat-pill"><div class="dot terminated"></div><span id="termCount">0</span> Terminated</div>
+      <div class="stat-pill"><div class="dot blue"></div>13 Total HC</div>
+      <button class="upload-btn" onclick="toggleDropZone()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        Import Data
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ DRAG-DROP ZONE ══ -->
+  <div class="drop-zone-wrap hidden" id="dropZoneWrap">
+    <div class="drop-zone" id="dropZone"
+         ondragover="handleDragOver(event)"
+         ondragleave="handleDragLeave(event)"
+         ondrop="handleDrop(event)"
+         onclick="document.getElementById('fileInput').click()">
+      <span class="drop-icon">📂</span>
+      <div class="drop-title">Drag & Drop Employee Data File</div>
+      <div class="drop-sub">Upload a CSV or JSON file to update employee names, titles, and status in the chart</div>
+      <div class="drop-format">CSV · JSON · Supported Formats</div>
+      <div class="template-link" onclick="downloadTemplate(event)">⬇ Download CSV Template</div>
+      <input type="file" id="fileInput" class="file-input" accept=".csv,.json" onchange="handleFileSelect(event)">
+    </div>
+    <div class="drop-preview" id="dropPreview">
+      <strong id="previewTitle">Preview</strong>
+      <div class="preview-list" id="previewList"></div>
+      <div class="drop-actions">
+        <button class="drop-cancel" onclick="cancelImport()">Cancel</button>
+        <button class="drop-apply" onclick="applyImport()">✓ Apply to Chart</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONTROLS BAR ══ -->
+  <div class="controls-bar">
+    <button class="filter-btn all-f" onclick="filterStatus('all',this)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      All Employees
+    </button>
+    <button class="filter-btn" onclick="filterStatus('active',this)">
+      <div class="dot active" style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 5px #10b981"></div>
+      Active Only
+    </button>
+    <button class="filter-btn" onclick="filterStatus('terminated',this)">
+      <div class="dot terminated" style="width:8px;height:8px;border-radius:50%;background:#ef4444"></div>
+      Terminated Only
+    </button>
+    <div class="search-box">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" placeholder="Search by name or role..." oninput="searchNodes(this.value)">
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot a"></div>Active</div>
+      <div class="legend-item"><div class="legend-dot t"></div>Terminated</div>
+      <div class="legend-item"><div class="legend-dot p"></div>TBI / Pending</div>
+      <div class="legend-item"><div class="legend-line"></div>Reports To</div>
+    </div>
+  </div>
+
+  <!-- ══ TOP ROW: WORKFORCE TABLE + VP ══ -->
+  <div style="display:flex;align-items:flex-start;justify-content:center;gap:60px;margin-bottom:0;width:100%">
+
+    <!-- WORKFORCE TABLE -->
+    <div>
+      <div class="workforce-table">
+        <div class="wf-header">
+          <div>Approved Workforce</div>
+          <div style="text-align:center">Head Count</div>
+        </div>
+        <div class="wf-row"><div class="wf-label">VP</div><div class="wf-cell" style="text-align:center">1</div></div>
+        <div class="wf-row"><div class="wf-label">HRBP</div><div class="wf-cell" style="text-align:center">3</div></div>
+        <div class="wf-row"><div class="wf-label">TA</div><div class="wf-cell" style="text-align:center">2</div></div>
+        <div class="wf-row"><div class="wf-label">MFG Unit HR</div><div class="wf-cell" style="text-align:center">4</div></div>
+        <div class="wf-row"><div class="wf-label">HR Ops</div><div class="wf-cell" style="text-align:center">2</div></div>
+        <div class="wf-row"><div class="wf-label">Vacant Position</div><div class="wf-cell" style="text-align:center">1</div></div>
+        <div class="wf-row total"><div class="wf-label" style="font-weight:700">Total</div><div class="wf-cell" style="text-align:center;font-weight:700">13</div></div>
+      </div>
+    </div>
+
+    <!-- VP NODE -->
+    <div class="tree-center">
+      <!-- LEVEL 1: VP -->
+      <div class="node" id="node-meera">
+        <div class="card vp-card" ondblclick="openEdit('meera')">
+          <div class="card-role">Head of HR – GXC</div>
+          <div class="avatar large" style="background:linear-gradient(135deg,#F59E0B,#FBBF24);color:#78350f">MK</div>
+          <div class="card-name">Meera K.</div>
+          <div class="card-title">Vice President</div>
+          <div class="status-badge active-s" onclick="toggleStatus(this,'meera')">Active</div>
+        </div>
+      </div>
+
+      <!-- Connector down -->
+      <div class="v-line-tall"></div>
+
+      <!-- HORIZONTAL LINE spanning 3 sections -->
+      <div style="height:2px;background:rgba(21,101,192,.2);width:900px;margin:0 auto"></div>
+
+      <!-- ══ THREE SECTIONS ══ -->
+      <div class="sections-row" style="width:960px">
+
+        <!-- ══════════ SECTION 1: HR BUSINESS PARTNERING ══════════ -->
+        <div class="section-col">
+          <div class="v-line"></div>
+
+          <!-- Lead HRBP -->
+          <div class="node" id="node-aditya">
+            <div class="card lead-card" ondblclick="openEdit('aditya')">
+              <div class="card-role">Lead HRBP – Corp &amp; Mfg</div>
+              <div class="avatar large" style="background:linear-gradient(135deg,#1565C0,#42A5F5)">AP</div>
+              <div class="card-name">Aditya P.</div>
+              <div class="card-title">DGM – HRBP</div>
+              <div class="status-badge active-s" onclick="toggleStatus(this,'aditya')">Active</div>
+            </div>
+          </div>
+
+          <!-- Connector + H line for Corporate & Manufacturing -->
+          <div class="v-line"></div>
+          <div style="height:2px;background:rgba(21,101,192,.18);width:360px;margin:0 auto"></div>
+
+          <!-- Corporate + Manufacturing columns -->
+          <div style="display:flex;align-items:flex-start;justify-content:center;gap:0;width:380px">
+
+            <!-- Corporate sub-column -->
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+              <div class="v-line"></div>
+              <div class="node" id="node-corporate-box" style="width:100%">
+                <div class="card" style="background:rgba(21,101,192,0.07);border-color:rgba(21,101,192,0.2);min-width:120px;max-width:150px;padding:10px 12px">
+                  <div class="card-role" style="font-size:8px;letter-spacing:1.5px">Division</div>
+                  <div class="card-name" style="font-size:12px">Corporate</div>
+                </div>
+              </div>
+              <div class="v-line"></div>
+              <!-- Varun S -->
+              <div class="node" id="node-varun">
+                <div class="card tbi-card member-row-card" style="max-width:175px" ondblclick="openEdit('varun')">
+                  <div class="avatar" style="background:linear-gradient(135deg,#94a3b8,#64748b);width:34px;height:34px;font-size:10px;flex-shrink:0;margin:0">VS</div>
+                  <div>
+                    <div class="card-role" style="font-size:7px">Asst HRBP – Corp</div>
+                    <div class="card-name" style="font-size:11px">Varun S</div>
+                    <div class="card-title" style="font-size:8px">Finance, IT, SCM</div>
+                    <div class="status-badge tbi-s" onclick="toggleStatus(this,'varun')" style="margin-top:4px;font-size:7px">Pending</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Manufacturing sub-column -->
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+              <div class="v-line"></div>
+              <div class="node" id="node-mfg-box" style="width:100%">
+                <div class="card" style="background:rgba(14,165,233,0.07);border-color:rgba(14,165,233,0.2);min-width:120px;max-width:150px;padding:10px 12px">
+                  <div class="card-role" style="font-size:8px;letter-spacing:1.5px">Division</div>
+                  <div class="card-name" style="font-size:12px">Manufacturing</div>
+                </div>
+              </div>
+              <div class="v-line"></div>
+              <!-- Kabir Shaikh – HRBP Plants -->
+              <div class="node" id="node-kabir">
+                <div class="card member-row-card" style="max-width:175px" ondblclick="openEdit('kabir')">
+                  <div class="avatar" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);width:34px;height:34px;font-size:10px;flex-shrink:0;margin:0">KS</div>
+                  <div>
+                    <div class="card-role" style="font-size:7px">HRBP – Plants</div>
+                    <div class="card-name" style="font-size:11px">Kabir Shaikh</div>
+                    <div class="card-title" style="font-size:8px">Manager</div>
+                    <div class="status-badge active-s" onclick="toggleStatus(this,'kabir')" style="margin-top:4px;font-size:7px">Active</div>
+                  </div>
+                </div>
+              </div>
+              <div class="v-line"></div>
+              <!-- Plant HR Executives row -->
+              <div style="height:2px;background:rgba(21,101,192,.15);width:240px;margin:0 auto"></div>
+              <div style="display:flex;align-items:flex-start;justify-content:center;gap:6px;margin-top:0">
+                <!-- Nikhil Rane – Bev+TBH -->
+                <div style="display:flex;flex-direction:column;align-items:center">
+                  <div class="v-line"></div>
+                  <div class="node" id="node-nikhil">
+                    <div class="card" style="min-width:110px;max-width:130px;padding:10px 10px" ondblclick="openEdit('nikhil')">
+                      <div class="card-role" style="font-size:7.5px">Plant HR Exec</div>
+                      <div class="avatar" style="background:linear-gradient(135deg,#0369a1,#38bdf8);width:34px;height:34px;font-size:10px;margin:6px auto">NR</div>
+                      <div class="card-name" style="font-size:11px">Nikhil Rane</div>
+                      <div class="card-title" style="font-size:8px">Bev + TBH</div>
+                      <div class="status-badge active-s" onclick="toggleStatus(this,'nikhil')" style="margin-top:4px;font-size:7px">Active</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Rohan Kadam – E.Oils -->
+                <div style="display:flex;flex-direction:column;align-items:center">
+                  <div class="v-line"></div>
+                  <div class="node" id="node-rohan">
+                    <div class="card" style="min-width:110px;max-width:130px;padding:10px 10px" ondblclick="openEdit('rohan')">
+                      <div class="card-role" style="font-size:7.5px">Plant HR Exec</div>
+                      <div class="avatar" style="background:linear-gradient(135deg,#0369a1,#38bdf8);width:34px;height:34px;font-size:10px;margin:6px auto">RK</div>
+                      <div class="card-name" style="font-size:11px">Rohan Kadam</div>
+                      <div class="card-title" style="font-size:8px">E.Oils</div>
+                      <div class="status-badge active-s" onclick="toggleStatus(this,'rohan')" style="margin-top:4px;font-size:7px">Active</div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Siddharth More – Rice+Atta -->
+                <div style="display:flex;flex-direction:column;align-items:center">
+                  <div class="v-line"></div>
+                  <div class="node" id="node-siddharth">
+                    <div class="card" style="min-width:110px;max-width:130px;padding:10px 10px" ondblclick="openEdit('siddharth')">
+                      <div class="card-role" style="font-size:7.5px">Plant HR Exec</div>
+                      <div class="avatar" style="background:linear-gradient(135deg,#0369a1,#38bdf8);width:34px;height:34px;font-size:10px;margin:6px auto">SM</div>
+                      <div class="card-name" style="font-size:11px">Siddharth More</div>
+                      <div class="card-title" style="font-size:8px">Rice + Atta</div>
+                      <div class="status-badge active-s" onclick="toggleStatus(this,'siddharth')" style="margin-top:4px;font-size:7px">Active</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Sales & Marketing HRBP -->
+          <div style="display:flex;flex-direction:column;align-items:center;width:100%;margin-top:16px">
+            <div style="height:2px;background:rgba(21,101,192,.1);width:2px;height:0"></div>
+            <!-- Separate branch from Aditya for Sales -->
+            <div style="background:rgba(21,101,192,.08);border:1.5px dashed rgba(21,101,192,.2);border-radius:10px;padding:6px 14px;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-family:'DM Mono',monospace;margin-top:8px;margin-bottom:4px">
+              Sales &amp; Marketing HRBP
+            </div>
+            <div class="v-line"></div>
+            <!-- Priya Sen -->
+            <div class="node" id="node-priya">
+              <div class="card sales-card" ondblclick="openEdit('priya')">
+                <div class="card-role">HRBP – Sales &amp; Mktg</div>
+                <div class="avatar large" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)">PS</div>
+                <div class="card-name">Priya Sen</div>
+                <div class="card-title">Sr. Manager</div>
+                <div class="status-badge active-s" onclick="toggleStatus(this,'priya')">Active</div>
+              </div>
+            </div>
+            <div class="v-line"></div>
+            <!-- Ananya B -->
+            <div class="node" id="node-ananya">
+              <div class="card member-row-card" style="max-width:175px" ondblclick="openEdit('ananya')">
+                <div class="avatar" style="background:linear-gradient(135deg,#38bdf8,#7dd3fc);width:34px;height:34px;font-size:10px;flex-shrink:0;margin:0">AB</div>
+                <div>
+                  <div class="card-role" style="font-size:7px">Assistant Manager</div>
+                  <div class="card-name" style="font-size:11px">Ananya B</div>
+                  <div class="status-badge active-s" onclick="toggleStatus(this,'ananya')" style="margin-top:4px;font-size:7px">Active</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section label -->
+          <div style="margin-top:20px;width:100%">
+            <div class="dept-strip hrbp">HR Business Partnering</div>
+          </div>
+        </div>
+
+        <!-- ══════════ SECTION 2: TALENT ACQUISITION ══════════ -->
+        <div class="section-col">
+          <div class="v-line"></div>
+
+          <!-- Divya M – TA Lead -->
+          <div class="node" id="node-divya">
+            <div class="card ta-card" ondblclick="openEdit('divya')">
+              <div class="card-role">Talent Acquisition Lead</div>
+              <div class="avatar large" style="background:linear-gradient(135deg,#7C3AED,#8B5CF6)">DM</div>
+              <div class="card-name">Divya M</div>
+              <div class="card-title">Sr. Manager 1</div>
+              <div class="status-badge active-s" onclick="toggleStatus(this,'divya')">Active</div>
+            </div>
+          </div>
+          <div class="v-line"></div>
+          <div style="height:2px;background:rgba(124,58,237,.2);width:220px;margin:0 auto"></div>
+
+          <!-- TA team -->
+          <div style="display:flex;align-items:flex-start;justify-content:center;gap:10px">
+            <!-- TA Corporate & Mfg Ops – Dy Manager (TBI/vacant) -->
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div class="v-line"></div>
+              <div class="node" id="node-ta-corp">
+                <div class="card tbi-card" style="min-width:130px;max-width:160px;padding:12px 12px" ondblclick="openEdit('ta-corp')">
+                  <div class="card-role" style="font-size:7.5px">TA – Corp &amp; Mfg Ops</div>
+                  <div class="avatar" style="background:linear-gradient(135deg,#94a3b8,#64748b);width:36px;height:36px;font-size:10px;margin:6px auto">TBI</div>
+                  <div class="card-name" style="font-size:11px">Vacant</div>
+                  <div class="card-title" style="font-size:8px">Dy. Manager</div>
+                  <div class="status-badge tbi-s" onclick="toggleStatus(this,'ta-corp')" style="margin-top:4px;font-size:7px">Pending</div>
+                </div>
+              </div>
+            </div>
+            <!-- Arjun Mehta -->
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div class="v-line"></div>
+              <div class="node" id="node-arjun">
+                <div class="card" style="min-width:130px;max-width:160px;padding:12px 12px" ondblclick="openEdit('arjun')">
+                  <div class="card-role" style="font-size:7.5px">TA – Commercial</div>
+                  <div class="avatar" style="background:linear-gradient(135deg,#7C3AED,#a78bfa);width:36px;height:36px;font-size:10px;margin:6px auto">AM</div>
+                  <div class="card-name" style="font-size:11px">Arjun Mehta</div>
+                  <div class="card-title" style="font-size:8px">Officer</div>
+                  <div class="status-badge active-s" onclick="toggleStatus(this,'arjun')" style="margin-top:4px;font-size:7px">Active</div>
+                </div>
+              </div>
+            </div>
+            <!-- TA Trainee TBI -->
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div class="v-line"></div>
+              <div class="node" id="node-ta-trainee">
+                <div class="card tbi-card" style="min-width:110px;max-width:140px;padding:12px 10px" ondblclick="openEdit('ta-trainee')">
+                  <div class="card-role" style="font-size:7.5px">TA Trainee</div>
+                  <div class="avatar" style="background:linear-gradient(135deg,#94a3b8,#cbd5e1);width:36px;height:36px;font-size:10px;margin:6px auto">TBI</div>
+                  <div class="card-name" style="font-size:11px">TBI</div>
+                  <div class="card-title" style="font-size:8px">Trainee</div>
+                  <div class="status-badge tbi-s" onclick="toggleStatus(this,'ta-trainee')" style="margin-top:4px;font-size:7px">Pending</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section label -->
+          <div style="margin-top:20px;width:100%">
+            <div class="dept-strip ta">Talent Acquisition</div>
+          </div>
+        </div>
+
+        <!-- ══════════ SECTION 3: HR OPERATIONS & PAYROLL ══════════ -->
+        <div class="section-col">
+          <div class="v-line"></div>
+
+          <!-- Placeholder for alignment – the dashed line from VP goes to HR Ops too -->
+          <div style="height:24px"></div>
+
+          <!-- HR Ops team directly under VP -->
+          <div style="height:2px;background:rgba(5,150,105,.2);width:160px;margin:0 auto"></div>
+          <div style="display:flex;align-items:flex-start;justify-content:center;gap:10px">
+            <!-- Karan T -->
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div class="v-line"></div>
+              <div class="node" id="node-karan">
+                <div class="card ops-card" style="min-width:130px;max-width:160px;padding:12px 12px" ondblclick="openEdit('karan')">
+                  <div class="card-role" style="font-size:7.5px">Payroll</div>
+                  <div class="avatar" style="background:linear-gradient(135deg,#059669,#34d399);width:40px;height:40px;font-size:11px;margin:6px auto">KT</div>
+                  <div class="card-name" style="font-size:12px">Karan T.</div>
+                  <div class="card-title" style="font-size:8px">Executive</div>
+                  <div class="status-badge active-s" onclick="toggleStatus(this,'karan')" style="margin-top:4px;font-size:7px">Active</div>
+                </div>
+              </div>
+            </div>
+            <!-- Sneha D -->
+            <div style="display:flex;flex-direction:column;align-items:center">
+              <div class="v-line"></div>
+              <div class="node" id="node-sneha">
+                <div class="card ops-card" style="min-width:130px;max-width:160px;padding:12px 12px" ondblclick="openEdit('sneha')">
+                  <div class="card-role" style="font-size:7.5px">HR Ops</div>
+                  <div class="avatar" style="background:linear-gradient(135deg,#059669,#34d399);width:40px;height:40px;font-size:11px;margin:6px auto">SD</div>
+                  <div class="card-name" style="font-size:12px">Sneha D</div>
+                  <div class="card-title" style="font-size:8px">Executive</div>
+                  <div class="status-badge active-s" onclick="toggleStatus(this,'sneha')" style="margin-top:4px;font-size:7px">Active</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section label -->
+          <div style="margin-top:20px;width:100%">
+            <div class="dept-strip hrops">HR Operations &amp; Payroll</div>
+          </div>
+        </div>
+
+      </div><!-- /sections-row -->
+    </div><!-- /tree-center -->
+  </div><!-- /top row -->
+
+</div><!-- /page -->
+
+<!-- ══ EDIT MODAL ══ -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-title"><span>✏️</span> Edit Employee Card</div>
+    <input type="hidden" id="editNodeId">
+    <div class="form-row">
+      <div class="form-label">Full Name</div>
+      <input class="form-input" type="text" id="editName" placeholder="Employee name">
+    </div>
+    <div class="form-row">
+      <div class="form-label">Role / Designation</div>
+      <input class="form-input" type="text" id="editRole" placeholder="e.g. DGM – HRBP">
+    </div>
+    <div class="form-row">
+      <div class="form-label">Title / Department</div>
+      <input class="form-input" type="text" id="editTitle" placeholder="e.g. Sr. Manager">
+    </div>
+    <div class="form-row">
+      <div class="form-label">Status</div>
+      <select class="form-select" id="editStatus">
+        <option value="active">Active</option>
+        <option value="terminated">Terminated</option>
+        <option value="tbi">TBI / Pending</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ NODE DATA ══
+const nodeData = {
+  meera:      {name:'Meera K.',role:'Head of HR – GXC',title:'Vice President',status:'active'},
+  aditya:    {name:'Aditya P.',role:'Lead HRBP – Corp & Mfg',title:'DGM – HRBP',status:'active'},
+  varun:      {name:'Varun S',role:'Asst HRBP – Corporate',title:'Finance, IT, SCM',status:'tbi'},
+  kabir:     {name:'Kabir Shaikh',role:'HRBP – Plants',title:'Manager',status:'active'},
+  nikhil:       {name:'Nikhil Rane',role:'Plant HR Executive',title:'Bev + TBH',status:'active'},
+  rohan:       {name:'Rohan Kadam',role:'Plant HR Executive',title:'E.Oils',status:'active'},
+  siddharth:   {name:'Siddharth More',role:'Plant HR Executive',title:'Rice + Atta',status:'active'},
+  priya:       {name:'Priya Sen',role:'HRBP – Sales & Marketing',title:'Sr. Manager',status:'active'},
+  ananya:     {name:'Ananya B',role:'Assistant Manager',title:'Sales & Mktg HRBP',status:'active'},
+  divya:     {name:'Divya M',role:'Talent Acquisition Lead',title:'Sr. Manager 1',status:'active'},
+  'ta-corp':  {name:'Vacant',role:'TA – Corp & Mfg Ops',title:'Dy. Manager',status:'tbi'},
+  arjun:    {name:'Arjun Mehta',role:'TA – Commercial',title:'Officer',status:'active'},
+  'ta-trainee':{name:'TBI',role:'TA Trainee',title:'Trainee',status:'tbi'},
+  karan:    {name:'Karan T.',role:'Payroll',title:'Executive',status:'active'},
+  sneha:    {name:'Sneha D',role:'HR Ops',title:'Executive',status:'active'},
+};
+
+// ══ COUNTS ══
+function updateCounts(){
+  let a=0,t=0;
+  document.querySelectorAll('.status-badge').forEach(b=>{
+    if(b.classList.contains('active-s'))a++;
+    else if(b.classList.contains('terminated-s'))t++;
+  });
+  document.getElementById('activeCount').textContent=a;
+  document.getElementById('termCount').textContent=t;
+}
+window.onload=()=>{updateCounts()};
+
+// ══ FILTER ══
+function filterStatus(type,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.remove('all-f','active-f','terminated-f')});
+  if(type==='all')btn.classList.add('all-f');
+  else if(type==='active')btn.classList.add('active-f');
+  else btn.classList.add('terminated-f');
+  document.querySelectorAll('.node').forEach(node=>{
+    if(type==='all'){node.classList.remove('hidden-node');return}
+    const badge=node.querySelector('.status-badge');
+    if(!badge){node.classList.remove('hidden-node');return}
+    const isActive=badge.classList.contains('active-s');
+    const isTerm=badge.classList.contains('terminated-s');
+    if(type==='active')node.classList.toggle('hidden-node',!isActive);
+    else node.classList.toggle('hidden-node',!isTerm);
+  });
+}
+
+// ══ SEARCH ══
+function searchNodes(q){
+  const lq=q.toLowerCase().trim();
+  document.querySelectorAll('.node').forEach(node=>{
+    if(!lq){node.classList.remove('hidden-node');return}
+    const name=(node.querySelector('.card-name')?.textContent||'').toLowerCase();
+    const role=(node.querySelector('.card-role')?.textContent||'').toLowerCase();
+    const title=(node.querySelector('.card-title')?.textContent||'').toLowerCase();
+    node.classList.toggle('hidden-node',!name.includes(lq)&&!role.includes(lq)&&!title.includes(lq));
+  });
+}
+
+// ══ STATUS TOGGLE ══
+function toggleStatus(badge,id){
+  const card=badge.closest('.card');
+  if(badge.classList.contains('active-s')){
+    badge.textContent='Terminated';badge.className='status-badge terminated-s';
+    card.classList.add('terminated-card');nodeData[id].status='terminated';
+  } else if(badge.classList.contains('terminated-s')){
+    badge.textContent='Pending';badge.className='status-badge tbi-s';
+    card.classList.remove('terminated-card');nodeData[id].status='tbi';
+  } else {
+    badge.textContent='Active';badge.className='status-badge active-s';
+    card.classList.remove('terminated-card');nodeData[id].status='active';
+  }
+  updateCounts();
+  showToast('Status updated','success');
+}
+
+// ══ EDIT MODAL ══
+function openEdit(id){
+  const d=nodeData[id]||{};
+  document.getElementById('editNodeId').value=id;
+  document.getElementById('editName').value=d.name||'';
+  document.getElementById('editRole').value=d.role||'';
+  document.getElementById('editTitle').value=d.title||'';
+  document.getElementById('editStatus').value=d.status||'active';
+  document.getElementById('editModal').classList.add('open');
+}
+function closeModal(){document.getElementById('editModal').classList.remove('open')}
+document.getElementById('editModal').addEventListener('click',function(e){if(e.target===this)closeModal()});
+
+function saveEdit(){
+  const id=document.getElementById('editNodeId').value;
+  const name=document.getElementById('editName').value;
+  const role=document.getElementById('editRole').value;
+  const title=document.getElementById('editTitle').value;
+  const status=document.getElementById('editStatus').value;
+  const node=document.getElementById('node-'+id);
+  if(!node){closeModal();return}
+  const card=node.querySelector('.card');
+  const nameEl=node.querySelector('.card-name');
+  const roleEl=node.querySelector('.card-role');
+  const titleEl=node.querySelector('.card-title');
+  const badge=node.querySelector('.status-badge');
+  if(nameEl&&name)nameEl.textContent=name;
+  if(roleEl&&role)roleEl.textContent=role;
+  if(titleEl&&title)titleEl.textContent=title;
+  if(badge){
+    if(status==='active'){badge.textContent='Active';badge.className='status-badge active-s';card.classList.remove('terminated-card')}
+    else if(status==='terminated'){badge.textContent='Terminated';badge.className='status-badge terminated-s';card.classList.add('terminated-card')}
+    else{badge.textContent='Pending';badge.className='status-badge tbi-s';card.classList.remove('terminated-card')}
+  }
+  nodeData[id]={name,role,title,status};
+  updateCounts();
+  closeModal();
+  showToast('✅ Card updated successfully','success');
+}
+
+// ══ DRAG & DROP ══
+let importData=[];
+function toggleDropZone(){document.getElementById('dropZoneWrap').classList.toggle('hidden')}
+function handleDragOver(e){e.preventDefault();document.getElementById('dropZone').classList.add('drag-over')}
+function handleDragLeave(){document.getElementById('dropZone').classList.remove('drag-over')}
+function handleDrop(e){
+  e.preventDefault();document.getElementById('dropZone').classList.remove('drag-over');
+  const file=e.dataTransfer.files[0];if(file)processFile(file);
+}
+function handleFileSelect(e){const file=e.target.files[0];if(file)processFile(file)}
+function processFile(file){
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const text=e.target.result;
+    if(file.name.endsWith('.json')){
+      try{importData=JSON.parse(text);showPreview(importData,file.name)}
+      catch{showToast('❌ Invalid JSON format','info')}
+    } else {
+      const lines=text.trim().split('\n');
+      const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+      importData=lines.slice(1).map(line=>{
+        const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));
+        const obj={};headers.forEach((h,i)=>obj[h]=vals[i]||'');return obj;
+      });
+      showPreview(importData,file.name);
+    }
+  };reader.readAsText(file);
+}
+function showPreview(data,fname){
+  const preview=document.getElementById('dropPreview');
+  const list=document.getElementById('previewList');
+  document.getElementById('previewTitle').textContent=`✅ Loaded "${fname}" — ${data.length} records found`;
+  list.innerHTML='';
+  data.slice(0,8).forEach(row=>{
+    const chip=document.createElement('div');chip.className='preview-chip';
+    chip.textContent=row.name||row.Name||row.employee||Object.values(row)[0]||'?';
+    list.appendChild(chip);
+  });
+  if(data.length>8){const more=document.createElement('div');more.className='preview-chip';more.style.opacity='.6';more.textContent=`+${data.length-8} more`;list.appendChild(more)}
+  preview.classList.add('show');
+}
+function cancelImport(){importData=[];document.getElementById('dropPreview').classList.remove('show');document.getElementById('fileInput').value=''}
+function applyImport(){
+  if(!importData.length){showToast('No data to apply','info');return}
+  let updated=0;
+  importData.forEach(row=>{
+    const id=row.id||row.nodeId||row.node_id||'';
+    const name=row.name||row.Name||row.employee||'';
+    const role=row.role||row.Role||row.designation||'';
+    const title=row.title||row.Title||row.department||'';
+    const status=(row.status||row.Status||'active').toLowerCase();
+    if(id&&document.getElementById('node-'+id)){
+      document.getElementById('editNodeId').value=id;
+      if(name)document.getElementById('editName').value=name;
+      if(role)document.getElementById('editRole').value=role;
+      if(title)document.getElementById('editTitle').value=title;
+      document.getElementById('editStatus').value=status==='terminated'?'terminated':status==='tbi'?'tbi':'active';
+      saveEditSilent(id,name,role,title,status);updated++;
+    } else {
+      document.querySelectorAll('.node').forEach(node=>{
+        const nName=node.querySelector('.card-name')?.textContent?.trim().toLowerCase()||'';
+        if(name&&nName===name.toLowerCase()){const nid=node.id.replace('node-','');saveEditSilent(nid,name,role,title,status);updated++}
+      });
+    }
+  });
+  document.getElementById('dropZoneWrap').classList.add('hidden');
+  document.getElementById('dropPreview').classList.remove('show');
+  document.getElementById('fileInput').value='';
+  updateCounts();showToast(`✅ Applied ${updated} updates to chart`,'success');
+}
+function saveEditSilent(id,name,role,title,status){
+  const node=document.getElementById('node-'+id);if(!node)return;
+  const card=node.querySelector('.card');
+  if(name&&node.querySelector('.card-name'))node.querySelector('.card-name').textContent=name;
+  if(role&&node.querySelector('.card-role'))node.querySelector('.card-role').textContent=role;
+  const titleEl=node.querySelector('.card-title');if(title&&titleEl)titleEl.textContent=title;
+  const badge=node.querySelector('.status-badge');
+  if(badge){
+    if(status==='terminated'){badge.textContent='Terminated';badge.className='status-badge terminated-s';card.classList.add('terminated-card')}
+    else if(status==='tbi'){badge.textContent='Pending';badge.className='status-badge tbi-s';card.classList.remove('terminated-card')}
+    else{badge.textContent='Active';badge.className='status-badge active-s';card.classList.remove('terminated-card')}
+  }
+  nodeData[id]={name,role,title,status};
+}
+
+// ══ CSV TEMPLATE ══
+function downloadTemplate(e){
+  e.stopPropagation();
+  const csv=`id,name,role,title,status
+meera,Meera K.,Head of HR – GXC,Vice President,active
+aditya,Aditya P.,Lead HRBP – Corp & Mfg,DGM – HRBP,active
+varun,Varun S,Asst HRBP – Corporate,Finance IT SCM,tbi
+kabir,Kabir Shaikh,HRBP – Plants,Manager,active
+nikhil,Nikhil Rane,Plant HR Executive,Bev + TBH,active
+rohan,Rohan Kadam,Plant HR Executive,E.Oils,active
+siddharth,Siddharth More,Plant HR Executive,Rice + Atta,active
+priya,Priya Sen,HRBP – Sales & Marketing,Sr. Manager,active
+ananya,Ananya B,Assistant Manager,Sales & Mktg HRBP,active
+divya,Divya M,Talent Acquisition Lead,Sr. Manager 1,active
+ta-corp,Vacant,TA – Corp & Mfg Ops,Dy. Manager,tbi
+arjun,Arjun Mehta,TA – Commercial,Officer,active
+ta-trainee,TBI,TA Trainee,Trainee,tbi
+karan,Karan T.,Payroll,Executive,active
+sneha,Sneha D,HR Ops,Executive,active`;
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gxc_hr_dept_template.csv';a.click();
+  showToast('📥 CSV template downloaded','info');
+}
+
+// ══ TOAST ══
+let toastTimer;
+function showToast(msg,type='info'){
+  clearTimeout(toastTimer);
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+(type||'info');t.classList.add('show');
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>

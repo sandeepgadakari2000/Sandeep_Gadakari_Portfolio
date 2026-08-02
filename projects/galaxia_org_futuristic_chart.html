@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GXC — Global Org Structure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f4f6fb;
+  --bg2: #eef2ff;
+  --glass: rgba(255,255,255,0.38);
+  --glass-strong: rgba(255,255,255,0.62);
+  --glass-border: rgba(255,255,255,0.55);
+  --glass-border-strong: rgba(255,255,255,0.8);
+  --cyan: #22d3ee;
+  --cyan-soft: rgba(34,211,238,0.15);
+  --cyan-glow: rgba(34,211,238,0.35);
+  --indigo: #6366f1;
+  --indigo-soft: rgba(99,102,241,0.18);
+  --slate: #334155;
+  --slate-mid: #64748b;
+  --slate-light: #94a3b8;
+  --green: #10b981;
+  --green-soft: rgba(16,185,129,0.15);
+  --green-glow: rgba(16,185,129,0.4);
+  --red: #ef4444;
+  --red-soft: rgba(239,68,68,0.12);
+  --red-glow: rgba(239,68,68,0.3);
+  --shadow-glass: 0 8px 40px rgba(255,255,255,0.28), 0 2px 12px rgba(99,102,241,0.08);
+  --shadow-hover: 0 0 40px rgba(34,211,238,0.35), 0 8px 40px rgba(255,255,255,0.3);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+html, body { width: 100%; min-height: 100vh; overflow-x: hidden; }
+
+body {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, #f5f7fb 0%, #ffffff 40%, #eef2ff 70%, #f0f9ff 100%);
+  min-height: 100vh;
+  position: relative;
+  color: var(--slate);
+}
+
+/* ── BG GLOWS ── */
+.bg-glow {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+  filter: blur(80px);
+}
+.bg-glow-1 { width: 900px; height: 900px; background: rgba(34,211,238,0.08); top: 50%; left: 50%; transform: translate(-50%,-50%); }
+.bg-glow-2 { width: 350px; height: 350px; background: rgba(255,255,255,0.55); top: 5%; left: 15%; }
+.bg-glow-3 { width: 400px; height: 400px; background: rgba(34,211,238,0.07); bottom: 5%; right: 8%; }
+.bg-glow-4 { width: 250px; height: 250px; background: rgba(99,102,241,0.06); top: 20%; right: 25%; }
+
+/* ── GRID TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  pointer-events: none;
+}
+
+.page-wrap {
+  position: relative; z-index: 1;
+  width: 100%; min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+/* ── NAVBAR ── */
+nav {
+  position: relative; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.nav-brand h1 {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700;
+  color: var(--slate); letter-spacing: -0.3px;
+}
+.nav-brand p { font-size: 12px; color: var(--slate-light); margin-top: 1px; }
+.nav-links { display: flex; gap: 8px; }
+.nav-link {
+  padding: 8px 20px; border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(16px);
+  font-size: 13px; font-weight: 500; color: var(--slate-mid);
+  cursor: pointer; transition: all 0.3s ease;
+  font-family: var(--font-body);
+}
+.nav-link:hover {
+  background: rgba(255,255,255,0.5);
+  transform: scale(1.05);
+  color: var(--slate);
+  box-shadow: 0 4px 20px rgba(255,255,255,0.4);
+}
+.nav-link.active {
+  background: rgba(99,102,241,0.12);
+  border-color: rgba(99,102,241,0.25);
+  color: var(--indigo);
+}
+
+/* ── MAIN AREA ── */
+main {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  position: relative;
+}
+
+/* ── ORG CANVAS ── */
+.org-canvas {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  height: 900px;
+}
+
+/* ── ORBITAL RINGS ── */
+.rings-wrap {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+.ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+.ring-1 { width: 310px; height: 310px; border-color: rgba(255,255,255,0.5); }
+.ring-2 { width: 520px; height: 520px; border-color: rgba(255,255,255,0.32); animation: ringPulse 8s ease-in-out infinite; }
+.ring-3 { width: 760px; height: 760px; border-color: rgba(255,255,255,0.2); animation: ringPulse 12s ease-in-out infinite 2s; }
+@keyframes ringPulse {
+  0%,100% { opacity: 0.6; } 50% { opacity: 1; }
+}
+
+/* ── SVG LINES ── */
+.svg-lines {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+/* ── CENTER HUB ── */
+.center-hub {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px; height: 280px;
+  border-radius: 40px;
+  background: var(--glass-strong);
+  border: 1.5px solid var(--glass-border-strong);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  box-shadow: var(--shadow-glass), inset 0 1px 0 rgba(255,255,255,0.9);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px;
+  z-index: 20;
+  cursor: pointer;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s;
+}
+.center-hub:hover {
+  transform: translate(-50%,-50%) scale(1.04);
+  box-shadow: var(--shadow-hover), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+.hub-ping {
+  position: absolute; inset: 0; border-radius: 40px;
+  border: 1px solid rgba(34,211,238,0.25);
+  animation: hubPing 3s ease-out infinite;
+}
+@keyframes hubPing {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.18); opacity: 0; }
+}
+.hub-avatars {
+  display: flex; margin-bottom: 14px;
+}
+.hub-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+  object-fit: cover;
+  background: linear-gradient(135deg, #1565C0, #42A5F5);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.hub-avatar:last-child { margin-left: -18px; }
+.hub-divider {
+  width: 60px; height: 1px; margin: 8px auto;
+  background: linear-gradient(to right, transparent, var(--cyan), transparent);
+}
+.hub-name { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--slate); text-align: center; line-height: 1.2; }
+.hub-role { font-size: 11px; color: var(--slate-light); text-align: center; margin-top: 2px; }
+.hub-live {
+  margin-top: 10px;
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.25);
+  border-radius: 20px; padding: 4px 12px;
+  font-size: 10px; font-weight: 600; color: var(--green);
+  letter-spacing: 1px;
+}
+.hub-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 1.5s infinite; box-shadow: 0 0 6px var(--green); }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0.2} }
+
+/* ── DEPARTMENT NODE ── */
+.dept-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 10;
+}
+.dept-card {
+  background: var(--glass);
+  border: 1.5px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: 18px 22px;
+  box-shadow: var(--shadow-glass);
+  transition: all 0.45s cubic-bezier(0.34,1.56,0.64,1);
+  min-width: 140px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.dept-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+}
+.dept-node:hover .dept-card {
+  transform: scale(1.1);
+  border-color: rgba(34,211,238,0.5);
+  background: rgba(255,255,255,0.55);
+  box-shadow: var(--shadow-hover);
+  z-index: 30;
+}
+.dept-node.active-node .dept-card { border-color: rgba(16,185,129,0.5); box-shadow: 0 0 30px rgba(16,185,129,0.2), var(--shadow-glass); }
+.dept-node.terminated-node .dept-card { border-color: rgba(239,68,68,0.4); box-shadow: 0 0 30px rgba(239,68,68,0.15), var(--shadow-glass); opacity: 0.8; }
+
+.dept-name {
+  font-family: var(--font-display);
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--slate);
+}
+.dept-expand {
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.45s ease, opacity 0.35s ease;
+}
+.dept-node:hover .dept-expand {
+  max-height: 160px; opacity: 1;
+}
+.dept-sep {
+  width: 100%; height: 1px; margin: 10px 0;
+  background: linear-gradient(to right, transparent, var(--cyan), transparent);
+}
+.dept-head { font-size: 12px; font-weight: 600; color: var(--slate); }
+.dept-role { font-size: 10px; color: var(--slate-light); margin-top: 2px; }
+.dept-btn {
+  margin-top: 10px;
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.4);
+  font-size: 10px; font-weight: 500;
+  color: var(--slate-mid); cursor: pointer;
+  transition: all 0.25s;
+  font-family: var(--font-body);
+  backdrop-filter: blur(10px);
+}
+.dept-btn:hover { background: rgba(255,255,255,0.65); color: #0891b2; }
+
+/* Status indicator on node */
+.node-status {
+  position: absolute; top: -6px; right: -6px;
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid #fff;
+  display: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 5;
+}
+.node-status.show { display: flex; align-items: center; justify-content: center; }
+.node-status.active { background: var(--green); box-shadow: 0 0 10px var(--green-glow); animation: blink 2s infinite; }
+.node-status.terminated { background: var(--red); box-shadow: 0 0 8px var(--red-glow); }
+
+/* ── PARTICLES ── */
+.particle {
+  position: fixed; border-radius: 50%;
+  background: rgba(34,211,238,0.65);
+  pointer-events: none; z-index: 0;
+  animation: particleDrift linear infinite;
+}
+@keyframes particleDrift {
+  0% { transform: translate(0,0); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.3; }
+  100% { transform: translate(20px,-80px); opacity: 0; }
+}
+
+/* ── BOTTOM SECTIONS ── */
+.bottom-sections {
+  position: relative; z-index: 10;
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 18px; padding: 0 40px 40px;
+}
+@media(max-width:900px){.bottom-sections{grid-template-columns:1fr}}
+.section-card {
+  border-radius: 30px;
+  border: 1.5px solid var(--glass-border);
+  background: rgba(255,255,255,0.22);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 32px;
+  box-shadow: var(--shadow-glass);
+  position: relative; overflow: hidden;
+  transition: all 0.4s ease;
+  cursor: pointer;
+}
+.section-card::before {
+  content: ''; position: absolute; inset: 0; opacity: 0;
+  background: linear-gradient(135deg, rgba(34,211,238,0.06) 0%, rgba(255,255,255,0.03) 100%);
+  transition: opacity 0.4s;
+}
+.section-card:hover { transform: translateY(-6px); background: rgba(255,255,255,0.38); }
+.section-card:hover::before { opacity: 1; }
+.section-title {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 700; color: var(--slate);
+  margin-bottom: 10px;
+}
+.section-desc { font-size: 13px; line-height: 1.8; color: var(--slate-light); }
+.section-btn {
+  margin-top: 22px; padding: 9px 22px; border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.32);
+  font-size: 13px; font-weight: 500; color: var(--slate-mid);
+  cursor: pointer; transition: all 0.3s;
+  font-family: var(--font-body); backdrop-filter: blur(12px);
+}
+.section-btn:hover { transform: scale(1.05); background: rgba(255,255,255,0.55); color: #0891b2; }
+
+/* ── DRAG & DROP ZONE ── */
+.drop-zone-wrap {
+  position: relative; z-index: 10;
+  padding: 0 40px 28px;
+}
+.drop-zone {
+  border-radius: 24px;
+  border: 2px dashed rgba(99,102,241,0.25);
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(16px);
+  padding: 28px 32px;
+  display: flex; align-items: center; gap: 28px;
+  transition: all 0.3s ease;
+  position: relative; overflow: hidden;
+  flex-wrap: wrap;
+}
+.drop-zone::before {
+  content: ''; position: absolute; inset: 0; border-radius: 22px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.04), transparent);
+  pointer-events: none;
+}
+.drop-zone.drag-over {
+  border-color: rgba(34,211,238,0.6);
+  background: rgba(34,211,238,0.06);
+  box-shadow: 0 0 40px rgba(34,211,238,0.15);
+}
+.drop-icon {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: rgba(99,102,241,0.1);
+  border: 1.5px solid rgba(99,102,241,0.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 28px;
+  transition: all 0.3s;
+}
+.drop-zone.drag-over .drop-icon {
+  background: rgba(34,211,238,0.15);
+  border-color: rgba(34,211,238,0.4);
+  transform: scale(1.1);
+}
+.drop-text { flex: 1; min-width: 200px; }
+.drop-title {
+  font-family: var(--font-display);
+  font-size: 16px; font-weight: 700; color: var(--slate); margin-bottom: 4px;
+}
+.drop-sub { font-size: 12px; color: var(--slate-light); line-height: 1.7; }
+.drop-sub code {
+  background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.15);
+  border-radius: 4px; padding: 1px 6px; font-size: 11px;
+  color: var(--indigo); font-family: monospace;
+}
+.drop-input-btn {
+  padding: 10px 22px; border-radius: 30px;
+  border: 1.5px solid rgba(99,102,241,0.3);
+  background: rgba(99,102,241,0.08);
+  font-size: 13px; font-weight: 600;
+  color: var(--indigo); cursor: pointer;
+  transition: all 0.3s; font-family: var(--font-body);
+  flex-shrink: 0;
+}
+.drop-input-btn:hover {
+  background: rgba(99,102,241,0.16);
+  transform: scale(1.04);
+  box-shadow: 0 4px 20px rgba(99,102,241,0.2);
+}
+
+/* STATUS BAR */
+.status-row {
+  display: flex; gap: 10px; align-items: center;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.55);
+  border-radius: 16px;
+  flex-shrink: 0;
+  backdrop-filter: blur(12px);
+  flex-wrap: wrap;
+}
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  font-family: var(--font-display);
+}
+.status-pill.green { background: var(--green-soft); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+.status-pill.red { background: var(--red-soft); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+.status-pill.blue { background: rgba(99,102,241,0.1); color: var(--indigo); border: 1px solid rgba(99,102,241,0.2); }
+.pill-dot { width: 6px; height: 6px; border-radius: 50%; }
+.pill-dot.green { background: var(--green); animation: blink 1.5s infinite; box-shadow: 0 0 6px var(--green); }
+.pill-dot.red { background: var(--red); }
+.pill-dot.blue { background: var(--indigo); }
+
+/* DATA MODAL */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(15,23,42,0.35);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.modal-backdrop.show { opacity: 1; pointer-events: all; }
+.modal {
+  width: 520px; max-width: 95vw;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(28px);
+  border: 1.5px solid rgba(255,255,255,0.8);
+  border-radius: 32px;
+  padding: 36px;
+  box-shadow: 0 24px 80px rgba(15,23,42,0.2), 0 4px 20px rgba(99,102,241,0.1);
+  transform: scale(0.9) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.modal-backdrop.show .modal { transform: scale(1) translateY(0); }
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 700; color: var(--slate);
+  margin-bottom: 6px;
+}
+.modal-sub { font-size: 12px; color: var(--slate-light); margin-bottom: 20px; }
+.modal-sub code {
+  background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.15);
+  border-radius: 4px; padding: 1px 6px; color: var(--indigo); font-size: 11px;
+}
+.modal-textarea {
+  width: 100%; min-height: 180px;
+  background: rgba(255,255,255,0.6);
+  border: 1.5px solid rgba(99,102,241,0.2);
+  border-radius: 16px; padding: 14px 16px;
+  font-family: monospace; font-size: 12px;
+  color: var(--slate); resize: vertical;
+  outline: none; transition: border-color 0.2s;
+  line-height: 1.8;
+}
+.modal-textarea:focus { border-color: rgba(34,211,238,0.5); box-shadow: 0 0 0 3px rgba(34,211,238,0.08); }
+.modal-textarea::placeholder { color: var(--slate-light); }
+.modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+.modal-btn-primary {
+  flex: 1; padding: 12px; border-radius: 16px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.85), rgba(34,211,238,0.7));
+  border: none; font-family: var(--font-display);
+  font-size: 14px; font-weight: 700; color: #fff;
+  cursor: pointer; transition: all 0.3s;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.25);
+}
+.modal-btn-primary:hover { transform: scale(1.02); box-shadow: 0 6px 28px rgba(99,102,241,0.35); }
+.modal-btn-secondary {
+  padding: 12px 22px; border-radius: 16px;
+  border: 1.5px solid rgba(99,102,241,0.2);
+  background: transparent; font-family: var(--font-display);
+  font-size: 14px; font-weight: 600; color: var(--slate-mid);
+  cursor: pointer; transition: all 0.25s;
+}
+.modal-btn-secondary:hover { background: rgba(255,255,255,0.5); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 200;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(255,255,255,0.8);
+  border-radius: 18px; padding: 14px 22px;
+  font-family: var(--font-display); font-size: 13px; font-weight: 600;
+  color: var(--slate);
+  box-shadow: 0 8px 40px rgba(15,23,42,0.12);
+  transform: translateY(20px); opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; gap: 10px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { font-size: 18px; }
+
+/* STREAM TICKER */
+.stream-bar {
+  position: relative; z-index: 10;
+  padding: 0 40px 20px;
+}
+.stream-inner {
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.22);
+  backdrop-filter: blur(14px);
+  padding: 10px 18px;
+  display: flex; align-items: center; gap: 14px;
+  overflow: hidden;
+}
+.stream-label {
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  color: var(--indigo); letter-spacing: 2px; text-transform: uppercase;
+  flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+}
+.stream-label::before { content: '▶'; font-size: 7px; }
+.stream-scroll { flex: 1; overflow: hidden; position: relative; height: 16px; }
+.stream-text {
+  position: absolute; white-space: nowrap;
+  font-size: 11px; color: var(--slate-light);
+  animation: streamTick 28s linear infinite;
+}
+@keyframes streamTick { from{transform:translateX(100vw)} to{transform:translateX(-100%)} }
+
+/* Animate card entries */
+@keyframes nodeAppear {
+  from { opacity: 0; transform: translate(-50%,-50%) scale(0.7); }
+  to { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+}
+.dept-node { animation: nodeAppear 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)} }
+.bottom-sections { animation: fadeUp 0.7s ease 1.2s both; }
+.drop-zone-wrap { animation: fadeUp 0.7s ease 1s both; }
+.stream-bar { animation: fadeUp 0.5s ease 1.3s both; }
+
+/* Hidden file input */
+#fileInput { display: none; }
+
+/* ── FLOWING BUBBLES ── */
+.flow-bubble {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 15;
+  transform: translate(-50%, -50%);
+  animation: flowBubble linear forwards;
+}
+.flow-bubble.active-bubble {
+  background: radial-gradient(circle at 35% 35%, rgba(52,211,153,0.95), rgba(16,185,129,0.7));
+  box-shadow: 0 0 8px rgba(16,185,129,0.7), 0 0 14px rgba(16,185,129,0.4);
+}
+.flow-bubble.terminated-bubble {
+  background: radial-gradient(circle at 35% 35%, rgba(252,165,165,0.95), rgba(239,68,68,0.7));
+  box-shadow: 0 0 8px rgba(239,68,68,0.7), 0 0 14px rgba(239,68,68,0.4);
+}
+@keyframes flowBubble {
+  0%   { opacity: 0; transform: translate(-50%,-50%) scale(0.3); }
+  8%   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  85%  { opacity: 0.85; }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(0.5); }
+}
+
+@media(max-width:700px){
+  nav{padding:16px 20px;flex-direction:column;gap:14px;}
+  .nav-links{gap:5px;flex-wrap:wrap;justify-content:center;}
+  .org-canvas{height:700px;}
+  .center-hub{width:200px;height:200px;}
+  .bottom-sections{padding:0 16px 28px;}
+  .drop-zone-wrap{padding:0 16px 20px;}
+  .stream-bar{padding:0 16px 16px;}
+}
+
+/* ═══════════════════════════════════════════════════════
+   DEPT DETAIL MODAL
+═══════════════════════════════════════════════════════ */
+.dept-modal-backdrop {
+  position: fixed; inset: 0; z-index: 110;
+  background: rgba(15,23,42,0.4);
+  backdrop-filter: blur(14px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.dept-modal-backdrop.show { opacity: 1; pointer-events: all; }
+.dept-modal {
+  width: 600px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1.5px solid rgba(255,255,255,0.85);
+  border-radius: 36px;
+  padding: 40px;
+  box-shadow: 0 32px 100px rgba(15,23,42,0.22), 0 4px 24px rgba(99,102,241,0.12);
+  transform: scale(0.88) translateY(24px);
+  transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+}
+.dept-modal-backdrop.show .dept-modal { transform: scale(1) translateY(0); }
+.dept-modal-header {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  margin-bottom: 28px;
+}
+.dept-modal-icon {
+  width: 68px; height: 68px; border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; flex-shrink: 0;
+  border: 1.5px solid rgba(255,255,255,0.7);
+  box-shadow: 0 4px 20px rgba(99,102,241,0.12);
+}
+.dept-modal-titles { flex: 1; }
+.dept-modal-name {
+  font-family: var(--font-display);
+  font-size: 26px; font-weight: 800; color: var(--slate);
+  line-height: 1.15; margin-bottom: 5px;
+}
+.dept-modal-function {
+  font-size: 12px; font-weight: 600; color: var(--indigo);
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.dept-modal-close {
+  width: 36px; height: 36px; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--slate-mid);
+  cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.dept-modal-close:hover { background: rgba(255,255,255,0.7); color: var(--slate); transform: scale(1.05); }
+
+.dept-modal-status-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.dept-modal-status-badge.active { background: var(--green-soft); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+.dept-modal-status-badge.terminated { background: var(--red-soft); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+.dept-modal-status-badge.unknown { background: rgba(99,102,241,0.1); color: var(--indigo); border: 1px solid rgba(99,102,241,0.2); }
+.badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+.badge-dot.active { background: var(--green); animation: blink 1.5s infinite; box-shadow: 0 0 6px var(--green); }
+.badge-dot.terminated { background: var(--red); }
+.badge-dot.unknown { background: var(--indigo); }
+
+.dept-modal-divider {
+  height: 1px; margin: 0 0 22px;
+  background: linear-gradient(to right, transparent, rgba(99,102,241,0.18), transparent);
+}
+.dept-modal-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px;
+}
+.dept-modal-stat {
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 18px; padding: 16px 18px;
+  backdrop-filter: blur(12px);
+}
+.dept-modal-stat-label {
+  font-size: 10px; font-weight: 700; color: var(--slate-light);
+  letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px;
+}
+.dept-modal-stat-value {
+  font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--slate);
+}
+
+.dept-modal-members-title {
+  font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--slate);
+  margin-bottom: 12px;
+}
+.dept-modal-members {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.dept-member-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px; border-radius: 16px;
+  background: rgba(255,255,255,0.45);
+  border: 1px solid rgba(255,255,255,0.65);
+  transition: all 0.25s;
+}
+.dept-member-row:hover { background: rgba(255,255,255,0.7); transform: translateX(4px); }
+.dept-member-avatar {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #fff;
+  flex-shrink: 0; border: 2px solid rgba(255,255,255,0.8);
+}
+.dept-member-info { flex: 1; }
+.dept-member-name { font-size: 13px; font-weight: 600; color: var(--slate); }
+.dept-member-role { font-size: 11px; color: var(--slate-light); margin-top: 1px; }
+.dept-member-status {
+  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px;
+  letter-spacing: 0.5px;
+}
+.dept-member-status.active { background: var(--green-soft); color: var(--green); }
+.dept-member-status.terminated { background: var(--red-soft); color: var(--red); }
+
+/* ═══════════════════════════════════════════════════════
+   NAV VIEW PANELS (fullscreen overlays)
+═══════════════════════════════════════════════════════ */
+.view-panel {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(244,246,251,0.97);
+  backdrop-filter: blur(20px);
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease;
+  overflow-y: auto;
+}
+.view-panel.show { opacity: 1; pointer-events: all; }
+.view-panel-inner {
+  max-width: 1100px; margin: 0 auto; padding: 60px 40px;
+  width: 100%;
+}
+.view-panel-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 20px; border-radius: 20px;
+  border: 1px solid rgba(99,102,241,0.25);
+  background: rgba(99,102,241,0.08);
+  font-size: 13px; font-weight: 600; color: var(--indigo);
+  cursor: pointer; transition: all 0.25s; margin-bottom: 36px;
+  font-family: var(--font-body);
+}
+.view-panel-back:hover { background: rgba(99,102,241,0.14); transform: translateX(-3px); }
+.view-panel-title {
+  font-family: var(--font-display); font-size: 38px; font-weight: 800; color: var(--slate);
+  margin-bottom: 6px; line-height: 1.1;
+}
+.view-panel-sub { font-size: 14px; color: var(--slate-light); margin-bottom: 40px; }
+
+/* People grid */
+.people-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+}
+.person-card {
+  background: rgba(255,255,255,0.5);
+  border: 1.5px solid rgba(255,255,255,0.75);
+  border-radius: 24px; padding: 24px;
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-glass);
+  transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.person-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+.person-avatar-lg {
+  width: 56px; height: 56px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 20px; font-weight: 700; color: #fff;
+  margin-bottom: 14px; border: 2px solid rgba(255,255,255,0.8);
+  box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+}
+.person-name { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--slate); margin-bottom: 3px; }
+.person-role { font-size: 12px; color: var(--slate-light); margin-bottom: 6px; }
+.person-dept { font-size: 11px; font-weight: 600; color: var(--indigo); margin-bottom: 10px; }
+.person-status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; letter-spacing: 0.5px;
+}
+.person-status-badge.active { background: var(--green-soft); color: var(--green); }
+.person-status-badge.terminated { background: var(--red-soft); color: var(--red); }
+
+/* Analytics panel */
+.analytics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; margin-bottom: 32px; }
+.analytics-card {
+  background: rgba(255,255,255,0.5);
+  border: 1.5px solid rgba(255,255,255,0.75);
+  border-radius: 24px; padding: 28px 24px;
+  backdrop-filter: blur(16px); box-shadow: var(--shadow-glass);
+}
+.analytics-num { font-family: var(--font-display); font-size: 42px; font-weight: 800; color: var(--slate); line-height: 1; }
+.analytics-label { font-size: 12px; color: var(--slate-light); margin-top: 6px; font-weight: 500; }
+.analytics-bar-wrap { margin-top: 32px; }
+.analytics-bar-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--slate); margin-bottom: 18px; }
+.analytics-bar-row { margin-bottom: 16px; }
+.analytics-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--slate-mid); margin-bottom: 6px; font-weight: 500; }
+.analytics-bar-track {
+  height: 8px; border-radius: 8px;
+  background: rgba(99,102,241,0.08);
+  overflow: hidden;
+}
+.analytics-bar-fill {
+  height: 100%; border-radius: 8px;
+  background: linear-gradient(90deg, var(--indigo), var(--cyan));
+  transition: width 1s cubic-bezier(0.34,1.56,0.64,1);
+}
+.analytics-bar-fill.red { background: linear-gradient(90deg, var(--red), #f97316); }
+
+/* Reports table */
+.reports-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+.reports-table th {
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  color: var(--slate-light); letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 0 18px 8px; text-align: left;
+}
+.reports-table td {
+  padding: 14px 18px; font-size: 13px; color: var(--slate); font-weight: 500;
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(12px);
+}
+.reports-table tr td:first-child { border-radius: 16px 0 0 16px; }
+.reports-table tr td:last-child { border-radius: 0 16px 16px 0; }
+.reports-table tr:hover td { background: rgba(255,255,255,0.72); }
+.reports-status { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 10px; letter-spacing: 0.5px; }
+.reports-status.active { background: var(--green-soft); color: var(--green); }
+.reports-status.terminated { background: var(--red-soft); color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="bg-glow bg-glow-3"></div>
+<div class="bg-glow bg-glow-4"></div>
+
+<div class="page-wrap">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-brand" style="display:flex;align-items:center;gap:14px;">
+      <!-- Galaxia Group Logo (SVG inline) -->
+      <div style="width:48px;height:48px;flex-shrink:0;">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="48" height="48">
+          <rect width="100" height="100" rx="10" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+          <!-- Big blue G letter -->
+          <path d="M18 50 C18 28 32 16 50 16 C65 16 76 24 80 36 L67 36 C64 28 58 24 50 24 C36 24 28 35 28 50 C28 65 36 76 50 76 C60 76 68 69 70 60 L52 60 L52 52 L80 52 L80 84 L73 84 L73 76 C68 82 60 84 50 84 C32 84 18 72 18 50 Z" fill="#1565C0"/>
+          <!-- Small text "GALAXIA GROUP" -->
+          <text x="50" y="94" text-anchor="middle" font-family="Arial,sans-serif" font-size="7" font-weight="700" fill="#1e293b" letter-spacing="0.3">GG</text>
+        </svg>
+      </div>
+      <div>
+        <h1 style="font-size:18px;line-height:1.1;">Galaxia Group</h1>
+        <p style="font-size:11px;color:#64748b;margin-top:2px;">Galaxia Consumer Ltd. · Global Org Structure · FY25</p>
+      </div>
+    </div>
+    <div class="nav-links">
+      <button class="nav-link active" data-view="overview">Overview</button>
+      <button class="nav-link" data-view="departments">Departments</button>
+      <button class="nav-link" data-view="leadership">Leadership</button>
+      <button class="nav-link" data-view="analytics">Analytics</button>
+      <button class="nav-link" data-view="reports">Reports</button>
+    </div>
+  </nav>
+
+  <!-- ORG CHART -->
+  <main>
+    <div class="org-canvas" id="orgCanvas">
+
+      <!-- RINGS -->
+      <div class="rings-wrap">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+      </div>
+
+      <!-- SVG LINES -->
+      <svg class="svg-lines" id="svgLines" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid meet">
+      </svg>
+
+      <!-- CENTER HUB -->
+      <div class="center-hub" id="centerHub">
+        <div class="hub-ping"></div>
+        <div class="hub-avatars">
+          <div class="hub-avatar">SR</div>
+          <div class="hub-avatar" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">SHR</div>
+        </div>
+        <div class="hub-name">Suresh Rathi</div>
+        <div style="font-size:11px;color:var(--slate-light);text-align:center">Chairman</div>
+        <div class="hub-divider"></div>
+        <div class="hub-name" style="font-size:14px">Shivam Rathi</div>
+        <div style="font-size:11px;color:var(--slate-light);text-align:center">Managing Director</div>
+        <div class="hub-live">
+          <div class="hub-live-dot"></div>
+          LIVE
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- DRAG & DROP ZONE -->
+  <div class="drop-zone-wrap">
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">📂</div>
+      <div class="drop-text">
+        <div class="drop-title">Drop Employee Data File Here</div>
+        <div class="drop-sub">
+          Drag &amp; drop a <code>.txt</code> or <code>.csv</code> file · or type manually · Format: <code>Name | ACTIVE</code> or <code>Name | TERMINATED</code> one per line
+        </div>
+      </div>
+      <div class="status-row" id="statusRow">
+        <div class="status-pill green"><div class="pill-dot green"></div><span id="activeCount">—</span> Active</div>
+        <div class="status-pill red"><div class="pill-dot red"></div><span id="terminatedCount">—</span> Terminated</div>
+        <div class="status-pill blue"><div class="pill-dot blue"></div><span id="totalCount">14</span> Total</div>
+      </div>
+      <button class="drop-input-btn" id="openModalBtn">✏️ Enter Data</button>
+    </div>
+  </div>
+
+  <!-- STREAM TICKER -->
+  <div class="stream-bar">
+    <div class="stream-inner">
+      <div class="stream-label">Data Stream</div>
+      <div class="stream-scroll">
+        <div class="stream-text" id="streamText">
+          SYSTEM READY · GXC AUTOMATED ORG ECOSYSTEM · DRAG &amp; DROP EMPLOYEE DATA FILE TO SYNC STATUS IN REAL TIME · AWAITING INPUT ·
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM SECTIONS -->
+  <section class="bottom-sections">
+    <div class="section-card" data-section="support">
+      <div class="section-title">Support Functions</div>
+      <div class="section-desc">Finance, HR, Marketing, Legal — the backbone enabling every business division with strategic and operational support.</div>
+      <button class="section-btn">Explore Division →</button>
+    </div>
+    <div class="section-card" data-section="sales">
+      <div class="section-title">Sales Function</div>
+      <div class="section-desc">Staples, Impulse, Exports, MT/eComm — driving revenue across every channel and geography for GXC.</div>
+      <button class="section-btn">Explore Division →</button>
+    </div>
+    <div class="section-card" data-section="operations">
+      <div class="section-title">Operations Function</div>
+      <div class="section-desc">Manufacturing, SCM, QMS, Engineering — ensuring production excellence and supply chain velocity at scale.</div>
+      <button class="section-btn">Explore Division →</button>
+    </div>
+  </section>
+
+</div><!-- /page-wrap -->
+
+<!-- MANUAL INPUT MODAL -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="modal-title">Enter Employee Status Data</div>
+    <div class="modal-sub">One entry per line · Format: <code>Name | ACTIVE</code> or <code>Name | TERMINATED</code></div>
+    <textarea class="modal-textarea" id="dataTextarea"
+      placeholder="Rahul Iyer | ACTIVE&#10;Nikhil Deshpande | ACTIVE&#10;Vikram G | TERMINATED&#10;Manoj Kulkarni | ACTIVE&#10;Rohit Bansal | ACTIVE&#10;Meera Kapadia | TERMINATED"></textarea>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" id="processBtn">⚡ Sync to Org Chart</button>
+      <button class="modal-btn-secondary" id="cancelBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEPT DETAIL MODAL -->
+<div class="dept-modal-backdrop" id="deptModalBackdrop">
+  <div class="dept-modal">
+    <div class="dept-modal-header">
+      <div class="dept-modal-icon" id="deptModalIcon">🏢</div>
+      <div class="dept-modal-titles">
+        <div class="dept-modal-name" id="deptModalName">Department</div>
+        <div class="dept-modal-function" id="deptModalFunction">Function</div>
+      </div>
+      <div class="dept-modal-close" id="deptModalClose">✕</div>
+    </div>
+    <div id="deptModalStatusBadge"></div>
+    <div class="dept-modal-divider"></div>
+    <div class="dept-modal-grid" id="deptModalGrid"></div>
+    <div class="dept-modal-members-title">Team Members</div>
+    <div class="dept-modal-members" id="deptModalMembers"></div>
+  </div>
+</div>
+
+<!-- NAV VIEW PANELS -->
+<div class="view-panel" id="panel-departments">
+  <div class="view-panel-inner">
+    <button class="view-panel-back" onclick="closePanel('departments')">← Back to Overview</button>
+    <div class="view-panel-title">All Departments</div>
+    <div class="view-panel-sub">Every division at Galaxia Consumer Ltd. — current leadership and live status.</div>
+    <div class="people-grid" id="deptPanelGrid"></div>
+  </div>
+</div>
+
+<div class="view-panel" id="panel-leadership">
+  <div class="view-panel-inner">
+    <button class="view-panel-back" onclick="closePanel('leadership')">← Back to Overview</button>
+    <div class="view-panel-title">Leadership Team</div>
+    <div class="view-panel-sub">Senior leaders driving GXC's 5X5Y vision across all functions.</div>
+    <div class="people-grid" id="leadershipPanelGrid"></div>
+  </div>
+</div>
+
+<div class="view-panel" id="panel-analytics">
+  <div class="view-panel-inner">
+    <button class="view-panel-back" onclick="closePanel('analytics')">← Back to Overview</button>
+    <div class="view-panel-title">Analytics</div>
+    <div class="view-panel-sub">Real-time workforce metrics and department-level insights.</div>
+    <div class="analytics-grid" id="analyticsGrid"></div>
+    <div class="analytics-bar-wrap" id="analyticsBarWrap"></div>
+  </div>
+</div>
+
+<div class="view-panel" id="panel-reports">
+  <div class="view-panel-inner">
+    <button class="view-panel-back" onclick="closePanel('reports')">← Back to Overview</button>
+    <div class="view-panel-title">Reports</div>
+    <div class="view-panel-sub">Full employee roster with department mapping and live status.</div>
+    <div style="overflow-x:auto">
+      <table class="reports-table" id="reportsTable">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Function</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="reportsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Section-specific panels -->
+<div class="view-panel" id="panel-support">
+  <div class="view-panel-inner">
+    <button class="view-panel-back" onclick="closePanel('support')">← Back to Overview</button>
+    <div class="view-panel-title">Support Functions</div>
+    <div class="view-panel-sub">Finance, HR, Marketing, Legal, IT & Administration — the backbone that powers every GXC division.</div>
+    <div class="people-grid" id="supportPanelGrid"></div>
+  </div>
+</div>
+
+<div class="view-panel" id="panel-sales">
+  <div class="view-panel-inner">
+    <button class="view-panel-back" onclick="closePanel('sales')">← Back to Overview</button>
+    <div class="view-panel-title">Sales Function</div>
+    <div class="view-panel-sub">Staples, Impulse, Exports, MT/eComm — driving revenue across every channel and geography for GXC.</div>
+    <div class="people-grid" id="salesPanelGrid"></div>
+  </div>
+</div>
+
+<div class="view-panel" id="panel-operations">
+  <div class="view-panel-inner">
+    <button class="view-panel-back" onclick="closePanel('operations')">← Back to Overview</button>
+    <div class="view-panel-title">Operations Function</div>
+    <div class="view-panel-sub">Manufacturing, SCM, QMS, Rice Ops, Oil Ops — ensuring production excellence and supply chain velocity.</div>
+    <div class="people-grid" id="operationsPanelGrid"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span id="toastMsg">Synced successfully</span>
+</div>
+
+<!-- HIDDEN FILE INPUT -->
+<input type="file" id="fileInput" accept=".txt,.csv">
+
+<script>
+// ═══════════════════════════════════════════════════════
+// LIVE DATA — from GXC_Org_Test_Data.csv
+// ═══════════════════════════════════════════════════════
+const LIVE_DATA = [
+  { name: 'Rahul Iyer',   status: 'ACTIVE',     dept: 'Finance & Accounts',       role: 'AVP - F&A',             func: 'Support' },
+  { name: 'Nikhil Deshpande',     status: 'ACTIVE',     dept: 'Information Technology',   role: 'VP - IT',               func: 'Support' },
+  { name: 'Arvind Menon',       status: 'ACTIVE',     dept: 'Operations',               role: 'VP - SCM',              func: 'Operations' },
+  { name: 'Ishita R',         status: 'ACTIVE',     dept: 'Marketing',                role: 'AGM - Marketing',       func: 'Support' },
+  { name: 'Meera Kapadia',        status: 'TERMINATED', dept: 'Human Resources',          role: 'VP - HR',               func: 'Support' },
+  { name: 'Vikram G',        status: 'TERMINATED', dept: 'Sales',                    role: 'VP - Sales (Staples)',  func: 'Sales' },
+  { name: 'Manoj Kulkarni',    status: 'ACTIVE',     dept: 'Production',               role: 'SR GM - MNFG',          func: 'Operations' },
+  { name: 'Rohit Bansal',       status: 'ACTIVE',     dept: 'Engineering & Maintenance',role: 'BU Head - Atta',        func: 'Operations' },
+  { name: 'Aditya Kumar Verma',status: 'ACTIVE',     dept: 'Quality Assurance',        role: 'VP - QMS & Sustainability', func: 'Operations' },
+  { name: 'Kunal Chavan',   status: 'ACTIVE',     dept: 'Administration',           role: 'AGM - Legal',           func: 'Support' },
+  { name: 'Anjali Rathore',       status: 'ACTIVE',     dept: 'Legal',                    role: 'DGM - Marketing',       func: 'Support' },
+  { name: 'Naveen P',      status: 'ACTIVE',     dept: 'SCM',                      role: 'DGM - BEV-TET-SFD',    func: 'Operations' },
+  { name: 'Sameer Kaul',      status: 'ACTIVE',     dept: 'Trading',                  role: 'DGM - Exports',         func: 'Sales' },
+  { name: 'Girish Shelke',     status: 'TERMINATED', dept: 'EHS',                      role: 'GM Ops - Rice',         func: 'Operations' },
+];
+
+// ═══════════════════════════════════════════════════════
+// DEPARTMENT DATA
+// ═══════════════════════════════════════════════════════
+const DEPARTMENTS = [
+  { id: 'Finance',    name: 'Finance &\nAccounts',       shortName:'Finance & Accounts',     x:0.50,y:0.12, head:'Rahul Iyer',      role:'AVP - F&A',               func:'Support',    icon:'💰', aliases:['rahul iyer','rahul i','finance'] },
+  { id: 'HR',         name: 'Human\nResources',           shortName:'Human Resources',        x:0.30,y:0.30, head:'Meera Kapadia',            role:'VP - HR',                 func:'Support',    icon:'👥', aliases:['meera kapadia','meera','human resources','hr'] },
+  { id: 'Operations', name: 'Operations',                  shortName:'Operations',             x:0.50,y:0.82, head:'Arvind Menon',           role:'VP - SCM',                func:'Operations', icon:'⚙️', aliases:['arvind menon','arvind','operations'] },
+  { id: 'Marketing',  name: 'Marketing',                   shortName:'Marketing',              x:0.18,y:0.28, head:'Ishita R',             role:'AGM - Marketing',         func:'Support',    icon:'📣', aliases:['ishita r','ishita','marketing'] },
+  { id: 'IT',         name: 'Information\nTechnology',    shortName:'Information Technology', x:0.28,y:0.12, head:'Nikhil Deshpande',         role:'VP - IT',                 func:'Support',    icon:'💻', aliases:['nikhil deshpande','nikhil','information technology','it'] },
+  { id: 'Admin',      name: 'Administration',              shortName:'Administration',         x:0.72,y:0.75, head:'Kunal Chavan',       role:'AGM - Legal',             func:'Support',    icon:'🏛️', aliases:['kunal chavan','kunal','administration','legal'] },
+  { id: 'Legal',      name: 'Legal',                       shortName:'Legal',                  x:0.82,y:0.25, head:'Anjali Rathore',           role:'DGM - Marketing',         func:'Support',    icon:'⚖️', aliases:['anjali rathore','anjali','legal dept'] },
+  { id: 'Production', name: 'Production',                  shortName:'Production',             x:0.70,y:0.10, head:'Manoj Kulkarni',        role:'SR GM - MNFG',            func:'Operations', icon:'🏭', aliases:['manoj kulkarni','manoj','production'] },
+  { id: 'Engineering',name: 'Engineering &\nMaintenance',  shortName:'Engineering',            x:0.86,y:0.42, head:'Rohit Bansal',           role:'BU Head - Atta',          func:'Operations', icon:'🔧', aliases:['rohit bansal','rohit','engineering'] },
+  { id: 'QA',         name: 'Quality\nAssurance',          shortName:'Quality Assurance',      x:0.92,y:0.62, head:'Aditya Kumar Verma',    role:'VP - QMS & Sustainability',func:'Operations', icon:'✅', aliases:['aditya kumar verma','aditya','quality assurance','qa','qms'] },
+  { id: 'SCM',        name: 'SCM',                         shortName:'SCM',                    x:0.50,y:0.92, head:'Naveen P',          role:'DGM - BEV-TET-SFD',      func:'Operations', icon:'🚚', aliases:['naveen p','naveen','scm','supply chain'] },
+  { id: 'Sales',      name: 'Sales',                       shortName:'Sales',                  x:0.08,y:0.25, head:'Vikram G',            role:'VP - Sales',              func:'Sales',      icon:'📈', aliases:['vikram g','vikram g sales','sales'] },
+  { id: 'Trading',    name: 'Trading',                     shortName:'Trading',                x:0.28,y:0.75, head:'Sameer Kaul',          role:'DGM - Exports',           func:'Sales',      icon:'🌐', aliases:['sameer kaul','sameer','trading','exports'] },
+  { id: 'EHS',        name: 'EHS',                         shortName:'EHS',                    x:0.92,y:0.18, head:'Girish Shelke',         role:'GM Ops - Rice',           func:'Operations', icon:'🛡️', aliases:['girish shelke','girish','ehs'] },
+];
+
+// Track runtime statuses
+const deptStatus = {};
+DEPARTMENTS.forEach(d => deptStatus[d.id] = null);
+
+const avatarColors = [
+  'linear-gradient(135deg,#6366f1,#8b5cf6)',
+  'linear-gradient(135deg,#0ea5e9,#0284c7)',
+  'linear-gradient(135deg,#10b981,#059669)',
+  'linear-gradient(135deg,#f59e0b,#d97706)',
+  'linear-gradient(135deg,#ef4444,#dc2626)',
+  'linear-gradient(135deg,#ec4899,#db2777)',
+  'linear-gradient(135deg,#14b8a6,#0d9488)',
+  'linear-gradient(135deg,#8b5cf6,#7c3aed)',
+];
+function getColor(name) {
+  let h = 0; for (let c of name) h = (h * 31 + c.charCodeAt(0)) % avatarColors.length;
+  return avatarColors[Math.abs(h)];
+}
+function initials(name) {
+  return name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+const CX_FRAC = 0.5;
+const CY_FRAC = 0.5;
+
+// ═══════════════════════════════════════════════════════
+// BUILD NODES
+// ═══════════════════════════════════════════════════════
+const canvas = document.getElementById('orgCanvas');
+const svgEl = document.getElementById('svgLines');
+
+DEPARTMENTS.forEach((dept, idx) => {
+  const delay = 0.5 + idx * 0.06;
+  const node = document.createElement('div');
+  node.className = 'dept-node';
+  node.id = 'node-' + dept.id;
+  node.style.left = (dept.x * 100) + '%';
+  node.style.top = (dept.y * 100) + '%';
+  node.style.animationDelay = delay + 's';
+
+  node.innerHTML = `
+    <div class="dept-card">
+      <div class="node-status" id="ns-${dept.id}"></div>
+      <div class="dept-name">${dept.name.replace('\n','<br>')}</div>
+      <div class="dept-expand">
+        <div class="dept-sep"></div>
+        <div class="dept-head">${dept.head}</div>
+        <div class="dept-role">${dept.role}</div>
+        <button class="dept-btn" data-dept="${dept.id}">View Department</button>
+      </div>
+    </div>
+  `;
+  canvas.appendChild(node);
+});
+
+// ═══════════════════════════════════════════════════════
+// VIEW DEPARTMENT BUTTON — event delegation on canvas
+// ═══════════════════════════════════════════════════════
+canvas.addEventListener('click', function(e) {
+  const btn = e.target.closest('.dept-btn');
+  if (!btn) return;
+  e.stopPropagation();
+  const deptId = btn.dataset.dept;
+  const dept = DEPARTMENTS.find(d => d.id === deptId);
+  if (dept) openDeptModal(dept);
+});
+
+// ═══════════════════════════════════════════════════════
+// DRAW SVG LINES
+// ═══════════════════════════════════════════════════════
+function drawLines() {
+  const rect = canvas.getBoundingClientRect();
+  const W = rect.width || 1400;
+  const H = rect.height || 900;
+  const cx = W * CX_FRAC;
+  const cy = H * CY_FRAC;
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+  DEPARTMENTS.forEach(dept => {
+    const x2 = dept.x * W;
+    const y2 = dept.y * H;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+    line.setAttribute('stroke', 'rgba(99,102,241,0.25)');
+    line.setAttribute('stroke-width', '1.5');
+    line.setAttribute('stroke-dasharray', '4 7');
+    line.id = 'line-' + dept.id;
+    svgEl.appendChild(line);
+  });
+}
+drawLines();
+window.addEventListener('resize', drawLines);
+
+// ═══════════════════════════════════════════════════════
+// PARTICLES
+// ═══════════════════════════════════════════════════════
+for (let i = 0; i < 20; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const s = Math.random() * 5 + 3;
+  p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${6+Math.random()*8}s;animation-delay:${Math.random()*7}s;opacity:0;`;
+  document.body.appendChild(p);
+}
+
+// ═══════════════════════════════════════════════════════
+// FLOWING BUBBLES — defined early so applyStatus can use it
+// ═══════════════════════════════════════════════════════
+function spawnBubble(dept, status) {
+  const canvas = document.getElementById('orgCanvas');
+  const rect = canvas.getBoundingClientRect();
+  const W = rect.width || 1400;
+  const H = rect.height || 900;
+  const startX = W * 0.5;
+  const startY = H * 0.5;
+  const endX = dept.x * W;
+  const endY = dept.y * H;
+  const dist = Math.hypot(endX - startX, endY - startY);
+  const duration = 1400 + (dist / W) * 1200 + Math.random() * 400;
+  const size = 5 + Math.random() * 5;
+  const bubble = document.createElement('div');
+  bubble.className = 'flow-bubble ' + (status === 'ACTIVE' ? 'active-bubble' : 'terminated-bubble');
+  bubble.style.width  = size + 'px';
+  bubble.style.height = size + 'px';
+  bubble.style.left   = startX + 'px';
+  bubble.style.top    = startY + 'px';
+  bubble.style.animationDuration = duration + 'ms';
+  canvas.appendChild(bubble);
+  const startTime = performance.now();
+  const mx = (startX + endX) / 2 + (Math.random() - 0.5) * 54;
+  const my = (startY + endY) / 2 + (Math.random() - 0.5) * 54;
+  function animate(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    const inv = 1 - t;
+    const x = inv * inv * startX + 2 * inv * t * mx + t * t * endX;
+    const y = inv * inv * startY + 2 * inv * t * my + t * t * endY;
+    bubble.style.left = x + 'px';
+    bubble.style.top  = y + 'px';
+    if (t < 1) { requestAnimationFrame(animate); } else { bubble.remove(); }
+  }
+  requestAnimationFrame(animate);
+}
+
+// ═══════════════════════════════════════════════════════
+// STATUS APPLICATION
+// ═══════════════════════════════════════════════════════
+function applyStatus(dept, status) {
+  const node = document.getElementById('node-' + dept.id);
+  const ns = document.getElementById('ns-' + dept.id);
+  const line = document.getElementById('line-' + dept.id);
+  if (!node || !ns) return;
+  const prevStatus = deptStatus[dept.id];
+  deptStatus[dept.id] = status;
+  node.classList.remove('active-node','terminated-node');
+  ns.classList.remove('show','active','terminated');
+  if (status === 'ACTIVE') {
+    node.classList.add('active-node');
+    ns.classList.add('show','active');
+    if (line) { line.setAttribute('stroke','rgba(16,185,129,0.45)'); line.setAttribute('stroke-dasharray','5 0'); line.setAttribute('stroke-width','2'); }
+  } else if (status === 'TERMINATED') {
+    node.classList.add('terminated-node');
+    ns.classList.add('show','terminated');
+    if (line) { line.setAttribute('stroke','rgba(239,68,68,0.35)'); line.setAttribute('stroke-dasharray','3 5'); line.setAttribute('stroke-width','1.5'); }
+  } else {
+    if (line) { line.setAttribute('stroke','rgba(99,102,241,0.25)'); line.setAttribute('stroke-dasharray','4 7'); line.setAttribute('stroke-width','1.5'); }
+  }
+  // Burst of bubbles whenever status is applied/changed
+  if (status && status !== prevStatus) {
+    const burstCount = 5 + Math.floor(Math.random() * 4);
+    for (let b = 0; b < burstCount; b++) {
+      setTimeout(() => spawnBubble(dept, status), b * 100 + Math.random() * 80);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// PARSE DATA
+// ═══════════════════════════════════════════════════════
+function parseAndSync(raw) {
+  const lines = raw.split('\n').map(l=>l.trim()).filter(l => l && l.includes('|'));
+  if (!lines.length) { showToast('⚠️ No valid data found. Use Name | ACTIVE format.', true); return; }
+  let active = 0, terminated = 0, matched = 0;
+  const streamParts = [];
+  DEPARTMENTS.forEach(d => applyStatus(d, null));
+  lines.forEach(line => {
+    const [namePart, statusPart] = line.split('|').map(s=>s.trim());
+    if (!namePart || !statusPart) return;
+    const nameNorm = namePart.toLowerCase().trim();
+    const statusNorm = statusPart.toUpperCase().includes('TERMINATED') || statusPart.toUpperCase().includes('TERM')
+      ? 'TERMINATED' : statusPart.toUpperCase().includes('ACTIVE') ? 'ACTIVE' : null;
+    if (!statusNorm) return;
+    if (statusNorm==='ACTIVE') active++; else terminated++;
+    DEPARTMENTS.forEach(dept => {
+      if (dept.aliases.some(a => nameNorm.includes(a) || a.includes(nameNorm))) {
+        applyStatus(dept, statusNorm);
+        matched++;
+        streamParts.push(`${dept.shortName}: ${statusNorm}`);
+      }
+    });
+  });
+  document.getElementById('activeCount').textContent = active;
+  document.getElementById('terminatedCount').textContent = terminated;
+  document.getElementById('totalCount').textContent = lines.length;
+  if (streamParts.length) {
+    document.getElementById('streamText').textContent =
+      'SYNC COMPLETE · ' + streamParts.join(' · ') + ' · GXC LIVE ORG ECOSYSTEM · ';
+  }
+  showToast(`✓ ${matched} departments synced — ${active} Active · ${terminated} Terminated`);
+  closeModal();
+}
+
+// ═══════════════════════════════════════════════════════
+// DRAG & DROP
+// ═══════════════════════════════════════════════════════
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0]; if (file) readFile(file);
+});
+dropZone.addEventListener('click', e => {
+  if (e.target === dropZone || e.target.classList.contains('drop-icon') || e.target.classList.contains('drop-text') || e.target.classList.contains('drop-title') || e.target.classList.contains('drop-sub'))
+    document.getElementById('fileInput').click();
+});
+document.getElementById('fileInput').addEventListener('change', e => {
+  const f = e.target.files[0]; if (f) readFile(f); e.target.value = '';
+});
+function readFile(file) {
+  if (!file.name.match(/\.(txt|csv)$/i)) { showToast('⚠️ Please use a .txt or .csv file', true); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const raw = ev.target.result;
+    // Support CSV with "Name | ACTIVE" in Sync Format column, or pipe-separated, or plain CSV
+    if (file.name.match(/\.csv$/i)) {
+      const csvLines = raw.split('\n').map(l=>l.trim()).filter(Boolean);
+      // If it has a header with "Sync Format" — use that column
+      const header = csvLines[0].toLowerCase();
+      if (header.includes('sync format')) {
+        const colIdx = csvLines[0].split(',').findIndex(c => c.toLowerCase().includes('sync format'));
+        const pipeLines = csvLines.slice(1).map(row => {
+          const cols = row.split(',');
+          return cols[colIdx] ? cols[colIdx].trim() : '';
+        }).filter(Boolean);
+        parseAndSync(pipeLines.join('\n'));
+      } else if (header.includes('employee name') && header.includes('status')) {
+        // Name,Status,... columns
+        const nameIdx = csvLines[0].split(',').findIndex(c=>c.toLowerCase().includes('employee name'));
+        const statusIdx = csvLines[0].split(',').findIndex(c=>c.toLowerCase().trim()==='status');
+        const pipeLines = csvLines.slice(1).map(row=>{
+          const cols = row.split(',');
+          return (cols[nameIdx]||'').trim() + ' | ' + (cols[statusIdx]||'').trim();
+        }).filter(l=>l.includes('|'));
+        parseAndSync(pipeLines.join('\n'));
+      } else {
+        parseAndSync(raw);
+      }
+    } else {
+      parseAndSync(raw);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════
+const modalBackdrop = document.getElementById('modalBackdrop');
+document.getElementById('openModalBtn').addEventListener('click', () => modalBackdrop.classList.add('show'));
+document.getElementById('cancelBtn').addEventListener('click', closeModal);
+modalBackdrop.addEventListener('click', e => { if(e.target===modalBackdrop) closeModal(); });
+document.getElementById('processBtn').addEventListener('click', () => {
+  const raw = document.getElementById('dataTextarea').value.trim();
+  if (!raw) { showToast('⚠️ Please enter some data first.', true); return; }
+  parseAndSync(raw);
+});
+function closeModal() { modalBackdrop.classList.remove('show'); }
+
+// ═══════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════
+function showToast(msg, isWarn=false) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.querySelector('.toast-icon').textContent = isWarn ? '⚠️' : '✓';
+  toast.style.borderColor = isWarn ? 'rgba(245,158,11,0.4)' : 'rgba(16,185,129,0.3)';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// ═══════════════════════════════════════════════════════
+// DEPT DETAIL MODAL
+// ═══════════════════════════════════════════════════════
+function openDeptModal(dept) {
+  const status = deptStatus[dept.id];
+  // Header
+  document.getElementById('deptModalIcon').textContent = dept.icon || '🏢';
+  document.getElementById('deptModalIcon').style.background =
+    status === 'ACTIVE' ? 'rgba(16,185,129,0.12)' :
+    status === 'TERMINATED' ? 'rgba(239,68,68,0.10)' : 'rgba(99,102,241,0.10)';
+  document.getElementById('deptModalName').textContent = dept.shortName;
+  document.getElementById('deptModalFunction').textContent = dept.func + ' Function';
+
+  // Status badge
+  const statusKey = status ? status.toLowerCase() : 'unknown';
+  const statusLabel = status || 'Pending Sync';
+  document.getElementById('deptModalStatusBadge').innerHTML = `
+    <div class="dept-modal-status-badge ${statusKey}">
+      <div class="badge-dot ${statusKey}"></div>
+      ${statusLabel}
+    </div>`;
+
+  // Stats grid
+  const liveEmployee = LIVE_DATA.find(e => dept.aliases.some(a => e.name.toLowerCase().includes(a) || a.includes(e.name.toLowerCase())));
+  document.getElementById('deptModalGrid').innerHTML = `
+    <div class="dept-modal-stat">
+      <div class="dept-modal-stat-label">Department Head</div>
+      <div class="dept-modal-stat-value">${dept.head}</div>
+    </div>
+    <div class="dept-modal-stat">
+      <div class="dept-modal-stat-label">Designation</div>
+      <div class="dept-modal-stat-value" style="font-size:13px">${dept.role}</div>
+    </div>
+    <div class="dept-modal-stat">
+      <div class="dept-modal-stat-label">Function</div>
+      <div class="dept-modal-stat-value">${dept.func}</div>
+    </div>
+    <div class="dept-modal-stat">
+      <div class="dept-modal-stat-label">Live Status</div>
+      <div class="dept-modal-stat-value" style="color:${status==='ACTIVE'?'var(--green)':status==='TERMINATED'?'var(--red)':'var(--slate-light)'}">${statusLabel}</div>
+    </div>
+  `;
+
+  // Members (from LIVE_DATA matching this dept)
+  const members = LIVE_DATA.filter(e =>
+    e.dept === dept.shortName ||
+    dept.aliases.some(a => e.name.toLowerCase().includes(a) || a.includes(e.name.toLowerCase()))
+  );
+  const memberHtml = members.length ? members.map(m => `
+    <div class="dept-member-row">
+      <div class="dept-member-avatar" style="background:${getColor(m.name)}">${initials(m.name)}</div>
+      <div class="dept-member-info">
+        <div class="dept-member-name">${m.name}</div>
+        <div class="dept-member-role">${m.role}</div>
+      </div>
+      <div class="dept-member-status ${m.status.toLowerCase()}">${m.status}</div>
+    </div>
+  `).join('') : `<div style="color:var(--slate-light);font-size:13px;padding:12px 0">No member records found for this department.</div>`;
+
+  document.getElementById('deptModalMembers').innerHTML = memberHtml;
+
+  document.getElementById('deptModalBackdrop').classList.add('show');
+}
+
+document.getElementById('deptModalClose').addEventListener('click', () => {
+  document.getElementById('deptModalBackdrop').classList.remove('show');
+});
+document.getElementById('deptModalBackdrop').addEventListener('click', e => {
+  if (e.target === document.getElementById('deptModalBackdrop'))
+    document.getElementById('deptModalBackdrop').classList.remove('show');
+});
+
+// ═══════════════════════════════════════════════════════
+// NAV VIEW PANELS
+// ═══════════════════════════════════════════════════════
+function openPanel(name) {
+  // Build dynamic content before showing
+  buildPanel(name);
+  document.getElementById('panel-' + name).classList.add('show');
+}
+function closePanel(name) {
+  document.getElementById('panel-' + name).classList.remove('show');
+  // Re-activate Overview nav btn
+  document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+  document.querySelector('[data-view="overview"]').classList.add('active');
+}
+
+function buildPanel(name) {
+  if (name === 'departments') {
+    const grid = document.getElementById('deptPanelGrid');
+    grid.innerHTML = DEPARTMENTS.map(d => {
+      const s = deptStatus[d.id];
+      return `<div class="person-card" style="cursor:pointer" onclick="openDeptModal(DEPARTMENTS.find(dep=>dep.id==='${d.id}'))">
+        <div class="person-avatar-lg" style="background:${getColor(d.shortName)}">${d.icon||initials(d.shortName)}</div>
+        <div class="person-name">${d.shortName}</div>
+        <div class="person-role">${d.role}</div>
+        <div class="person-dept">${d.func} Function</div>
+        <div class="person-status-badge ${s?s.toLowerCase():'unknown'}">${s||'Pending'}</div>
+      </div>`;
+    }).join('');
+  }
+  if (name === 'leadership') {
+    const grid = document.getElementById('leadershipPanelGrid');
+    // Leadership = top leaders first + all dept heads
+    const leaders = [
+      { name:'Suresh Rathi', role:'Chairman', dept:'GXC', status:'ACTIVE' },
+      { name:'Shivam Rathi', role:'Managing Director', dept:'GXC', status:'ACTIVE' },
+      { name:'Sanika Rathi', role:'CEO - GXC', dept:'GXC', status:'ACTIVE' },
+      { name:'Rohan Rathi', role:'Director', dept:'GXC', status:'ACTIVE' },
+      { name:'Sameer Kapoor', role:'Group CFO', dept:'GXC', status:'ACTIVE' },
+      { name:'Sumit M', role:'Director', dept:'Board', status:'ACTIVE' },
+      { name:'Deepak M', role:'Director', dept:'Board', status:'ACTIVE' },
+      ...LIVE_DATA.map(e => ({ name:e.name, role:e.role, dept:e.dept, status:e.status }))
+    ];
+    grid.innerHTML = leaders.map(l => `
+      <div class="person-card">
+        <div class="person-avatar-lg" style="background:${getColor(l.name)}">${initials(l.name)}</div>
+        <div class="person-name">${l.name}</div>
+        <div class="person-role">${l.role}</div>
+        <div class="person-dept">${l.dept}</div>
+        <div class="person-status-badge ${l.status.toLowerCase()}">${l.status}</div>
+      </div>`).join('');
+  }
+  if (name === 'analytics') {
+    const active = LIVE_DATA.filter(e=>e.status==='ACTIVE').length;
+    const terminated = LIVE_DATA.filter(e=>e.status==='TERMINATED').length;
+    const total = LIVE_DATA.length;
+    const supportCount = LIVE_DATA.filter(e=>e.func==='Support').length;
+    const salesCount = LIVE_DATA.filter(e=>e.func==='Sales').length;
+    const opsCount = LIVE_DATA.filter(e=>e.func==='Operations').length;
+    document.getElementById('analyticsGrid').innerHTML = `
+      <div class="analytics-card">
+        <div class="analytics-num" style="color:var(--green)">${active}</div>
+        <div class="analytics-label">Active Employees</div>
+      </div>
+      <div class="analytics-card">
+        <div class="analytics-num" style="color:var(--red)">${terminated}</div>
+        <div class="analytics-label">Terminated</div>
+      </div>
+      <div class="analytics-card">
+        <div class="analytics-num">${total}</div>
+        <div class="analytics-label">Total in Org</div>
+      </div>
+      <div class="analytics-card">
+        <div class="analytics-num" style="color:var(--indigo)">${DEPARTMENTS.length}</div>
+        <div class="analytics-label">Departments</div>
+      </div>
+      <div class="analytics-card">
+        <div class="analytics-num" style="color:var(--cyan)">${Math.round(active/total*100)}%</div>
+        <div class="analytics-label">Retention Rate</div>
+      </div>
+      <div class="analytics-card">
+        <div class="analytics-num" style="color:var(--slate-mid)">3</div>
+        <div class="analytics-label">Functions</div>
+      </div>
+    `;
+    document.getElementById('analyticsBarWrap').innerHTML = `
+      <div class="analytics-bar-title">Headcount by Function</div>
+      ${[
+        {label:'Support Functions', count:supportCount, total, cl:''},
+        {label:'Operations Function', count:opsCount, total, cl:''},
+        {label:'Sales Function', count:salesCount, total, cl:'red'},
+      ].map(b=>`
+        <div class="analytics-bar-row">
+          <div class="analytics-bar-label"><span>${b.label}</span><span>${b.count} people</span></div>
+          <div class="analytics-bar-track"><div class="analytics-bar-fill ${b.cl}" style="width:${Math.round(b.count/b.total*100)}%"></div></div>
+        </div>`).join('')}
+      <div class="analytics-bar-title" style="margin-top:28px">Status Breakdown</div>
+      <div class="analytics-bar-row">
+        <div class="analytics-bar-label"><span>Active</span><span>${active}/${total}</span></div>
+        <div class="analytics-bar-track"><div class="analytics-bar-fill" style="width:${Math.round(active/total*100)}%;background:linear-gradient(90deg,var(--green),#34d399)"></div></div>
+      </div>
+      <div class="analytics-bar-row">
+        <div class="analytics-bar-label"><span>Terminated</span><span>${terminated}/${total}</span></div>
+        <div class="analytics-bar-track"><div class="analytics-bar-fill red" style="width:${Math.round(terminated/total*100)}%"></div></div>
+      </div>
+    `;
+  }
+  if (name === 'reports') {
+    document.getElementById('reportsTbody').innerHTML = LIVE_DATA.map(e => `
+      <tr>
+        <td><strong>${e.name}</strong></td>
+        <td>${e.role}</td>
+        <td>${e.dept}</td>
+        <td>${e.func}</td>
+        <td><span class="reports-status ${e.status.toLowerCase()}">${e.status}</span></td>
+      </tr>`).join('');
+  }
+  if (name === 'support') {
+    const items = LIVE_DATA.filter(e=>e.func==='Support');
+    document.getElementById('supportPanelGrid').innerHTML = items.map(e=>`
+      <div class="person-card">
+        <div class="person-avatar-lg" style="background:${getColor(e.name)}">${initials(e.name)}</div>
+        <div class="person-name">${e.name}</div>
+        <div class="person-role">${e.role}</div>
+        <div class="person-dept">${e.dept}</div>
+        <div class="person-status-badge ${e.status.toLowerCase()}">${e.status}</div>
+      </div>`).join('');
+  }
+  if (name === 'sales') {
+    const items = LIVE_DATA.filter(e=>e.func==='Sales');
+    document.getElementById('salesPanelGrid').innerHTML = items.map(e=>`
+      <div class="person-card">
+        <div class="person-avatar-lg" style="background:${getColor(e.name)}">${initials(e.name)}</div>
+        <div class="person-name">${e.name}</div>
+        <div class="person-role">${e.role}</div>
+        <div class="person-dept">${e.dept}</div>
+        <div class="person-status-badge ${e.status.toLowerCase()}">${e.status}</div>
+      </div>`).join('');
+  }
+  if (name === 'operations') {
+    const items = LIVE_DATA.filter(e=>e.func==='Operations');
+    document.getElementById('operationsPanelGrid').innerHTML = items.map(e=>`
+      <div class="person-card">
+        <div class="person-avatar-lg" style="background:${getColor(e.name)}">${initials(e.name)}</div>
+        <div class="person-name">${e.name}</div>
+        <div class="person-role">${e.role}</div>
+        <div class="person-dept">${e.dept}</div>
+        <div class="person-status-badge ${e.status.toLowerCase()}">${e.status}</div>
+      </div>`).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// NAV ACTIVE STATE + PANEL ROUTING
+// ═══════════════════════════════════════════════════════
+document.querySelectorAll('.nav-link').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const view = this.dataset.view;
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    if (view !== 'overview') openPanel(view);
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// BOTTOM SECTION CARDS
+// ═══════════════════════════════════════════════════════
+document.querySelectorAll('.section-card').forEach(card => {
+  card.addEventListener('click', function() {
+    const section = this.dataset.section;
+    if (section) openPanel(section);
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// AUTO-LOAD LIVE DATA ON START
+// ═══════════════════════════════════════════════════════
+function autoLoadLiveData() {
+  let active = 0, terminated = 0, matched = 0;
+  const streamParts = [];
+  LIVE_DATA.forEach(emp => {
+    const nameNorm = emp.name.toLowerCase();
+    DEPARTMENTS.forEach(dept => {
+      if (dept.aliases.some(a => nameNorm.includes(a) || a.includes(nameNorm))) {
+        applyStatus(dept, emp.status);
+        matched++;
+        if (emp.status === 'ACTIVE') active++;
+        else terminated++;
+        streamParts.push(`${dept.shortName}: ${emp.status}`);
+      }
+    });
+  });
+  document.getElementById('activeCount').textContent = active;
+  document.getElementById('terminatedCount').textContent = terminated;
+  document.getElementById('totalCount').textContent = LIVE_DATA.length;
+  document.getElementById('streamText').textContent =
+    'LIVE DATA LOADED · ' + streamParts.join(' · ') + ' · GXC ORG ECOSYSTEM SYNCED · ';
+  updateHubGlow();
+}
+
+// ═══════════════════════════════════════════════════════
+// CENTER HUB GLOW
+// ═══════════════════════════════════════════════════════
+function updateHubGlow() {
+  const activeNodes = document.querySelectorAll('.active-node').length;
+  const hub = document.getElementById('centerHub');
+  if (activeNodes > 0) hub.style.boxShadow = `0 0 50px rgba(16,185,129,0.15), var(--shadow-glass)`;
+}
+
+// Auto-load CSV data on boot (after a short delay so nodes are rendered)
+setTimeout(autoLoadLiveData, 900);
+
+// ═══════════════════════════════════════════════════════
+// FLOWING BUBBLES SYSTEM — continuous loop
+// Blue bubbles → ACTIVE departments
+// Red bubbles  → TERMINATED departments
+// ═══════════════════════════════════════════════════════
+function startBubbleFlow() {
+  function spawnRound() {
+    DEPARTMENTS.forEach((dept, i) => {
+      const status = deptStatus[dept.id];
+      if (!status) return;
+      const delay = i * 120 + Math.random() * 200;
+      setTimeout(() => {
+        const count = 2 + Math.floor(Math.random() * 3);
+        for (let b = 0; b < count; b++) {
+          setTimeout(() => spawnBubble(dept, status), b * 180 + Math.random() * 120);
+        }
+      }, delay);
+    });
+  }
+  setTimeout(spawnRound, 1200);
+  setInterval(spawnRound, 2200);
+}
+
+startBubbleFlow();
+</script>
+</body>
+</html>

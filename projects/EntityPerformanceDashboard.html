@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entity Performance Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg-void: #e8e8f8;
+    --bg-deep: #dcdcf0;
+    --bg-surface: rgba(255,255,255,0.25);
+    --bg-card: rgba(255,255,255,0.30);
+    --bg-elevated: rgba(255,255,255,0.45);
+    --border: rgba(180,180,220,0.35);
+    --border-bright: rgba(140,140,200,0.55);
+    --text-primary: #0f1220;
+    --text-secondary: rgba(15,18,32,0.60);
+    --text-muted: rgba(15,18,32,0.38);
+    --accent-cyan: #00d4ff;
+    --accent-blue: #3b8bff;
+    --accent-violet: #8b5cf6;
+    --accent-emerald: #10d98a;
+    --accent-amber: #f5a623;
+    --accent-rose: #ff4d6d;
+    --glow-cyan: rgba(0,212,255,0.15);
+    --glow-blue: rgba(59,139,255,0.15);
+    --glow-violet: rgba(139,92,246,0.12);
+    --glow-emerald: rgba(16,217,138,0.12);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, #dcddf5 0%, #e4e4f8 30%, #eae4f5 60%, #dfe0f2 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background orbs */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: -10%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, rgba(180,180,240,0.35) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift1 18s ease-in-out infinite alternate;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(200,180,240,0.25) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift2 22s ease-in-out infinite alternate;
+  }
+  @keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(5vw,3vh) scale(1.08); } }
+  @keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(-4vw,-5vh) scale(1.05); } }
+
+  /* Layout */
+  .shell {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  header {
+    padding: 20px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(230,230,248,0.88);
+    backdrop-filter: blur(24px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-zone { display: flex; align-items: center; gap: 14px; }
+  .logo-mark {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 14px;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(0,212,255,0.3);
+  }
+  .logo-text { font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+  .logo-sub { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-top: 1px; }
+  .header-center {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .live-dot {
+    width: 6px; height: 6px;
+    background: var(--accent-emerald);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent-emerald);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .btn-ghost {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .btn-ghost:hover { border-color: var(--border-bright); color: var(--text-primary); background: var(--bg-elevated); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+    border: none;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 12px;
+    padding: 8px 18px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(59,139,255,0.25);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 30px rgba(59,139,255,0.4); }
+
+  /* Main content */
+  main { flex: 1; padding: 32px 36px; display: flex; flex-direction: column; gap: 28px; }
+
+  /* Section header */
+  .section-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* KPI row */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .kpi-card:hover {
+    border-color: var(--border-bright);
+    background: var(--bg-elevated);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--kpi-glow);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .kpi-card:hover::before { opacity: 1; }
+  .kpi-accent-line {
+    position: absolute;
+    top: 0; left: 24px; right: 24px;
+    height: 2px;
+    background: var(--kpi-accent);
+    border-radius: 0 0 2px 2px;
+  }
+  .kpi-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--kpi-icon-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  .kpi-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .kpi-value {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .kpi-delta {
+    font-size: 11px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .kpi-delta.pos { color: var(--accent-emerald); }
+  .kpi-delta.neg { color: var(--accent-rose); }
+  .kpi-delta.neu { color: var(--text-muted); }
+
+  /* Charts grid */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    position: relative;
+    overflow: hidden;
+  }
+  .chart-card-wide { grid-column: 1 / -1; }
+  .chart-title {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .chart-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 22px; }
+  .chart-wrap { position: relative; height: 240px; }
+  .chart-wrap-lg { height: 300px; }
+
+  /* Data Table */
+  .table-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .table-header {
+    padding: 20px 26px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  thead th {
+    padding: 12px 20px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  tbody tr:hover { background: rgba(255,255,255,0.03); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td {
+    padding: 16px 20px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    vertical-align: middle;
+  }
+  .entity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .entity-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-chip {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .status-ok { background: rgba(16,217,138,0.12); color: var(--accent-emerald); border: 1px solid rgba(16,217,138,0.2); }
+  .status-warn { background: rgba(245,166,35,0.12); color: var(--accent-amber); border: 1px solid rgba(245,166,35,0.2); }
+  .bar-cell { display: flex; align-items: center; gap: 10px; }
+  .mini-bar-bg {
+    width: 80px; height: 5px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .mini-bar-fill { height: 100%; border-radius: 10px; background: var(--bar-color); }
+
+  /* Drop Zone */
+  .drop-zone-wrap { }
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-xl);
+    padding: 48px;
+    text-align: center;
+    transition: all 0.25s;
+    background: var(--bg-surface);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .drop-zone.dragover {
+    border-color: var(--accent-cyan);
+    background: rgba(0,212,255,0.04);
+    box-shadow: 0 0 40px rgba(0,212,255,0.1), inset 0 0 40px rgba(0,212,255,0.03);
+  }
+  .drop-zone-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 18px;
+    transition: all 0.25s;
+  }
+  .drop-zone.dragover .drop-zone-icon { transform: scale(1.1); box-shadow: 0 0 30px rgba(0,212,255,0.25); }
+  .drop-zone-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .drop-zone-sub { font-size: 12px; color: var(--text-muted); }
+  .drop-zone-formats {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 18px;
+  }
+  .format-tag {
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  .drop-zone input[type="file"] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+
+  /* Entity detail flyout */
+  .entity-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .entity-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .entity-card:hover {
+    border-color: var(--entity-color);
+    box-shadow: 0 0 30px var(--entity-glow);
+    transform: translateY(-2px);
+  }
+  .entity-card.active {
+    border-color: var(--entity-color);
+    background: var(--entity-bg);
+    box-shadow: 0 0 30px var(--entity-glow);
+  }
+  .entity-card-name { font-family: var(--font-display); font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+  .entity-card-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 14px; }
+  .entity-card-stat { font-size: 22px; font-weight: 700; font-family: var(--font-display); }
+  .entity-card-stat-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+  .entity-color-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--entity-color);
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* Radar / spider chart */
+  .radar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-md);
+    padding: 14px 20px;
+    font-size: 13px;
+    color: var(--text-primary);
+    display: flex; align-items: center; gap: 10px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    max-width: 340px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 10px; }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+    .entity-grid { grid-template-columns: repeat(2, 1fr); }
+    .radar-grid { grid-template-columns: 1fr; }
+  }
+
+  .fade-in { animation: fadeIn 0.5s ease forwards; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+  .number-ticker { transition: all 0.6s cubic-bezier(.25,.8,.25,1); }
+
+  /* Timestamp */
+  #last-updated { font-size: 11px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-zone">
+      <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDcgNDUyIiB3aWR0aD0iNDQ3IiBoZWlnaHQ9IjQ1MiI+CiAgPHJlY3QgeD0iNS41IiB5PSI1LjUiIHdpZHRoPSI0MzYiIGhlaWdodD0iNDQxIiByeD0iNTQiIHJ5PSI1NCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMjMxZjIwIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSIyMjMiIGN5PSIxNDgiIHI9Ijk5IiBmaWxsPSIjMDA3MWJjIi8+CiAgPHRleHQgeD0iMjIzIiB5PSIyMDMiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkc8L3RleHQ+CiAgPHRleHQgeD0iMjE3IiB5PSIzMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0NyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzIzMWYyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjExIj5HQUxBWElBPC90ZXh0PgogIDx0ZXh0IHg9IjIxNyIgeT0iMzk4IiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDciIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyMzFmMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIxMSI+R1JPVVA8L3RleHQ+Cjwvc3ZnPgo=" alt="Galaxia Group" style="height:54px;width:auto;object-fit:contain;border-radius:8px;" />
+      <div>
+        <div class="logo-text">Entity Performance Intelligence</div>
+        <div class="logo-sub">Corporate Analytics Platform</div>
+      </div>
+    </div>
+    <div class="header-center">
+      <div class="live-dot"></div>
+      Live Data · Auto-sync enabled
+    </div>
+    <div class="header-right">
+      <span id="last-updated">Updated just now</span>
+      <button class="btn-ghost" onclick="document.getElementById('file-trigger').click()">
+        ⬆ Upload Data
+      </button>
+      <button class="btn-primary" onclick="exportDashboard()">↓ Export</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ENTITY SELECTOR -->
+    <div>
+      <div class="section-label">Entities Overview</div>
+      <div class="entity-grid" id="entity-grid"></div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div>
+      <div class="section-label">Key Performance Indicators</div>
+      <div class="kpi-grid" id="kpi-grid"></div>
+    </div>
+
+    <!-- CHARTS ROW 1 -->
+    <div>
+      <div class="section-label">Performance Analytics</div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">Headcount Distribution</div>
+          <div class="chart-subtitle">Total workforce per entity</div>
+          <div class="chart-wrap"><canvas id="headcountChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Attrition Rate</div>
+          <div class="chart-subtitle">Employee turnover percentage by entity</div>
+          <div class="chart-wrap"><canvas id="attritionChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Payroll Cost Breakdown</div>
+          <div class="chart-subtitle">Total compensation allocation (₹)</div>
+          <div class="chart-wrap"><canvas id="payrollChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Attendance vs Hiring Activity</div>
+          <div class="chart-subtitle">Normalized attendance rate & new hires</div>
+          <div class="chart-wrap"><canvas id="attendanceHiringChart"></canvas></div>
+        </div>
+        <div class="chart-card chart-card-wide">
+          <div class="chart-title">Multi-Metric Comparative Analysis</div>
+          <div class="chart-subtitle">Normalized entity performance across all dimensions</div>
+          <div class="chart-wrap chart-wrap-lg"><canvas id="radarChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA TABLE -->
+    <div>
+      <div class="section-label">Detailed Entity Report</div>
+      <div class="table-card">
+        <div class="table-header">
+          <div>
+            <div class="chart-title">Entity Performance Summary</div>
+            <div class="chart-subtitle" style="margin:0">Real-time data from uploaded source</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input id="search-box" placeholder="Search entity..." style="background:var(--bg-surface);border:1px solid var(--border);border-radius:100px;padding:7px 16px;color:var(--text-primary);font-size:12px;font-family:var(--font-body);outline:none;" oninput="filterTable(this.value)">
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Entity</th>
+              <th>Headcount</th>
+              <th>Attrition %</th>
+              <th>Hiring</th>
+              <th>Payroll Cost</th>
+              <th>Attendance %</th>
+              <th>Compliance Status</th>
+            </tr>
+          </thead>
+          <tbody id="data-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DROP ZONE -->
+    <div class="drop-zone-wrap">
+      <div class="section-label">Update Dashboard Data</div>
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" accept=".xlsx,.xls,.csv" id="file-trigger" onchange="handleFile(this.files[0])">
+        <div class="drop-zone-icon">📂</div>
+        <div class="drop-zone-title">Drop your Excel or CSV file to refresh dashboard</div>
+        <div class="drop-zone-sub">Drag & drop or click to browse — dashboard updates instantly</div>
+        <div class="drop-zone-formats">
+          <span class="format-tag">xlsx</span>
+          <span class="format-tag">xls</span>
+          <span class="format-tag">csv</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-msg">Data loaded successfully</span>
+</div>
+
+<script>
+// ===== INITIAL DATA (from uploaded Excel) =====
+let DATA = [
+  { Entity: "GXC",      Headcount: 458,  Attrition: 0.450, Hiring: 20, PayrollCost: 20000000, Attendance: 0.90, ComplianceStatus: "Fully paid in Timeline" },
+  { Entity: "GXP",     Headcount: 490,  Attrition: 0.200, Hiring: 2,  PayrollCost: 10000000, Attendance: 0.80, ComplianceStatus: "Fully paid in Timeline" },
+  { Entity: "GXV",     Headcount: 15,   Attrition: 0.005, Hiring: 1,  PayrollCost: 4000000,  Attendance: 1.00, ComplianceStatus: "Fully paid in Timeline" },
+  { Entity: "Aviora Air", Headcount: 1600, Attrition: 0.500, Hiring: 45, PayrollCost: 80000000, Attendance: 0.95, ComplianceStatus: "Slightly delay" }
+];
+
+const ENTITY_PALETTE = [
+  { color: '#3b8bff', glow: 'rgba(59,139,255,0.2)', bg: 'rgba(59,139,255,0.05)' },
+  { color: '#8b5cf6', glow: 'rgba(139,92,246,0.2)', bg: 'rgba(139,92,246,0.05)' },
+  { color: '#10d98a', glow: 'rgba(16,217,138,0.2)', bg: 'rgba(16,217,138,0.05)' },
+  { color: '#f5a623', glow: 'rgba(245,166,35,0.2)', bg: 'rgba(245,166,35,0.05)' }
+];
+
+let charts = {};
+let selectedEntity = null;
+
+function fmt(n) {
+  if (n >= 1e7) return '₹' + (n/1e7).toFixed(1) + 'Cr';
+  if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + 'L';
+  return '₹' + n.toLocaleString();
+}
+
+// ===== RENDER ALL =====
+function renderAll() {
+  renderEntityGrid();
+  renderKPIs();
+  renderTable(DATA);
+  renderCharts();
+  document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+// ===== ENTITY GRID =====
+function renderEntityGrid() {
+  const container = document.getElementById('entity-grid');
+  container.innerHTML = DATA.map((d, i) => {
+    const pal = ENTITY_PALETTE[i % ENTITY_PALETTE.length];
+    return `
+    <div class="entity-card fade-in ${selectedEntity === d.Entity ? 'active' : ''}"
+      style="--entity-color:${pal.color};--entity-glow:${pal.glow};--entity-bg:${pal.bg};animation-delay:${i*0.07}s"
+      onclick="selectEntity('${d.Entity}')">
+      <div class="entity-color-bar"></div>
+      <div class="entity-card-name" style="color:${pal.color}">${d.Entity}</div>
+      <div class="entity-card-sub">${d.ComplianceStatus}</div>
+      <div class="entity-card-stat" style="color:${pal.color}">${d.Headcount.toLocaleString()}</div>
+      <div class="entity-card-stat-label">Total Employees</div>
+    </div>`;
+  }).join('');
+}
+
+function selectEntity(name) {
+  selectedEntity = selectedEntity === name ? null : name;
+  renderAll();
+}
+
+// ===== KPIs =====
+function renderKPIs() {
+  const totalHead = DATA.reduce((s,d) => s + d.Headcount, 0);
+  const avgAttr = DATA.reduce((s,d) => s + d.Attrition, 0) / DATA.length;
+  const totalPayroll = DATA.reduce((s,d) => s + d.PayrollCost, 0);
+  const avgAtt = DATA.reduce((s,d) => s + d.Attendance, 0) / DATA.length;
+  const totalHiring = DATA.reduce((s,d) => s + d.Hiring, 0);
+
+  const kpis = [
+    { label: 'Total Headcount', value: totalHead.toLocaleString(), icon: '👥', delta: '+' + totalHiring + ' new hires', deltaType: 'pos',
+      accent: 'linear-gradient(90deg,#3b8bff,#00d4ff)', glow: 'linear-gradient(135deg,rgba(59,139,255,0.08),transparent)', iconBg: 'rgba(59,139,255,0.15)' },
+    { label: 'Avg Attrition Rate', value: (avgAttr*100).toFixed(1) + '%', icon: '📉', delta: 'Across ' + DATA.length + ' entities', deltaType: avgAttr > 0.3 ? 'neg' : 'neu',
+      accent: 'linear-gradient(90deg,#ff4d6d,#f5a623)', glow: 'linear-gradient(135deg,rgba(255,77,109,0.08),transparent)', iconBg: 'rgba(255,77,109,0.15)' },
+    { label: 'Total Payroll Cost', value: fmt(totalPayroll), icon: '💰', delta: fmt(totalPayroll/DATA.length) + ' avg/entity', deltaType: 'neu',
+      accent: 'linear-gradient(90deg,#10d98a,#3b8bff)', glow: 'linear-gradient(135deg,rgba(16,217,138,0.08),transparent)', iconBg: 'rgba(16,217,138,0.15)' },
+    { label: 'Avg Attendance', value: (avgAtt*100).toFixed(1) + '%', icon: '📋', delta: avgAtt >= 0.9 ? '↑ Above target' : '↓ Below 90% target', deltaType: avgAtt >= 0.9 ? 'pos' : 'neg',
+      accent: 'linear-gradient(90deg,#8b5cf6,#00d4ff)', glow: 'linear-gradient(135deg,rgba(139,92,246,0.08),transparent)', iconBg: 'rgba(139,92,246,0.15)' }
+  ];
+
+  document.getElementById('kpi-grid').innerHTML = kpis.map((k,i) => `
+    <div class="kpi-card fade-in" style="--kpi-accent:${k.accent};--kpi-glow:${k.glow};animation-delay:${i*0.08}s">
+      <div class="kpi-accent-line"></div>
+      <div class="kpi-icon" style="background:${k.iconBg}">${k.icon}</div>
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value number-ticker">${k.value}</div>
+      <div class="kpi-delta ${k.deltaType}">${k.deltaType==='pos'?'↑':k.deltaType==='neg'?'↓':'•'} ${k.delta}</div>
+    </div>`).join('');
+}
+
+// ===== TABLE =====
+function renderTable(rows) {
+  const tbody = document.getElementById('data-table-body');
+  tbody.innerHTML = rows.map((d, i) => {
+    const pal = ENTITY_PALETTE[DATA.indexOf(d) % ENTITY_PALETTE.length];
+    const maxHC = Math.max(...DATA.map(x=>x.Headcount));
+    const compClass = d.ComplianceStatus.toLowerCase().includes('delay') ? 'status-warn' : 'status-ok';
+    return `<tr onclick="selectEntity('${d.Entity}')">
+      <td><span class="entity-badge">
+        <span class="entity-dot" style="background:${pal.color};box-shadow:0 0 6px ${pal.color}"></span>
+        ${d.Entity}
+      </span></td>
+      <td>
+        <div class="bar-cell">
+          <span>${d.Headcount.toLocaleString()}</span>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="--bar-color:${pal.color};width:${(d.Headcount/maxHC*100).toFixed(1)}%"></div></div>
+        </div>
+      </td>
+      <td style="color:${d.Attrition>0.4?'var(--accent-rose)':d.Attrition>0.2?'var(--accent-amber)':'var(--accent-emerald)'}">${(d.Attrition*100).toFixed(1)}%</td>
+      <td>${d.Hiring}</td>
+      <td>${fmt(d.PayrollCost)}</td>
+      <td style="color:${d.Attendance>=0.95?'var(--accent-emerald)':d.Attendance>=0.85?'var(--accent-amber)':'var(--accent-rose)'}">${(d.Attendance*100).toFixed(0)}%</td>
+      <td><span class="status-chip ${compClass}">${d.ComplianceStatus}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTable(q) {
+  const filtered = DATA.filter(d => d.Entity.toLowerCase().includes(q.toLowerCase()));
+  renderTable(filtered);
+}
+
+// ===== CHARTS =====
+function getChartDefaults() {
+  return {
+    color: 'rgba(15,18,32,0.60)',
+    borderColor: 'rgba(240,242,255,0.08)',
+    plugins: { legend: { labels: { color: 'rgba(15,18,32,0.55)', font: { family: 'DM Sans', size: 11 }, boxWidth: 10, padding: 16 } }, tooltip: { backgroundColor: 'rgba(255,255,255,0.97)', titleColor: '#0f1220', bodyColor: 'rgba(15,18,32,0.65)', borderColor: 'rgba(0,0,0,0.1)', borderWidth: 1, padding: 12, titleFont:{family:'Syne',weight:'600'} } }
+  };
+}
+
+function destroyChart(id) { if(charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function renderCharts() {
+  const labels = DATA.map(d => d.Entity);
+  const colors = ENTITY_PALETTE.map(p => p.color);
+  const colorsBg = ENTITY_PALETTE.map(p => p.glow.replace('0.2','0.7'));
+  const def = getChartDefaults();
+
+  // 1. Headcount Bar
+  destroyChart('headcount');
+  charts['headcount'] = new Chart(document.getElementById('headcountChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Headcount',
+        data: DATA.map(d => d.Headcount),
+        backgroundColor: colors.map(c => c + 'cc'),
+        borderColor: colors,
+        borderWidth: 2,
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { ...def.plugins, legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(15,18,32,0.55)', font:{family:'DM Sans',size:11} } },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: 'rgba(15,18,32,0.55)', font:{family:'DM Sans',size:11} } }
+      }
+    }
+  });
+
+  // 2. Attrition Doughnut
+  destroyChart('attrition');
+  charts['attrition'] = new Chart(document.getElementById('attritionChart'), {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: DATA.map(d => +(d.Attrition*100).toFixed(1)),
+        backgroundColor: colors.map(c => c + 'cc'),
+        borderColor: 'rgba(7,10,20,0.8)',
+        borderWidth: 3,
+        hoverBorderColor: colors,
+        hoverBorderWidth: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '72%',
+      plugins: { ...def.plugins, tooltip: { ...def.plugins.tooltip, callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}%` } } }
+    }
+  });
+
+  // 3. Payroll Pie/Polar
+  destroyChart('payroll');
+  charts['payroll'] = new Chart(document.getElementById('payrollChart'), {
+    type: 'polarArea',
+    data: {
+      labels,
+      datasets: [{
+        data: DATA.map(d => d.PayrollCost/1e7),
+        backgroundColor: colors.map(c => c + '55'),
+        borderColor: colors,
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { ...def.plugins, tooltip: { ...def.plugins.tooltip, callbacks: { label: ctx => ` ${ctx.label}: ₹${ctx.raw.toFixed(1)}Cr` } } },
+      scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(15,18,32,0.45)', font:{size:10}, backdropColor:'rgba(255,255,255,0.0)' } } }
+    }
+  });
+
+  // 4. Mixed Attendance + Hiring
+  destroyChart('attendHiring');
+  charts['attendHiring'] = new Chart(document.getElementById('attendanceHiringChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Attendance %',
+          data: DATA.map(d => +(d.Attendance*100).toFixed(0)),
+          backgroundColor: 'rgba(16,217,138,0.3)',
+          borderColor: '#10d98a',
+          borderWidth: 2,
+          borderRadius: 6,
+          yAxisID: 'y',
+        },
+        {
+          label: 'New Hires',
+          data: DATA.map(d => d.Hiring),
+          type: 'line',
+          borderColor: '#f5a623',
+          backgroundColor: 'rgba(245,166,35,0.1)',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#f5a623',
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          tension: 0.35,
+          fill: true,
+          yAxisID: 'y1',
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { ...def.plugins },
+      scales: {
+        x: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'rgba(240,242,255,0.5)',font:{family:'DM Sans',size:11}} },
+        y: { grid:{color:'rgba(255,255,255,0.04)'}, ticks:{color:'rgba(240,242,255,0.5)',font:{size:10}}, position:'left', title:{display:true,text:'Attendance %',color:'rgba(240,242,255,0.4)',font:{size:10}} },
+        y1: { grid:{drawOnChartArea:false}, ticks:{color:'rgba(245,166,35,0.7)',font:{size:10}}, position:'right', title:{display:true,text:'New Hires',color:'rgba(245,166,35,0.5)',font:{size:10}} }
+      }
+    }
+  });
+
+  // 5. Radar
+  destroyChart('radar');
+  const maxHC = Math.max(...DATA.map(d=>d.Headcount));
+  const maxPC = Math.max(...DATA.map(d=>d.PayrollCost));
+  const maxH  = Math.max(...DATA.map(d=>d.Hiring));
+  charts['radar'] = new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
+    data: {
+      labels: ['Headcount', 'Attrition', 'Hiring Activity', 'Payroll Weight', 'Attendance'],
+      datasets: DATA.map((d,i) => ({
+        label: d.Entity,
+        data: [
+          +(d.Headcount/maxHC*100).toFixed(1),
+          +(d.Attrition*100).toFixed(1),
+          +(d.Hiring/maxH*100).toFixed(1),
+          +(d.PayrollCost/maxPC*100).toFixed(1),
+          +(d.Attendance*100).toFixed(1)
+        ],
+        borderColor: ENTITY_PALETTE[i].color,
+        backgroundColor: ENTITY_PALETTE[i].color + '22',
+        borderWidth: 2,
+        pointBackgroundColor: ENTITY_PALETTE[i].color,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { ...def.plugins },
+      scales: {
+        r: {
+          grid: { color: 'rgba(255,255,255,0.07)' },
+          angleLines: { color: 'rgba(255,255,255,0.07)' },
+          pointLabels: { color: 'rgba(15,18,32,0.60)', font: { family:'DM Sans', size:11 } },
+          ticks: { color: 'rgba(15,18,32,0.35)', backdropColor:'rgba(255,255,255,0.0)', font:{size:9} },
+          suggestedMin: 0, suggestedMax: 100
+        }
+      }
+    }
+  });
+}
+
+// ===== FILE HANDLER =====
+function handleFile(file) {
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      let newData = [];
+      if (ext === 'csv') {
+        const text = e.target.result;
+        const lines = text.trim().split('\n');
+        const headers = lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+        newData = lines.slice(1).map(line => {
+          const vals = line.split(',').map(v=>v.trim().replace(/"/g,''));
+          const obj = {};
+          headers.forEach((h,i) => obj[h] = vals[i]);
+          return parseRow(obj, headers);
+        }).filter(d=>d.Entity);
+      } else {
+        const wb = XLSX.read(e.target.result, { type: 'binary' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const raw = XLSX.utils.sheet_to_json(ws);
+        newData = raw.map(row => parseRow(row, Object.keys(row))).filter(d=>d.Entity);
+      }
+      if (newData.length === 0) { showToast('⚠️', 'No valid data found in file'); return; }
+      DATA = newData;
+      selectedEntity = null;
+      renderAll();
+      showToast('✓', `Loaded ${newData.length} entities from "${file.name}"`);
+    } catch(err) {
+      showToast('✗', 'Error parsing file: ' + err.message);
+    }
+  };
+
+  if (ext === 'csv') reader.readAsText(file);
+  else reader.readAsBinaryString(file);
+}
+
+function parseRow(row, headers) {
+  const find = (keys) => {
+    for (const k of keys) {
+      const match = headers.find(h => h.toLowerCase().includes(k));
+      if (match) return row[match];
+    }
+    return undefined;
+  };
+  const entityKey = headers.find(h => h.toLowerCase().includes('entity') || h.toLowerCase() === 'name');
+  if (!entityKey || !row[entityKey]) return {};
+
+  const attrVal = find(['attrition','turnover','churn']);
+  const payVal = find(['payroll','salary','cost','compensation']);
+  const attVal = find(['attendance','present']);
+
+  return {
+    Entity: String(row[entityKey]),
+    Headcount: parseFloat(find(['headcount','head count','employees','workforce','staff'])) || 0,
+    Attrition: parseFloat(attrVal) > 1 ? parseFloat(attrVal)/100 : parseFloat(attrVal) || 0,
+    Hiring: parseFloat(find(['hiring','hire','recruit','new hire'])) || 0,
+    PayrollCost: parseFloat(payVal) || 0,
+    Attendance: parseFloat(attVal) > 1 ? parseFloat(attVal)/100 : parseFloat(attVal) || 0,
+    ComplianceStatus: find(['compliance','status','payment']) || 'Unknown'
+  };
+}
+
+// ===== DRAG & DROP =====
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+});
+
+// ===== TOAST =====
+let toastTimer;
+function showToast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ===== EXPORT =====
+function exportDashboard() {
+  const ws = XLSX.utils.json_to_sheet(DATA.map(d => ({
+    'Entity': d.Entity,
+    'Headcount': d.Headcount,
+    'Attrition Rate': (d.Attrition*100).toFixed(2)+'%',
+    'Hiring': d.Hiring,
+    'Payroll Cost': d.PayrollCost,
+    'Attendance Rate': (d.Attendance*100).toFixed(2)+'%',
+    'Compliance Status': d.ComplianceStatus
+  })));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Entity Performance');
+  XLSX.writeFile(wb, 'EntityPerformanceReport_Export.xlsx');
+  showToast('↓', 'Dashboard exported as Excel');
+}
+
+// ===== INIT =====
+renderAll();
+</script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Sandeep Gadakari — AI Product Management (certified), data &amp; BI portfolio. A hand-drawn 3D walkthrough: four rooms of case studies in Python, SQL, Tableau and machine learning.">
+<meta name="description" content="Sandeep Gadakari — AI Product Management (certified), data &amp; BI portfolio. A hand-drawn 3D walkthrough: five rooms of case studies in Python, SQL, Tableau, machine learning and agentic AI.">
 <meta name="author" content="Sandeep Gadakari">
 <meta name="theme-color" content="#f1efe9">
 <title>Sandeep Gadakari — Portfolio</title>
@@ -196,7 +196,7 @@
 </div>
 
 <!-- 3D EXPERIENCE -->
-<canvas id="webgl" aria-label="A hand-drawn three dimensional portfolio corridor with four doors: Demos, Dashboards, Tableau and Code. Drag or scroll to walk, click a door to open it, click a framed poster to read the case study."></canvas>
+<canvas id="webgl" aria-label="A hand-drawn three dimensional portfolio corridor with five doors: Demos, Dashboards, Tableau, Code and AI Systems. Drag or scroll to walk, click a door to open it, click a framed poster to read the case study."></canvas>
 
 <div class="frame-ui">
   <div class="brand"><b>SANDEEP GADAKARI</b><span>AI PRODUCT MANAGEMENT · DATA &amp; BI</span></div>
@@ -215,7 +215,7 @@
   <div class="hud">
     <p class="kicker" id="hudKicker">SANDEEP GADAKARI · AI PRODUCT MANAGEMENT</p>
     <h1 id="hudTitle">PRODUCTS BUILT<br>TO MAKE DATA<br>ACTIONABLE.</h1>
-    <p id="hudCopy">A hand-drawn walk through the work — four rooms of case studies in Python, SQL, Tableau, and machine learning.</p>
+    <p id="hudCopy">A hand-drawn walk through the work — five rooms of case studies in Python, SQL, Tableau, machine learning and agentic AI.</p>
   </div>
   <div class="hint" id="hint"><b>DRAG</b> or <b>SCROLL</b> to walk<br><b>CLICK</b> a door to open it<span class="dot">↓</span></div>
 </div>
@@ -265,7 +265,7 @@
     </section>
     <section class="fb-sec" id="fb-gallery">
       <h2>The work, by room.</h2>
-      <p class="lead">Every project sorted into one of four rooms — so you can go straight to the kind of work you came to see.</p>
+      <p class="lead">Every project sorted into one of five rooms — so you can go straight to the kind of work you came to see.</p>
       <div id="fbCats"></div>
     </section>
     <section class="fb-sec" id="fb-tools">
@@ -317,20 +317,22 @@ const DEMOS={
   nifty:{title:'NIFTY 50 ML FORECAST — LIVE WALKTHROUGH', get html(){return b64ToText(DEMO_B64.nifty)}}
 };
 
-/* Four rooms. side = which corridor wall the door sits on, z = where along the corridor. */
+/* Five rooms. side = which corridor wall the door sits on, z = where along the corridor. */
 const CATS=[
   {id:'demos',      no:'01', label:'DEMOS',      title:'LIVE<br>WALKTHROUGHS', color:'#b8543f', side:'L', z:-2,
    blurb:'Recorded, running demos — press play and watch the pipeline execute end to end.'},
   {id:'dashboards', no:'02', label:'DASHBOARDS', title:'AUTOMATED<br>DASHBOARDS', color:'#3f6fb8', side:'R', z:-11,
-   blurb:'Self-contained HTML & JavaScript dashboards built for real operating teams.'},
+   blurb:'Self-contained HTML & JavaScript dashboards built for real operating teams. The OneSGG set was delivered to the client — company names and employee data are anonymised here for privacy.'},
   {id:'tableau',    no:'03', label:'TABLEAU',    title:'TABLEAU<br>VIZZES', color:'#2f7f66', side:'L', z:-20,
    blurb:'Published Tableau Public workbooks — finance, HR, media, retail and geospatial.'},
   {id:'code',       no:'04', label:'CODE',       title:'CODE<br>&amp; SQL', color:'#8a5fb0', side:'R', z:-29,
-   blurb:'The source behind the work — Python pipelines and SQL analysis, on GitHub.'}
+   blurb:'The source behind the work — Python pipelines and SQL analysis, on GitHub.'},
+  {id:'ai',         no:'05', label:'AI SYSTEMS', title:'AGENTIC AI<br>&amp; ML SYSTEMS', color:'#b07d2b', side:'L', z:-38,
+   blurb:'Systems where the model makes the call — a multi-agent investment committee and a predictive plant engine that turns a live signal into a decision, and a decision into rupees.'}
 ];
 const CAT=Object.fromEntries(CATS.map(c=>[c.id,c]));
 
-/* kind: demo | tableau | github | internal */
+/* kind: demo | live | app | tableau | github | internal */
 const PROJECTS=[
   /* ---- 01 DEMOS ---- */
   {t:'S&OP Automation Demo', cat:'demos', kind:'demo', demo:'snop', art:'terminal',
@@ -341,24 +343,27 @@ const PROJECTS=[
    s:['Python','scikit-learn','Random Forest','RSI · MACD · BB']},
 
   /* ---- 02 DASHBOARDS ---- */
-  {t:'Entity Performance Intelligence', cat:'dashboards', kind:'internal', art:'kpi',
-   d:'A cross-entity HR command view: attendance, hiring pipeline, attrition and headcount distribution for every business unit on one screen.',
+  {t:'Entity Performance Intelligence', cat:'dashboards', kind:'app', link:'projects/EntityPerformanceDashboard.html', art:'kpi',
+   d:'A cross-entity HR command view: attendance, hiring pipeline, attrition and headcount distribution for every business unit on one screen. Delivered to OneSGG — entity and employee data anonymised for privacy.',
    s:['Excel / CSV','BI','Data Viz']},
-  {t:'OneSGG HR Analytics', cat:'dashboards', kind:'internal', art:'kpi',
-   d:'AI-assisted attrition-risk scoring by grade, paired with department-level headcount forecasting so staffing gaps surface before they bite.',
+  {t:'HR Analytics Intelligence', cat:'dashboards', kind:'app', link:'projects/Galaxia_HR_Analytics.html', art:'kpi',
+   d:'AI-assisted attrition-risk scoring by grade, paired with department-level headcount forecasting so staffing gaps surface before they bite. Delivered to OneSGG — company names and employee data anonymised for privacy.',
    s:['Machine Learning','HR Analytics','Python']},
-  {t:'OneSGG HR Platform v2', cat:'dashboards', kind:'internal', art:'grid',
-   d:'Workforce planning across approved, filled and vacant roles — attrition trend, cost-to-hire and generated AI insights in one planning surface.',
+  {t:'HR Intelligence Platform v2', cat:'dashboards', kind:'app', link:'projects/Galaxia_HR_Dashboard_v2.html', art:'grid',
+   d:'Workforce planning across approved, filled and vacant roles — attrition trend, cost-to-hire and generated AI insights in one planning surface. Delivered to OneSGG — company names and employee data anonymised for privacy.',
    s:['Workforce Planning','AI Insights','Dashboards']},
-  {t:'SGG HR Compliance', cat:'dashboards', kind:'internal', art:'grid',
-   d:'Excel-powered compliance tracking with automatic gap detection and trend insight, so lapsed statutory items are visible the week they slip.',
-   s:['Excel / CSV','Compliance','Analytics']},
-  {t:'GCL Global Org Structure', cat:'dashboards', kind:'internal', art:'org',
-   d:'An interactive leadership-to-function org chart wired to live headcount analytics — expand any branch and the numbers follow.',
+  {t:'HR Department Org Chart', cat:'dashboards', kind:'app', link:'projects/galaxia_hr_org_chart.html', art:'org',
+   d:'A live HR-department hierarchy with drag-and-drop CSV import, per-card status tracking and instant active/vacant filtering. Delivered to OneSGG — every name on the chart replaced for privacy.',
+   s:['JavaScript','Org Design','Data Viz']},
+  {t:'Global Org Structure', cat:'dashboards', kind:'app', link:'projects/galaxia_org_futuristic_chart.html', art:'org',
+   d:'An interactive leadership-to-function org chart wired to live headcount analytics — expand any branch and the numbers follow. Delivered to OneSGG — company names and leadership data anonymised for privacy.',
    s:['JavaScript','Data Viz','Org Analytics']},
-  {t:'OWSR Control Tower — Coolberg', cat:'dashboards', kind:'internal', art:'kpi',
-   d:'A retail control tower covering outlet coverage, revenue, metro mix and buying-pattern heatmaps for the Coolberg beverage portfolio.',
-   s:['Chart.js','Retail Analytics','BI']},
+  {t:'HR Compliance Tracker', cat:'dashboards', kind:'internal', art:'grid',
+   d:'Excel-powered compliance tracking with automatic gap detection and trend insight, so lapsed statutory items are visible the week they slip. Delivered to OneSGG — client data withheld.',
+   s:['Excel / CSV','Compliance','Analytics']},
+  {t:'OWSR Control Tower — Coolberg', cat:'dashboards', kind:'app', link:'projects/owsr_dashboard_v3.html?demo=1', art:'kpi',
+   d:'Drop the Python pipeline’s output workbook onto the page and it becomes a retail control tower: outlet coverage, productive calls, repeat-billing rate, case-box throughput and revenue, sliced by zone, territory, beat, market type, segment and category. Every outlet is auto-segmented — Champion, Loyal, New, At Risk, Occasional, Dormant — and an Action Centre ranks risk and opportunity flags by rupee impact: high-value outlets gone silent, dormant accounts worth winning back, single-category buyers open to cross-sell, territories surging or sliding. Parsing runs in a background worker so 49,000 rows never freeze the UI. Built during the OneSGG internship; opens here on synthetic demo data — drag in your own OWSR file and it recalculates.',
+   s:['JavaScript','Chart.js','Web Workers','Retail Analytics']},
 
   /* ---- 03 TABLEAU ---- */
   {t:'P&L Statement Dashboard', cat:'tableau', kind:'tableau', link:TB, art:'bars',
@@ -389,13 +394,27 @@ const PROJECTS=[
    s:['Python','scikit-learn','Pandas','NumPy']},
   {t:'Amazon Sales SQL Project', cat:'code', kind:'github', link:GH+'/Amazon_-sales', art:'code',
    d:'A SQL analysis deck working through real business questions on Amazon sales data — query by query, with the insight each one produced.',
-   s:['SQL','Sales Analytics','PowerPoint']}
+   s:['SQL','Sales Analytics','PowerPoint']},
+  {t:'OWSR Calculator — Automation Pipeline', cat:'code', kind:'internal', art:'code',
+   d:'The Python engine behind the OWSR control tower. One run takes the raw secondary-sales export and rebuilds the entire outlet-wise report: productive calls per outlet-month, unique productive coverage, case-box conversion across differing unit factors, sale value, and the repeat-billing chain that needs the previous month to resolve the current one — overall and per product category. It rewrites the master workbook in place, carrying prior-month history forward, so a report that took days of manual pivoting lands in a single command. Written during the OneSGG internship.',
+   s:['Python','Pandas','openpyxl','Excel Automation']},
+
+  /* ---- 05 AI SYSTEMS ---- */
+  {t:'Argonaut — AI Job-Scam Detection', cat:'ai', kind:'live', link:'https://sandeepgadakari2000.github.io/https-sandeepgadakari2000.github.io-argonaut-/', repo:GH+'/Argonaut---Argus-', art:'scatter',
+   d:'A live tool that tells you whether a LinkedIn or WhatsApp job post is real. Paste the text and the Argus engine returns a 0–100 trust score, a verdict — Legitimate, Engagement Bait, Suspicious or Actual Scam — and the evidence behind it. The model is a hybrid: a TF-IDF + logistic-regression classifier trained in Python on labelled Indian job-fraud posts, whose weights are exported and run in the browser, blended 60/40 with six rule detectors that read fee demands, UPI handles, off-platform channels, unrealistic pay, MLM patterns and urgency bait. The whole thing runs on-device — no API, no account, no key — so nothing a user pastes ever leaves their machine, which is what makes the privacy promise literally true and every scan free. Deterministic and fully explainable: each verdict ships its own audit trail.',
+   s:['Machine Learning','scikit-learn','On-Device Inference','JavaScript']},
+  {t:'Kaizen-to-EBITDA Engine', cat:'ai', kind:'live', link:'https://kaizen-ebitda-engine.streamlit.app/', repo:GH+'/kaizen-ebitda-engine', art:'forecast',
+   d:'A live industrial-AI system that watches eight foundry machines minute by minute, predicts what is about to fail, and prices that risk straight into EBITDA. Two ML models score every machine 0–100 for failure in the next hour; the engine then converts the score into rupees at risk — including the losses most plants miss: knock-on stoppages, slow running and material starvation. Across eight simulated weeks holding 38 real breakdowns it warned about 50 minutes early and caught 30 of them, at roughly 0.7 false alarms per machine per day. One screen for the plant engineer, one for the CFO, over the same truth.',
+   s:['Python','Machine Learning','Streamlit','EBITDA Modelling']},
+  {t:'NiftyPulse Quant Orchestrator', cat:'ai', kind:'internal', art:'terminal',
+   d:'An agentic AI research terminal for the NIFTY 50. Three CrewAI agents convene as an investment committee and run sequentially: a Macro Economist calls the regime off the cross-asset tape, a Technical Quant turns the indicator fact sheet into one falsifiable thesis with invalidation levels, and a Chief Risk Officer — holding a unilateral veto — tests it against the mandate and signs the memo APPROVED, CONDITIONAL or VETOED. The design decision that makes it trustworthy: the LLMs never do arithmetic. Every indicator, volatility figure and position size is computed deterministically in pandas/NumPy and handed to the agents as pre-computed evidence, so numbers are auditable and there is nothing numeric left to hallucinate. Three engines run in descending order of ambition — the agent committee, a single-shot LangChain/LiteLLM analyst, then a rule-based quant engine — so a rate-limited run still ships a defensible memo. You get a different author, never a broken app.',
+   s:['CrewAI','Agentic AI','LangChain','Python','Streamlit']}
 ];
 PROJECTS.forEach((p,i)=>p.i=i);
 const byCat=id=>PROJECTS.filter(p=>p.cat===id);
 
-const skills=['Python','SQL','Tableau','Machine Learning','Pandas / NumPy','JavaScript','Chart.js','Excel Automation','Data Visualization','Dashboard Engineering'];
-const tagFor=p=>p.kind==='demo'?'▶ LIVE DEMO':p.kind==='github'?'GITHUB ↗':p.kind==='tableau'?'TABLEAU ↗':'CASE STUDY';
+const skills=['Python','SQL','Tableau','Machine Learning','Agentic AI / CrewAI','Pandas / NumPy','JavaScript','Chart.js','Excel Automation','Streamlit','Data Visualization','Dashboard Engineering'];
+const tagFor=p=>p.kind==='demo'?'▶ LIVE DEMO':p.kind==='live'?'▶ LIVE APP':p.kind==='app'?'OPEN ↗':p.kind==='github'?'GITHUB ↗':p.kind==='tableau'?'TABLEAU ↗':'CASE STUDY';
 
 /* ============================== LOADER ============================== */
 const loader=document.getElementById('loader'), pctEl=document.getElementById('pct');
@@ -452,6 +471,11 @@ function openProject(i){
     if(p.link){ link(mP,p.link,'VIEW SOURCE ↗',true); link(mS,mail,'DISCUSS THIS →',false); }
     else{ link(mP,mail,'DISCUSS THIS →',false); link(mS,GH,'MORE ON GITHUB ↗',true); }
   }
+  else if(p.kind==='live'){
+    link(mP,p.link,'OPEN THE LIVE APP ↗',true);
+    if(p.repo) link(mS,p.repo,'VIEW SOURCE ↗',true); else link(mS,mail,'DISCUSS THIS →',false);
+  }
+  else if(p.kind==='app'){ link(mP,p.link,'OPEN THE DASHBOARD ↗',true); link(mS,mail,'DISCUSS THIS →',false); }
   else if(p.kind==='github'){ link(mP,p.link,'VIEW ON GITHUB ↗',true); link(mS,mail,'DISCUSS THIS →',false); }
   else if(p.kind==='tableau'){ link(mP,p.link,'VIEW ON TABLEAU ↗',true); link(mS,mail,'DISCUSS THIS →',false); }
   else{ link(mP,`mailto:${EMAIL}?subject=${encodeURIComponent('Walkthrough: '+p.t)}`,'REQUEST A WALKTHROUGH →',false); link(mS,GH,'MORE ON GITHUB ↗',true); }
@@ -643,7 +667,7 @@ function noteTexture(head,body,color='#b68235'){
   });
 }
 
-const CORR_START=10, CORR_END=-42, WALL_X=6, WALL_H=6, DOOR_W=1.9, DOOR_H=3.3;
+const CORR_START=10, CORR_END=-51, WALL_X=6, WALL_H=6, DOOR_W=1.9, DOOR_H=3.3;
 
 /* ---- FLOOR ---- */
 const floorTex=tex(512,512,(x)=>{
@@ -782,6 +806,125 @@ const catTex=tex(128,128,(x)=>{x.clearRect(0,0,128,128);x.strokeStyle='#2a2a2a';
   x.moveTo(44,110);x.quadraticCurveTo(30,60,50,44);x.lineTo(40,24);x.lineTo(58,42);x.lineTo(72,42);x.lineTo(90,24);x.lineTo(80,46);
   x.quadraticCurveTo(98,64,84,110);x.closePath();x.stroke();x.beginPath();x.arc(56,64,3,0,7);x.arc(74,64,3,0,7);x.stroke();});
 const catSp=new THREE.Sprite(new THREE.SpriteMaterial({map:catTex,transparent:true}));catSp.position.set(-2.6,0.55,11.7);catSp.scale.set(1.1,1.1,1);scene.add(catSp);
+
+/* ============================== THE FRONT YARD ==============================
+   Same ink-on-paper hand: sun behind the clouds, a second tree, and a boy
+   throwing a ball for his dog on the path in front of the door. Everything
+   here lives in FRONT of the facade (z > 12) and fades out as you walk in. */
+const yard=new THREE.Group();scene.add(yard);
+const YARD_Z=13.1;
+function inkSprite(w,h,draw,opts){
+  const o=opts||{};
+  const m=new THREE.SpriteMaterial({map:tex(w,h,draw),transparent:true,
+    depthTest:o.depthTest!==false,depthWrite:false,opacity:o.opacity==null?1:o.opacity});
+  const s=new THREE.Sprite(m);
+  if(o.order!=null)s.renderOrder=o.order;
+  return s;
+}
+
+/* ---- SUN — sits behind the clouds, rays turning slowly ---- */
+const sunDisc=inkSprite(256,256,(x)=>{
+  x.clearRect(0,0,256,256);
+  x.fillStyle='rgba(182,130,53,.16)';x.beginPath();x.arc(128,128,74,0,Math.PI*2);x.fill();
+  x.strokeStyle='#b68235';x.lineWidth=7;x.beginPath();x.arc(128,128,74,0,Math.PI*2);x.stroke();
+  /* a second, slightly-off pass so the circle reads as drawn by hand */
+  x.strokeStyle='rgba(42,42,42,.30)';x.lineWidth=3;x.beginPath();x.arc(130,127,77,0.5,5.6);x.stroke();
+},{depthTest:false,order:-3,opacity:.92});
+sunDisc.position.set(4.6,7.3,10.1);sunDisc.scale.set(1.65,1.65,1);scene.add(sunDisc);
+const sunRays=inkSprite(256,256,(x)=>{
+  x.clearRect(0,0,256,256);x.strokeStyle='#b68235';x.lineWidth=6;x.lineCap='round';
+  for(let i=0;i<12;i++){const a=i*Math.PI/6,r0=88,r1=i%2?114:126;
+    x.beginPath();x.moveTo(128+Math.cos(a)*r0,128+Math.sin(a)*r0);x.lineTo(128+Math.cos(a)*r1,128+Math.sin(a)*r1);x.stroke();}
+},{depthTest:false,order:-3,opacity:.8});
+sunRays.position.copy(sunDisc.position);sunRays.scale.set(2.5,2.5,1);scene.add(sunRays);
+
+/* ---- a second tree, so the door sits between two of them ---- */
+const tree2=treeSprite();tree2.position.set(5.15,3.25,11.15);tree2.scale.set(4.5,6.6,1);scene.add(tree2);
+
+/* ---- grass tufts along the path ---- */
+const tuftTex=tex(64,64,(x)=>{x.clearRect(0,0,64,64);x.strokeStyle='rgba(42,42,42,.55)';x.lineWidth=4;x.lineCap='round';
+  x.beginPath();x.moveTo(32,60);x.quadraticCurveTo(12,42,10,18);x.moveTo(32,60);x.lineTo(32,10);x.moveTo(32,60);x.quadraticCurveTo(52,42,54,20);x.stroke();});
+const Rg=rnd(91);
+[-5.2,-4.3,-1.9,1.7,3.4,4.4,5.6].forEach(gx=>{
+  const g=new THREE.Sprite(new THREE.SpriteMaterial({map:tuftTex,transparent:true,depthWrite:false,opacity:.7}));
+  const s=0.26+Rg()*0.16;g.position.set(gx,s*0.5,YARD_Z-0.35+Rg()*0.5);g.scale.set(s,s,1);yard.add(g);
+});
+
+/* ---- THE BOY (body + a separately pivoting throwing arm) ---- */
+function ground(w,op){return inkSprite(128,64,(x)=>{x.clearRect(0,0,128,64);
+  x.strokeStyle='rgba(42,42,42,.5)';x.lineWidth=4;x.beginPath();x.ellipse(64,34,52,13,0,0,Math.PI*2);x.stroke();},{opacity:op});}
+const boy=new THREE.Group();boy.position.set(-3.2,0,YARD_Z);yard.add(boy);
+const boyBody=inkSprite(256,384,(x)=>{
+  x.clearRect(0,0,256,384);x.strokeStyle='#2a2a2a';x.lineWidth=9;x.lineCap='round';x.lineJoin='round';
+  /* head + a hint of hair */
+  x.beginPath();x.arc(128,62,40,0,Math.PI*2);x.stroke();
+  x.lineWidth=7;x.beginPath();x.moveTo(94,40);x.quadraticCurveTo(124,10,162,38);x.stroke();
+  /* face, turned toward the dog */
+  x.lineWidth=6;x.beginPath();x.arc(146,58,4.5,0,7);x.stroke();
+  x.beginPath();x.arc(140,74,13,0.15,1.15);x.stroke();
+  /* torso + legs, mid-stride */
+  x.lineWidth=9;x.beginPath();x.moveTo(128,102);x.lineTo(128,214);
+  x.moveTo(128,214);x.lineTo(96,300);x.lineTo(88,356);
+  x.moveTo(128,214);x.lineTo(166,296);x.lineTo(178,354);x.stroke();
+  /* shoes */
+  x.lineWidth=8;x.beginPath();x.moveTo(88,356);x.lineTo(64,358);x.moveTo(178,354);x.lineTo(202,357);x.stroke();
+  /* the trailing arm */
+  x.lineWidth=8;x.beginPath();x.moveTo(128,132);x.quadraticCurveTo(92,168,84,206);x.stroke();
+  /* shirt accent — same terracotta the DEMOS room uses */
+  x.strokeStyle='rgba(184,84,63,.45)';x.lineWidth=7;x.beginPath();x.moveTo(112,150);x.lineTo(146,150);x.stroke();
+},{order:2});
+boyBody.position.set(0,1.125,0);boyBody.scale.set(1.5,2.25,1);boy.add(boyBody);
+/* the throwing arm pivots about its own centre, which sits on the shoulder */
+const boyArm=inkSprite(128,128,(x)=>{
+  x.clearRect(0,0,128,128);x.strokeStyle='#2a2a2a';x.lineWidth=9;x.lineCap='round';
+  x.beginPath();x.moveTo(64,64);x.quadraticCurveTo(92,52,112,30);x.stroke();
+  x.lineWidth=7;x.beginPath();x.arc(114,26,7,0,Math.PI*2);x.stroke();
+},{order:3});
+boyArm.position.set(0.065,1.476,0.03);boyArm.scale.set(1.01,1.01,1);boy.add(boyArm);
+const boyShadow=ground(1,.5);boyShadow.position.set(0,0.04,0.02);boyShadow.scale.set(1.1,0.24,1);boy.add(boyShadow);
+
+/* ---- THE DOG (body + a wagging tail) ---- */
+const dog=new THREE.Group();dog.position.set(3.0,0,YARD_Z);yard.add(dog);
+const dogBody=inkSprite(320,256,(x)=>{
+  x.clearRect(0,0,320,256);x.strokeStyle='#2a2a2a';x.lineWidth=9;x.lineCap='round';x.lineJoin='round';
+  /* body, facing left toward the boy */
+  x.beginPath();x.moveTo(96,120);x.quadraticCurveTo(160,96,236,120);x.quadraticCurveTo(252,150,236,178);
+  x.quadraticCurveTo(160,196,96,176);x.quadraticCurveTo(80,148,96,120);x.stroke();
+  /* head + muzzle + ear */
+  x.beginPath();x.arc(74,116,40,0,Math.PI*2);x.stroke();
+  x.lineWidth=8;x.beginPath();x.moveTo(46,126);x.lineTo(14,136);x.quadraticCurveTo(6,146,20,150);x.lineTo(48,146);x.stroke();
+  x.beginPath();x.moveTo(84,82);x.quadraticCurveTo(104,60,110,96);x.stroke();
+  x.lineWidth=7;x.beginPath();x.arc(58,108,5,0,7);x.stroke();
+  x.beginPath();x.arc(16,140,5,0,7);x.fillStyle='#2a2a2a';x.fill();
+  /* legs, front pair reaching */
+  x.lineWidth=9;x.beginPath();
+  x.moveTo(112,176);x.lineTo(104,232);x.moveTo(140,180);x.lineTo(146,232);
+  x.moveTo(206,180);x.lineTo(200,232);x.moveTo(232,176);x.lineTo(242,232);x.stroke();
+  /* collar */
+  x.strokeStyle='rgba(47,127,102,.55)';x.lineWidth=8;x.beginPath();x.moveTo(100,96);x.lineTo(108,146);x.stroke();
+},{order:2});
+dogBody.position.set(0,0.56,0);dogBody.scale.set(1.7,1.36,1);dog.add(dogBody);
+const dogTail=inkSprite(128,128,(x)=>{
+  x.clearRect(0,0,128,128);x.strokeStyle='#2a2a2a';x.lineWidth=9;x.lineCap='round';
+  x.beginPath();x.moveTo(64,64);x.quadraticCurveTo(94,54,110,22);x.stroke();
+},{order:3});
+dogTail.position.set(0.40,0.60,0.03);dogTail.scale.set(0.8,0.8,1);dog.add(dogTail);
+const dogShadow=ground(1,.45);dogShadow.position.set(-0.02,0.035,0.02);dogShadow.scale.set(1.05,0.22,1);dog.add(dogShadow);
+
+/* ---- THE BALL ---- */
+const ball=inkSprite(128,128,(x)=>{
+  x.clearRect(0,0,128,128);
+  x.fillStyle='rgba(184,84,63,.22)';x.beginPath();x.arc(64,64,46,0,Math.PI*2);x.fill();
+  x.strokeStyle='#2a2a2a';x.lineWidth=8;x.beginPath();x.arc(64,64,46,0,Math.PI*2);x.stroke();
+  x.lineWidth=5;x.beginPath();x.moveTo(24,44);x.quadraticCurveTo(64,64,24,86);x.moveTo(104,44);x.quadraticCurveTo(64,64,104,86);x.stroke();
+},{order:4});
+ball.scale.set(0.38,0.38,1);yard.add(ball);
+
+/* throw geometry — hand to snout, arcing above the doorway */
+const THROW={x0:-2.74,y0:1.78,x1:2.2,y1:0.62,peak:2.1,period:3.1};
+let yardFade=1;
+/* remember each sprite's own opacity so the walk-in fade scales it rather than flattening it */
+yard.traverse(o=>{if(o.isSprite)o.userData.baseOp=o.material.opacity;});
 
 /* ============================== HERO NAME ============================== */
 const heroGroup=new THREE.Group();heroGroup.position.set(0,2.2,4);scene.add(heroGroup);
@@ -1026,7 +1169,7 @@ function setHUD(place,inRoom){
   if(place==='entry'){labelText.textContent='THE FRONT DOOR';hudKicker.textContent='SANDEEP GADAKARI · AI PRODUCT MANAGEMENT';
     hudTitle.innerHTML='PRODUCTS BUILT<br>TO MAKE DATA<br>ACTIONABLE.';hudCopy.textContent='Click the door to step inside — then pick a room off the corridor.';markNav('entry')}
   else if(place==='hero'){labelText.textContent='WELCOME IN';hudKicker.textContent='HELLO, I’M';hudTitle.innerHTML='SANDEEP<br>GADAKARI';
-    hudCopy.textContent='‹ data storyteller /› — four doors ahead, one per kind of work.';markNav('entry')}
+    hudCopy.textContent='‹ data storyteller /› — five doors ahead, one per kind of work.';markNav('entry')}
   else if(place==='about'){labelText.textContent='ABOUT · THE HALLWAY';hudKicker.textContent='ABOUT';
     hudTitle.innerHTML='TURNING DATA<br>INTO DIRECTION.';hudCopy.textContent='End-to-end product leadership for AI-driven solutions — grounded in Python, SQL, and data strategy.';markNav('')}
   else if(place==='toolkit'){labelText.textContent='TOOLKIT';hudKicker.textContent='TOOLKIT';
@@ -1178,6 +1321,57 @@ function animate(now){
   doorL.rotation.y=-passed*1.2;doorR.rotation.y=passed*1.2;
   facade.visible=camera.position.z>4.2;
   tree.visible=catSp.visible=camera.position.z>3;
+
+  /* ---- FRONT YARD: sun, trees, and the boy throwing for his dog ---- */
+  {
+    const skyOn=camera.position.z>3;
+    sunDisc.visible=sunRays.visible=tree2.visible=skyOn;
+    if(skyOn){
+      sunRays.material.rotation=t*0.085;
+      const breathe=1+Math.sin(t*1.15)*0.022;
+      sunDisc.scale.set(1.65*breathe,1.65*breathe,1);
+      sunRays.scale.set(2.5*breathe,2.5*breathe,1);
+      sunRays.material.opacity=0.72+Math.sin(t*1.15)*0.09;
+      /* both trees sway, a little out of step */
+      tree.position.x=-4.6+Math.sin(t*0.42)*0.045;
+      tree2.position.x=5.15+Math.sin(t*0.37+1.7)*0.05;
+    }
+
+    /* the yard itself only exists while you are still outside */
+    const wantFade=THREE.MathUtils.clamp((camera.position.z-14.4)/5.4,0,1);
+    yardFade+=(wantFade-yardFade)*(1-Math.pow(0.004,dt));
+    yard.visible=yardFade>0.015;
+    if(yard.visible){
+      yard.traverse(o=>{if(o.isSprite)o.material.opacity=(o.userData.baseOp||1)*yardFade;});
+
+      /* one full cycle = boy throws out, dog brings it back */
+      const u=(t%THROW.period)/THROW.period;
+      const out=u<0.5, s=out?u*2:(u-0.5)*2;
+      const ease=s*s*(3-2*s);                       // smoothstep, so no jerk at the ends
+      const ax=out?THROW.x0:THROW.x1, bx=out?THROW.x1:THROW.x0;
+      const ay=out?THROW.y0:THROW.y1, by=out?THROW.y1:THROW.y0;
+      ball.position.set(ax+(bx-ax)*ease, ay+(by-ay)*ease+Math.sin(Math.PI*ease)*THROW.peak, YARD_Z+0.06);
+      ball.material.rotation-=dt*(out?7.5:6.2);
+
+      /* boy: throw on release, then wind back and wait for the return */
+      let armWant;
+      if(out) armWant = s<0.2 ? -1.05+(s/0.2)*1.7 : 0.65-Math.min(1,(s-0.2)/0.55)*1.7;
+      else    armWant = s>0.72 ? -1.05+((s-0.72)/0.28)*0.72 : -1.05;
+      boyArm.material.rotation+=(armWant-boyArm.material.rotation)*(1-Math.pow(0.0035,dt));
+      boy.position.y=Math.sin(t*1.7)*0.022;
+      boyBody.material.rotation=(out?Math.sin(Math.PI*Math.min(1,s/0.35))*0.075:0.0)+Math.sin(t*1.7)*0.008;
+
+      /* dog: leans back, then springs up to meet the catch */
+      const chase=out?ease:1-ease;                  // 0 at the boy's end, 1 at the dog's end
+      const leap=Math.max(0,Math.sin(Math.PI*Math.min(1,Math.max(0,(chase-0.45)/0.55))));
+      dog.position.x=3.0-chase*0.34;
+      dog.position.y=leap*0.5;
+      dogBody.material.rotation=-leap*0.30;
+      dogTail.material.rotation=0.35+Math.sin(t*11)*0.55;
+      dogShadow.material.opacity=(0.45*(1-leap*0.55))*yardFade;
+      dogShadow.scale.set(1.05-leap*0.2,0.22-leap*0.04,1);
+    }
+  }
 
   /* hero */
   heroGroup.position.y=2.2+Math.sin(t*0.9)*0.06;

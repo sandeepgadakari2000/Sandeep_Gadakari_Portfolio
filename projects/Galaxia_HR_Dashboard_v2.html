@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galaxia — HR Intelligence Platform</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & TOKENS ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white: #ffffff;
+  --bg: #f0f4f8;
+  --glass: rgba(255,255,255,0.72);
+  --glass-strong: rgba(255,255,255,0.88);
+  --glass-border: rgba(255,255,255,0.6);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  --glass-shadow-lg: 0 20px 60px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.06);
+
+  --sidebar-bg: rgba(255,255,255,0.82);
+  --sidebar-border: rgba(0,0,0,0.06);
+
+  --blue: #007AFF;
+  --blue-light: rgba(0,122,255,0.10);
+  --green: #34C759;
+  --green-light: rgba(52,199,89,0.10);
+  --orange: #FF9500;
+  --orange-light: rgba(255,149,0,0.10);
+  --red: #FF3B30;
+  --red-light: rgba(255,59,48,0.10);
+  --purple: #AF52DE;
+  --purple-light: rgba(175,82,222,0.10);
+  --teal: #5AC8FA;
+  --teal-light: rgba(90,200,250,0.10);
+
+  --text: #1C1C1E;
+  --text2: #48484A;
+  --text3: #8E8E93;
+  --text4: #AEAEB2;
+
+  --border: rgba(0,0,0,0.08);
+  --radius-xl: 20px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  --sidebar-w: 230px;
+  --topbar-h: 60px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background mesh */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(0,122,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 80%, rgba(52,199,89,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(175,82,222,0.04) 0%, transparent 70%),
+    linear-gradient(135deg, #eef2f7 0%, #f5f7fa 50%, #eff1f5 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── SIDEBAR ─────────────────────────────────────────────────── */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  border-right: 1px solid var(--sidebar-border);
+  display: flex; flex-direction: column;
+  z-index: 200;
+  box-shadow: 2px 0 20px rgba(0,0,0,0.05);
+}
+
+.sidebar-logo {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 11px;
+}
+.logo-mark {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 13px; color: #fff;
+  letter-spacing: -0.3px;
+  box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+  flex-shrink: 0;
+}
+.logo-name { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.logo-sub { font-size: 10px; color: var(--text3); letter-spacing: 0.6px; text-transform: uppercase; margin-top: 1px; }
+
+.nav-body { flex: 1; padding: 12px 10px; overflow-y: auto; }
+.nav-section-label {
+  font-size: 10px; font-weight: 600; color: var(--text4);
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: 12px 10px 4px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  cursor: pointer; transition: var(--transition);
+  margin-bottom: 1px; border: none; background: none; width: 100%;
+  text-align: left; position: relative;
+}
+.nav-item:hover { background: rgba(0,0,0,0.04); color: var(--text); }
+.nav-item.active {
+  background: var(--blue-light);
+  color: var(--blue);
+  font-weight: 600;
+}
+.nav-item .nav-icon {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 15px; flex-shrink: 0;
+  transition: var(--transition);
+}
+.nav-item.active .nav-icon { background: rgba(0,122,255,0.12); }
+.nav-item .nav-badge {
+  margin-left: auto;
+  background: var(--blue);
+  color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 20px;
+}
+
+.sidebar-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text4);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sidebar-footer .fy-pill {
+  background: var(--green-light);
+  color: var(--green);
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+}
+
+/* ── MAIN AREA ───────────────────────────────────────────────── */
+.main { margin-left: var(--sidebar-w); min-height: 100vh; position: relative; z-index: 1; }
+
+/* ── TOPBAR ──────────────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  height: var(--topbar-h);
+  background: rgba(255,255,255,0.80);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  box-shadow: 0 1px 12px rgba(0,0,0,0.05);
+}
+.topbar-title { font-size: 17px; font-weight: 700; color: var(--text); }
+.topbar-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
+
+.entity-select {
+  height: 34px; padding: 0 12px;
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 500; color: var(--text);
+  cursor: pointer; outline: none;
+  transition: var(--transition);
+}
+.entity-select:hover { border-color: var(--blue); }
+
+.btn {
+  height: 34px; padding: 0 16px;
+  border: none; border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: var(--transition);
+}
+.btn-primary { background: var(--blue); color: #fff; box-shadow: 0 2px 8px rgba(0,122,255,0.3); }
+.btn-primary:hover { background: #0066DD; box-shadow: 0 4px 12px rgba(0,122,255,0.4); transform: translateY(-1px); }
+.btn-ghost {
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  color: var(--text2);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.95); color: var(--text); }
+
+/* ── PAGE SECTIONS ───────────────────────────────────────────── */
+.page-section { display: none; }
+.page-section.active { display: block; }
+
+.content { padding: 24px 28px 32px; }
+
+/* ── GLASS CARD ──────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition);
+}
+.glass-card:hover { box-shadow: var(--glass-shadow-lg); }
+.glass-card-inner { padding: 22px; }
+
+/* ── UPLOAD ZONE ──────────────────────────────────────────────── */
+.upload-zone {
+  border: 2px dashed rgba(0,122,255,0.35);
+  border-radius: var(--radius-xl);
+  background: rgba(0,122,255,0.03);
+  padding: 36px 24px; text-align: center;
+  cursor: pointer; transition: var(--transition);
+  position: relative; margin-bottom: 24px;
+}
+.upload-zone.drag-over { background: rgba(0,122,255,0.08); border-color: var(--blue); }
+.upload-zone:hover { background: rgba(0,122,255,0.06); }
+.upload-zone.hidden { display: none; }
+#fileInput { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 2; }
+.upload-icon { font-size: 44px; margin-bottom: 14px; }
+.upload-zone h3 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.upload-zone p { font-size: 13px; color: var(--text3); }
+.upload-zone .formats { margin-top: 10px; display: flex; justify-content: center; gap: 8px; }
+.format-tag {
+  background: rgba(0,0,0,0.05); border-radius: 6px;
+  padding: 3px 10px; font-size: 11px; font-weight: 600; color: var(--text3);
+}
+
+/* ── KPI CARDS ───────────────────────────────────────────────── */
+.kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 22px; }
+.kpi-card {
+  background: var(--glass-strong);
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  position: relative; overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  transition: var(--transition);
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--glass-shadow-lg); }
+.kpi-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+.kpi-card.blue::before { background: linear-gradient(90deg, #007AFF, #5AC8FA); }
+.kpi-card.green::before { background: linear-gradient(90deg, #34C759, #30D158); }
+.kpi-card.orange::before { background: linear-gradient(90deg, #FF9500, #FFD60A); }
+.kpi-card.red::before { background: linear-gradient(90deg, #FF3B30, #FF6961); }
+.kpi-card.purple::before { background: linear-gradient(90deg, #AF52DE, #BF5AF2); }
+
+.kpi-icon {
+  width: 36px; height: 36px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 12px;
+}
+.kpi-card.blue .kpi-icon { background: var(--blue-light); }
+.kpi-card.green .kpi-icon { background: var(--green-light); }
+.kpi-card.orange .kpi-icon { background: var(--orange-light); }
+.kpi-card.red .kpi-icon { background: var(--red-light); }
+.kpi-card.purple .kpi-icon { background: var(--purple-light); }
+
+.kpi-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 6px; }
+.kpi-value { font-size: 30px; font-weight: 800; color: var(--text); line-height: 1; letter-spacing: -1px; }
+.kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+.kpi-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 3px 8px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; margin-top: 8px;
+}
+.badge-up { background: rgba(52,199,89,0.12); color: #1D7A2E; }
+.badge-down { background: rgba(255,59,48,0.12); color: #C0251D; }
+.badge-neutral { background: rgba(0,0,0,0.06); color: var(--text3); }
+
+/* ── CHART GRID ──────────────────────────────────────────────── */
+.charts-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.charts-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-header { margin-bottom: 16px; }
+.chart-title { font-size: 14px; font-weight: 700; color: var(--text); }
+.chart-subtitle { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.chart-canvas-wrap { position: relative; }
+
+/* ── TABLE ───────────────────────────────────────────────────── */
+.gx-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.gx-table thead th {
+  text-align: left; padding: 10px 14px;
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.02);
+}
+.gx-table tbody td { padding: 11px 14px; color: var(--text); border-bottom: 1px solid rgba(0,0,0,0.04); }
+.gx-table tbody tr:last-child td { border-bottom: none; }
+.gx-table tbody tr:hover td { background: rgba(0,122,255,0.03); }
+
+.pct-bar { height: 5px; border-radius: 3px; background: rgba(0,0,0,0.06); margin-top: 4px; }
+.pct-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+
+/* ── ENTITY PILLS ────────────────────────────────────────────── */
+.entity-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+}
+.pill-blue { background: var(--blue-light); color: var(--blue); }
+.pill-green { background: var(--green-light); color: #1D7A2E; }
+.pill-orange { background: var(--orange-light); color: #9E5C00; }
+
+/* ── INSIGHT ITEMS ───────────────────────────────────────────── */
+.insight-item {
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.insight-item:last-child { border-bottom: none; }
+.insight-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  margin-top: 5px; flex-shrink: 0;
+}
+.insight-dot.red { background: var(--red); box-shadow: 0 0 6px rgba(255,59,48,0.4); }
+.insight-dot.orange { background: var(--orange); box-shadow: 0 0 6px rgba(255,149,0,0.4); }
+.insight-dot.green { background: var(--green); box-shadow: 0 0 6px rgba(52,199,89,0.4); }
+.insight-text { font-size: 13px; color: var(--text2); line-height: 1.55; }
+.insight-flag {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; display: block; margin-bottom: 3px;
+}
+.insight-flag.red { color: var(--red); }
+.insight-flag.orange { color: var(--orange); }
+.insight-flag.green { color: var(--green); }
+
+/* ── SECTION HEADERS ─────────────────────────────────────────── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.section-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+.section-sub { font-size: 13px; color: var(--text3); margin-top: 3px; }
+
+/* ── STAT ROW ────────────────────────────────────────────────── */
+.stat-row { display: flex; align-items: center; justify-content: space-between; padding: 13px 0; border-bottom: 1px solid var(--border); }
+.stat-row:last-child { border-bottom: none; }
+.stat-label { font-size: 13px; color: var(--text2); }
+.stat-value { font-size: 14px; font-weight: 700; color: var(--text); }
+
+/* ── MONTHLY REPORT ──────────────────────────────────────────── */
+.report-header {
+  background: linear-gradient(135deg, rgba(0,122,255,0.08) 0%, rgba(90,200,250,0.06) 100%);
+  border: 1px solid rgba(0,122,255,0.15);
+  border-radius: var(--radius-xl);
+  padding: 28px 32px;
+  margin-bottom: 22px;
+}
+.report-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 12px; }
+.report-meta-item { font-size: 12px; color: var(--text3); }
+.report-meta-item strong { color: var(--text); font-weight: 600; }
+
+.report-entity-block {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.report-entity-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.report-entity-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.report-entity-body { padding: 18px 20px; }
+.report-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.report-metric { text-align: center; }
+.report-metric-val { font-size: 24px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+.report-metric-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; margin-top: 2px; }
+
+/* ── SETTINGS ────────────────────────────────────────────────── */
+.settings-group { margin-bottom: 28px; }
+.settings-group-title { font-size: 13px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-label { font-size: 14px; color: var(--text); font-weight: 500; }
+.settings-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.settings-control { flex-shrink: 0; margin-left: 20px; }
+
+/* Toggle */
+.toggle { position: relative; width: 44px; height: 26px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track {
+  position: absolute; inset: 0;
+  border-radius: 26px; cursor: pointer;
+  background: rgba(0,0,0,0.15);
+  transition: var(--transition);
+}
+.toggle input:checked + .toggle-track { background: var(--green); }
+.toggle-thumb {
+  position: absolute;
+  left: 3px; top: 3px;
+  width: 20px; height: 20px;
+  border-radius: 50%; background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: var(--transition);
+  pointer-events: none;
+}
+.toggle input:checked ~ .toggle-thumb { transform: translateX(18px); }
+
+/* Select control */
+.settings-select {
+  height: 32px; padding: 0 10px;
+  background: rgba(0,0,0,0.05);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text);
+  cursor: pointer; outline: none;
+}
+
+/* Input */
+.settings-input {
+  height: 32px; padding: 0 10px;
+  background: rgba(0,0,0,0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text);
+  outline: none; width: 160px;
+  transition: var(--transition);
+}
+.settings-input:focus { border-color: var(--blue); background: #fff; }
+
+.save-btn {
+  width: 100%; height: 44px;
+  background: var(--blue); color: #fff;
+  border: none; border-radius: var(--radius-md);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: var(--transition);
+  box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+  margin-top: 8px;
+}
+.save-btn:hover { background: #0066DD; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,122,255,0.4); }
+
+/* ── TOAST ───────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: rgba(28,28,30,0.9);
+  backdrop-filter: blur(12px);
+  color: #fff; font-size: 13px; font-weight: 500;
+  padding: 12px 20px; border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  z-index: 9999;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── DETAIL TABLE SECTION ────────────────────────────────────── */
+.detail-tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.detail-tab {
+  padding: 7px 16px; border-radius: var(--radius-md);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+  background: rgba(0,0,0,0.05); color: var(--text3);
+  border: none;
+}
+.detail-tab.active { background: var(--blue); color: #fff; box-shadow: 0 2px 8px rgba(0,122,255,0.25); }
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+.footer {
+  margin-left: var(--sidebar-w);
+  padding: 16px 28px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text4);
+  display: flex; justify-content: space-between; align-items: center;
+  position: relative; z-index: 1;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  .report-metrics { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .charts-grid-2, .charts-grid-3 { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ──────────────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-logo" style="flex-direction:column; align-items:center; padding:16px 12px 14px; gap:0;">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDcgNDUyIiB3aWR0aD0iNDQ3IiBoZWlnaHQ9IjQ1MiI+CiAgPHJlY3QgeD0iNS41IiB5PSI1LjUiIHdpZHRoPSI0MzYiIGhlaWdodD0iNDQxIiByeD0iNTQiIHJ5PSI1NCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjMjMxZjIwIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8Y2lyY2xlIGN4PSIyMjMiIGN5PSIxNDgiIHI9Ijk5IiBmaWxsPSIjMDA3MWJjIi8+CiAgPHRleHQgeD0iMjIzIiB5PSIyMDMiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNTgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkc8L3RleHQ+CiAgPHRleHQgeD0iMjE3IiB5PSIzMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0NyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzIzMWYyMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgbGV0dGVyLXNwYWNpbmc9IjExIj5HQUxBWElBPC90ZXh0PgogIDx0ZXh0IHg9IjIxNyIgeT0iMzk4IiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDciIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiMyMzFmMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSIxMSI+R1JPVVA8L3RleHQ+Cjwvc3ZnPgo=" alt="Galaxia Group" style="width:140px; height:auto; display:block; object-fit:contain;">
+  </div>
+
+  <nav class="nav-body">
+    <div class="nav-section-label">Overview</div>
+    <button class="nav-item active" data-page="dashboard">
+      <span class="nav-icon">📊</span> Dashboard
+    </button>
+
+    <div class="nav-section-label">Workforce</div>
+    <button class="nav-item" data-page="headcount">
+      <span class="nav-icon">👥</span> Headcount
+    </button>
+    <button class="nav-item" data-page="hiring">
+      <span class="nav-icon">📈</span> Hiring
+    </button>
+    <button class="nav-item" data-page="attrition">
+      <span class="nav-icon">📉</span> Attrition
+    </button>
+    <button class="nav-item" data-page="vacancies">
+      <span class="nav-icon">🏢</span> Vacancies
+    </button>
+
+    <div class="nav-section-label">Reports</div>
+    <button class="nav-item" data-page="monthlyreport">
+      <span class="nav-icon">📋</span> Monthly Report
+    </button>
+    <button class="nav-item" data-page="settings">
+      <span class="nav-icon">⚙️</span> Settings
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <span>FY 2025–26</span>
+    <span class="fy-pill">Active</span>
+  </div>
+</aside>
+
+<!-- ── MAIN ─────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">HR Dashboard</div>
+      <div class="topbar-sub" id="topbar-sub">Workforce Intelligence · Galaxia Group</div>
+    </div>
+    <div class="topbar-actions">
+      <select class="entity-select" id="entitySelect" onchange="renderAll()">
+        <option value="all">All Entities</option>
+        <option value="Aviora Air">Aviora Air</option>
+        <option value="GXC">GXC</option>
+        <option value="GXR">GXR</option>
+      </select>
+      <button class="btn btn-ghost" id="exportBtn">⬇ Export</button>
+      <button class="btn btn-primary" onclick="triggerUpload()">⬆ Upload Excel</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PAGE: DASHBOARD                                         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="page-section active content" id="page-dashboard">
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFileSelect(event)">
+      <div class="upload-icon">📂</div>
+      <h3>Upload Monthly HR Excel</h3>
+      <p>Single-sheet monthly data file · Auto-detects entities & generates full analytics</p>
+      <div class="formats">
+        <span class="format-tag">.xlsx</span>
+        <span class="format-tag">.xls</span>
+        <span class="format-tag">Multi-entity</span>
+      </div>
+    </div>
+
+    <!-- KPI GRID -->
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <!-- CHARTS ROW 1 -->
+    <div class="charts-grid-2" style="margin-bottom:16px">
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Headcount by Entity</div>
+            <div class="chart-subtitle">On-roll + Off-roll breakdown this month</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:220px">
+            <canvas id="headcountChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Hiring vs Exits</div>
+            <div class="chart-subtitle">Replacement + new position hires vs total exits</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:220px">
+            <canvas id="hiringExitChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW 2 -->
+    <div class="charts-grid-3" style="margin-bottom:16px">
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Attrition Rate</div>
+            <div class="chart-subtitle">Annualized · vol + invol by entity</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:200px">
+            <canvas id="attritionChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Workforce Mix</div>
+            <div class="chart-subtitle">On-roll vs Off-roll split</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:200px">
+            <canvas id="mixChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">AI Insights</div>
+            <div class="chart-subtitle">Auto-detected workforce signals</div>
+          </div>
+          <div id="insightsList" style="max-height:220px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PAGE: HEADCOUNT                                         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="page-section content" id="page-headcount">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Headcount</div>
+        <div class="section-sub">Total workforce breakdown by entity and employment type</div>
+      </div>
+    </div>
+
+    <div class="charts-grid-2" style="margin-bottom:16px">
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">On-Roll vs Off-Roll by Entity</div>
+            <div class="chart-subtitle">Current month headcount composition</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:260px">
+            <canvas id="hc_stackedChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Growth vs FY Baseline</div>
+            <div class="chart-subtitle">Headcount change since Mar 2025</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:260px">
+            <canvas id="hc_growthChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="glass-card-inner">
+        <div class="chart-header">
+          <div class="chart-title">Detailed Headcount Table</div>
+          <div class="chart-subtitle">Entity-wise breakdown — on-roll, off-roll, and total</div>
+        </div>
+        <table class="gx-table" id="hcDetailTable">
+          <thead>
+            <tr>
+              <th>Entity</th>
+              <th>On-Roll</th>
+              <th>Off-Roll</th>
+              <th>Total Current</th>
+              <th>FY Baseline</th>
+              <th>Growth</th>
+              <th>Mix</th>
+            </tr>
+          </thead>
+          <tbody id="hcDetailBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PAGE: HIRING                                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="page-section content" id="page-hiring">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Hiring Analytics</div>
+        <div class="section-sub">Replacement hiring vs new positions across all entities</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:22px" id="hiringKPIs"></div>
+
+    <div class="charts-grid-2" style="margin-bottom:16px">
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Hiring by Entity</div>
+            <div class="chart-subtitle">Replacement vs new position hires</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:260px">
+            <canvas id="hiring_entityChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Hire Type Split</div>
+            <div class="chart-subtitle">Distribution of replacement vs new roles</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:260px">
+            <canvas id="hiring_typeChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="glass-card-inner">
+        <div class="chart-header">
+          <div class="chart-title">Hiring Details</div>
+        </div>
+        <table class="gx-table">
+          <thead>
+            <tr><th>Entity</th><th>Replacement Hires</th><th>New Position Hires</th><th>Total Hiring</th><th>Net Flow (Hire − Exit)</th></tr>
+          </thead>
+          <tbody id="hiringDetailBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PAGE: ATTRITION                                         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="page-section content" id="page-attrition">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Attrition Analytics</div>
+        <div class="section-sub">Voluntary and involuntary turnover analysis by entity</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:22px" id="attritionKPIs"></div>
+
+    <div class="charts-grid-2" style="margin-bottom:16px">
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Attrition Rate Comparison</div>
+            <div class="chart-subtitle">Annualized rate per entity</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:260px">
+            <canvas id="attr_rateChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Vol vs Invol Breakdown</div>
+            <div class="chart-subtitle">Exit type composition per entity</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:260px">
+            <canvas id="attr_breakdownChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="glass-card-inner">
+        <div class="chart-header">
+          <div class="chart-title">Attrition Detail</div>
+        </div>
+        <table class="gx-table">
+          <thead>
+            <tr><th>Entity</th><th>Voluntary Exits</th><th>Involuntary Exits</th><th>Total Exits</th><th>Vol Rate</th><th>Invol Rate</th><th>Total Rate</th><th>Risk Level</th></tr>
+          </thead>
+          <tbody id="attrDetailBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PAGE: VACANCIES                                         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="page-section content" id="page-vacancies">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Vacancy Tracker</div>
+        <div class="section-sub">Approved positions, fills, and open vacancies by entity</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:22px" id="vacancyKPIs"></div>
+
+    <div class="charts-grid-2" style="margin-bottom:16px">
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Approved vs Filled vs Vacant</div>
+            <div class="chart-subtitle">Position fulfilment by entity</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:260px">
+            <canvas id="vac_entityChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="chart-header">
+            <div class="chart-title">Fill Rate by Entity</div>
+            <div class="chart-subtitle">% of approved positions filled</div>
+          </div>
+          <div class="chart-canvas-wrap" style="height:260px">
+            <canvas id="vac_rateChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="glass-card-inner">
+        <div class="chart-header">
+          <div class="chart-title">Vacancy Details</div>
+        </div>
+        <table class="gx-table">
+          <thead>
+            <tr><th>Entity</th><th>Approved</th><th>Filled</th><th>Vacant</th><th>Fill Rate</th><th>Vacancy %</th><th>Status</th></tr>
+          </thead>
+          <tbody id="vacDetailBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PAGE: MONTHLY REPORT                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="page-section content" id="page-monthlyreport">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Monthly Report</div>
+        <div class="section-sub">Comprehensive workforce summary for current period</div>
+      </div>
+      <button class="btn btn-primary" onclick="printReport()">🖨 Print Report</button>
+    </div>
+
+    <div class="report-header" id="reportHeader">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:6px">Galaxia Group — Monthly HR Intelligence Report</div>
+      <div style="font-size:24px;font-weight:800;color:var(--text);letter-spacing:-0.5px" id="reportTitle">Monthly Summary</div>
+      <div class="report-meta" id="reportMeta"></div>
+    </div>
+
+    <div id="reportEntityBlocks"></div>
+
+    <div class="glass-card" style="margin-bottom:16px">
+      <div class="glass-card-inner">
+        <div class="chart-header">
+          <div class="chart-title">📌 Executive Summary</div>
+        </div>
+        <div id="reportExecutiveSummary" style="font-size:13px;color:var(--text2);line-height:1.7"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PAGE: SETTINGS                                          -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="page-section content" id="page-settings">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Settings</div>
+        <div class="section-sub">Platform configuration and preferences</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+      <!-- Organization -->
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="settings-group">
+            <div class="settings-group-title">Organization</div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Company Name</div>
+                <div class="settings-desc">Displayed on reports and exports</div>
+              </div>
+              <div class="settings-control">
+                <input class="settings-input" id="set-company" value="Galaxia Group" type="text">
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Financial Year</div>
+                <div class="settings-desc">Reporting fiscal year</div>
+              </div>
+              <div class="settings-control">
+                <select class="settings-select" id="set-fy">
+                  <option value="2025-26" selected>FY 2025–26</option>
+                  <option value="2024-25">FY 2024–25</option>
+                  <option value="2026-27">FY 2026–27</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Report Month</div>
+                <div class="settings-desc">Current active reporting period</div>
+              </div>
+              <div class="settings-control">
+                <input class="settings-input" id="set-month" value="" type="text" placeholder="e.g. November 2025">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Display -->
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="settings-group">
+            <div class="settings-group-title">Display</div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Show Baseline Comparison</div>
+                <div class="settings-desc">Compare vs Mar 2025 FY baseline</div>
+              </div>
+              <div class="settings-control">
+                <label class="toggle">
+                  <input type="checkbox" id="set-baseline" checked onchange="renderAll()">
+                  <div class="toggle-track"></div>
+                  <div class="toggle-thumb"></div>
+                </label>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Show AI Insights</div>
+                <div class="settings-desc">Auto-generated workforce signals</div>
+              </div>
+              <div class="settings-control">
+                <label class="toggle">
+                  <input type="checkbox" id="set-insights" checked onchange="renderAll()">
+                  <div class="toggle-track"></div>
+                  <div class="toggle-thumb"></div>
+                </label>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Attrition Threshold (Red)</div>
+                <div class="settings-desc">% above which alert is flagged</div>
+              </div>
+              <div class="settings-control">
+                <input class="settings-input" id="set-attrThreshold" value="50" type="number" min="0" max="100" style="width:80px">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data Management -->
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="settings-group">
+            <div class="settings-group-title">Data Management</div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Reset to Sample Data</div>
+                <div class="settings-desc">Reload embedded demo dataset</div>
+              </div>
+              <div class="settings-control">
+                <button class="btn btn-ghost" onclick="resetToSampleData()" style="height:32px;font-size:12px">Reset</button>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Upload New Data File</div>
+                <div class="settings-desc">Replace current dataset with new Excel</div>
+              </div>
+              <div class="settings-control">
+                <button class="btn btn-primary" onclick="triggerUpload()" style="height:32px;font-size:12px">Upload</button>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Export Dashboard Data</div>
+                <div class="settings-desc">Download current data as JSON</div>
+              </div>
+              <div class="settings-control">
+                <button class="btn btn-ghost" onclick="exportJSON()" style="height:32px;font-size:12px">Export</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Entities -->
+      <div class="glass-card">
+        <div class="glass-card-inner">
+          <div class="settings-group">
+            <div class="settings-group-title">Entity Configuration</div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Aviora Air</div>
+                <div class="settings-desc">Aviation entity — on-roll & off-roll</div>
+              </div>
+              <div class="settings-control">
+                <label class="toggle">
+                  <input type="checkbox" id="set-avioraAir" checked>
+                  <div class="toggle-track"></div>
+                  <div class="toggle-thumb"></div>
+                </label>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">GXC</div>
+                <div class="settings-desc">Ground services entity</div>
+              </div>
+              <div class="settings-control">
+                <label class="toggle">
+                  <input type="checkbox" id="set-gxc" checked>
+                  <div class="toggle-track"></div>
+                  <div class="toggle-thumb"></div>
+                </label>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">GXR</div>
+                <div class="settings-desc">Support services entity</div>
+              </div>
+              <div class="settings-control">
+                <label class="toggle">
+                  <input type="checkbox" id="set-gxr" checked>
+                  <div class="toggle-track"></div>
+                  <div class="toggle-thumb"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:16px">
+      <button class="save-btn" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span id="footerLeft">Galaxia Group · HR Intelligence Platform · <span id="footerDataInfo">Sample data loaded</span></span>
+  <span>FY 2025–26 · Built with ❤</span>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-msg">Settings saved</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════
+const SAMPLE_DATA = {
+  month: 'November 2025',
+  baseline: {
+    'Aviora Air': { onRoll: 1277, offRoll: 8 },
+    GXC: { onRoll: 521, offRoll: 381 },
+    GXR: { onRoll: 214, offRoll: 290.5 }
+  },
+  current: {
+    'Aviora Air': { onRoll: 1594, offRoll: 8 },
+    GXC: { onRoll: 484, offRoll: 657 },
+    GXR: { onRoll: 210, offRoll: 400 }
+  },
+  hiring: {
+    'Aviora Air': { rep: 250, newPos: 311 },
+    GXC: { rep: 100, newPos: 41 },
+    GXR: { rep: 61, newPos: 39 }
+  },
+  exits: {
+    'Aviora Air': { vol: 175, invol: 113 },
+    GXC: { vol: 104, invol: 34 },
+    GXR: { vol: 54, invol: 38 }
+  },
+  attrition: {
+    'Aviora Air': { vol: 0.1647, invol: 0.1063, total: 0.2710 },
+    GXC: { vol: 0.3223, invol: 0.1054, total: 0.4277 },
+    GXR: { vol: 0.3857, invol: 0.2714, total: 0.6571 }
+  },
+  vacancy: {
+    'Aviora Air': { approved: 1380, filled: 1296, vacant: 167 },
+    GXC: { approved: 152, filled: 119, vacant: 33 },
+    GXR: { approved: 77, filled: 41, vacant: 36 }
+  }
+};
+
+const ENTITIES = ['Aviora Air', 'GXC', 'GXR'];
+const E_COLORS = { 'Aviora Air': '#007AFF', GXC: '#34C759', GXR: '#FF9500' };
+const E_COLORS_LIGHT = { 'Aviora Air': 'rgba(0,122,255,0.15)', GXC: 'rgba(52,199,89,0.15)', GXR: 'rgba(255,149,0,0.15)' };
+
+let DATA = { ...SAMPLE_DATA };
+let charts = {};
+
+// ══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════
+const PAGE_TITLES = {
+  dashboard:    ['HR Dashboard', 'Workforce intelligence · Galaxia Group'],
+  headcount:    ['Headcount', 'Total workforce overview by entity'],
+  hiring:       ['Hiring Analytics', 'Recruitment activity breakdown'],
+  attrition:    ['Attrition Analytics', 'Turnover analysis & retention signals'],
+  vacancies:    ['Vacancy Tracker', 'Open positions & fill rate status'],
+  monthlyreport:['Monthly Report', 'Executive workforce summary'],
+  settings:     ['Settings', 'Platform configuration & preferences']
+};
+
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const page = btn.dataset.page;
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    const [title, sub] = PAGE_TITLES[page] || ['', ''];
+    document.getElementById('topbar-title').textContent = title;
+    document.getElementById('topbar-sub').textContent = sub;
+    renderPage(page);
+  });
+});
+
+function renderPage(page) {
+  switch(page) {
+    case 'dashboard':    renderAll(); break;
+    case 'headcount':    renderHeadcountPage(); break;
+    case 'hiring':       renderHiringPage(); break;
+    case 'attrition':    renderAttritionPage(); break;
+    case 'vacancies':    renderVacanciesPage(); break;
+    case 'monthlyreport':renderMonthlyReport(); break;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════
+function getEntities() {
+  const sel = document.getElementById('entitySelect').value;
+  return sel === 'all' ? ENTITIES : [sel];
+}
+
+function hcTotal(entity) {
+  const c = (DATA.current || {})[entity] || {};
+  return (c.onRoll || 0) + (c.offRoll || 0);
+}
+
+function baseTotal(entity) {
+  const b = (DATA.baseline || {})[entity] || {};
+  return (b.onRoll || 0) + (b.offRoll || 0);
+}
+
+function hiringTotal(entity) {
+  const h = (DATA.hiring || {})[entity] || {};
+  return (h.rep || 0) + (h.newPos || 0);
+}
+
+function exitsTotal(entity) {
+  const ex = (DATA.exits || {})[entity] || {};
+  return (ex.vol || 0) + (ex.invol || 0);
+}
+
+function attrRate(entity) {
+  return ((DATA.attrition || {})[entity] || {}).total || 0;
+}
+
+function pct(num, den) { return den > 0 ? ((num / den) * 100).toFixed(1) : '0.0'; }
+function fmt(n) { return Math.round(n).toLocaleString(); }
+
+function destroyChart(id) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+function riskLabel(rate) {
+  if (rate >= 0.5) return '<span style="color:#FF3B30;font-weight:700">🔴 Critical</span>';
+  if (rate >= 0.35) return '<span style="color:#FF9500;font-weight:700">🟡 High</span>';
+  if (rate >= 0.2) return '<span style="color:#FF9F0A;font-weight:700">🟠 Moderate</span>';
+  return '<span style="color:#34C759;font-weight:700">🟢 Normal</span>';
+}
+
+// ══════════════════════════════════════════════════════════════
+// CHART DEFAULTS
+// ══════════════════════════════════════════════════════════════
+Chart.defaults.font.family = "'Inter', sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#8E8E93';
+Chart.defaults.plugins.legend.labels.boxWidth = 10;
+Chart.defaults.plugins.legend.labels.padding = 14;
+
+const GRID_COLOR = 'rgba(0,0,0,0.05)';
+const scaleOpts = (callback) => ({
+  y: { beginAtZero: true, grid: { color: GRID_COLOR }, ticks: { callback } },
+  x: { grid: { display: false } }
+});
+
+// ══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════
+function renderAll() {
+  renderKPIs();
+  renderHeadcountBar();
+  renderHiringExit();
+  renderAttritionRadar();
+  renderMixDonut();
+  renderInsights();
+}
+
+function renderKPIs() {
+  const ents = getEntities();
+  const totalHC = ents.reduce((s, e) => s + hcTotal(e), 0);
+  const totalBase = ents.reduce((s, e) => s + baseTotal(e), 0);
+  const totalHire = ents.reduce((s, e) => s + hiringTotal(e), 0);
+  const totalExit = ents.reduce((s, e) => s + exitsTotal(e), 0);
+  const avgAttr = ents.length > 0
+    ? ents.map(e => attrRate(e)).filter(v => v > 0).reduce((a, b) => a + b, 0) / ents.length
+    : 0;
+  const growthPct = totalBase > 0 ? ((totalHC - totalBase) / totalBase * 100) : 0;
+  const netFlow = totalHire - totalExit;
+
+  let vacTotal = 0, vacApproved = 0;
+  if (DATA.vacancy) {
+    ents.forEach(e => {
+      const v = DATA.vacancy[e] || {};
+      vacTotal += (v.vacant || 0);
+      vacApproved += (v.approved || 0);
+    });
+  }
+
+  const kpis = [
+    { cls: 'blue', icon: '👥', label: 'Total Headcount', value: fmt(totalHC),
+      sub: `Baseline: ${fmt(totalBase)}`,
+      badge: growthPct !== 0 ? { text: (growthPct > 0 ? '▲ ' : '▼ ') + Math.abs(growthPct).toFixed(1) + '% vs FY start', cls: growthPct > 0 ? 'badge-up' : 'badge-down' } : null },
+    { cls: 'green', icon: '📈', label: 'Total Hiring (YTD)', value: fmt(totalHire),
+      sub: 'Replacement + new positions', badge: null },
+    { cls: 'orange', icon: '📉', label: 'Total Exits (YTD)', value: fmt(totalExit),
+      sub: 'Voluntary + involuntary',
+      badge: netFlow !== 0 ? { text: 'Net ' + (netFlow > 0 ? '+' : '') + netFlow + ' headcount', cls: netFlow > 0 ? 'badge-up' : 'badge-down' } : null },
+    { cls: 'red', icon: '⚠️', label: 'Avg Attrition Rate', value: (avgAttr * 100).toFixed(1) + '%',
+      sub: 'Annualized, all entities',
+      badge: { text: avgAttr >= 0.35 ? 'Above Benchmark' : 'Within Range', cls: avgAttr >= 0.35 ? 'badge-down' : 'badge-up' } },
+    { cls: 'purple', icon: '🏢', label: 'Open Vacancies', value: vacApproved > 0 ? fmt(vacTotal) : '—',
+      sub: vacApproved > 0 ? `${pct(vacTotal, vacApproved)}% vacancy rate` : 'No vacancy data',
+      badge: null }
+  ];
+
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
+    <div class="kpi-card ${k.cls}">
+      <div class="kpi-icon">${k.icon}</div>
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+      ${k.badge ? `<span class="kpi-badge ${k.badge.cls}">${k.badge.text}</span>` : ''}
+    </div>`).join('');
+}
+
+function renderHeadcountBar() {
+  const ents = getEntities();
+  destroyChart('headcountChart');
+  charts.headcountChart = new Chart(document.getElementById('headcountChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [
+        { label: 'On-Roll', data: ents.map(e => (DATA.current[e] || {}).onRoll || 0), backgroundColor: ents.map(e => E_COLORS[e]), borderRadius: 6, borderSkipped: false },
+        { label: 'Off-Roll', data: ents.map(e => (DATA.current[e] || {}).offRoll || 0), backgroundColor: ents.map(e => E_COLORS_LIGHT[e]), borderRadius: 6, borderSkipped: false }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: scaleOpts() }
+  });
+}
+
+function renderHiringExit() {
+  const ents = getEntities();
+  destroyChart('hiringExitChart');
+  charts.hiringExitChart = new Chart(document.getElementById('hiringExitChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [
+        { label: 'Total Hiring', data: ents.map(e => hiringTotal(e)), backgroundColor: 'rgba(0,122,255,0.75)', borderRadius: 6 },
+        { label: 'Total Exits', data: ents.map(e => exitsTotal(e)), backgroundColor: 'rgba(255,59,48,0.75)', borderRadius: 6 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: scaleOpts() }
+  });
+}
+
+function renderAttritionRadar() {
+  const ents = getEntities();
+  destroyChart('attritionChart');
+  charts.attritionChart = new Chart(document.getElementById('attritionChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [
+        { label: 'Vol %', data: ents.map(e => +((((DATA.attrition[e] || {}).vol || 0) * 100).toFixed(1))), backgroundColor: 'rgba(255,149,0,0.7)', borderRadius: 4 },
+        { label: 'Invol %', data: ents.map(e => +((((DATA.attrition[e] || {}).invol || 0) * 100).toFixed(1))), backgroundColor: 'rgba(255,59,48,0.7)', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      scales: scaleOpts(v => v + '%')
+    }
+  });
+}
+
+function renderMixDonut() {
+  const ents = getEntities();
+  const onRoll = ents.reduce((s, e) => s + ((DATA.current[e] || {}).onRoll || 0), 0);
+  const offRoll = ents.reduce((s, e) => s + ((DATA.current[e] || {}).offRoll || 0), 0);
+  destroyChart('mixChart');
+  charts.mixChart = new Chart(document.getElementById('mixChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['On-Roll (Direct)', 'Off-Roll (Indirect)'],
+      datasets: [{ data: [onRoll, offRoll], backgroundColor: ['#007AFF', '#34C759'], borderWidth: 3, borderColor: 'rgba(255,255,255,0.8)', hoverOffset: 8 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '68%',
+      plugins: {
+        legend: { position: 'right' },
+        tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmt(ctx.parsed) + ' (' + pct(ctx.parsed, onRoll + offRoll) + '%)' } }
+      }
+    }
+  });
+}
+
+function renderInsights() {
+  const showInsights = document.getElementById('set-insights')?.checked !== false;
+  if (!showInsights) { document.getElementById('insightsList').innerHTML = '<div style="color:var(--text3);font-size:13px;padding:12px 0">Insights disabled in settings.</div>'; return; }
+
+  const ents = getEntities();
+  const insights = [];
+  const threshold = parseFloat(document.getElementById('set-attrThreshold')?.value || 50) / 100;
+
+  ents.forEach(e => {
+    const attr = attrRate(e);
+    if (attr >= threshold) insights.push({ type: 'red', flag: 'CRITICAL', text: `${e} has a critically high annualized attrition rate of ${(attr*100).toFixed(1)}% — immediate retention action required.` });
+    else if (attr >= 0.35) insights.push({ type: 'orange', flag: 'WARNING', text: `${e} attrition at ${(attr*100).toFixed(1)}% — above industry benchmark of 25%. Monitor closely.` });
+  });
+
+  const totalHire = ents.reduce((s, e) => s + hiringTotal(e), 0);
+  const totalExit = ents.reduce((s, e) => s + exitsTotal(e), 0);
+  const netFlow = totalHire - totalExit;
+  if (netFlow > 0) insights.push({ type: 'green', flag: 'POSITIVE', text: `Net positive workforce flow: ${netFlow} more hires than exits — headcount is expanding this month.` });
+  else if (netFlow < 0) insights.push({ type: 'orange', flag: 'ALERT', text: `Net negative workforce flow: ${Math.abs(netFlow)} more exits than hires — headcount at risk of contraction.` });
+
+  if (DATA.vacancy) {
+    ents.forEach(e => {
+      const v = DATA.vacancy[e];
+      if (v && v.approved > 0) {
+        const vPct = (v.vacant / v.approved * 100);
+        if (vPct > 20) insights.push({ type: 'orange', flag: 'VACANCY', text: `${e} has ${v.vacant} open vacancies (${vPct.toFixed(0)}% vacancy rate) — fill-rate action needed.` });
+      }
+    });
+  }
+
+  if (insights.length === 0) insights.push({ type: 'green', flag: 'ALL CLEAR', text: 'All key HR metrics are within acceptable range. No immediate action required.' });
+
+  document.getElementById('insightsList').innerHTML = insights.slice(0, 6).map(i => `
+    <div class="insight-item">
+      <div class="insight-dot ${i.type}"></div>
+      <div>
+        <span class="insight-flag ${i.type}">${i.flag}</span>
+        <div class="insight-text">${i.text}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// HEADCOUNT PAGE
+// ══════════════════════════════════════════════════════════════
+function renderHeadcountPage() {
+  const ents = getEntities();
+
+  // Stacked bar
+  destroyChart('hc_stackedChart');
+  charts.hc_stackedChart = new Chart(document.getElementById('hc_stackedChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [
+        { label: 'On-Roll', data: ents.map(e => (DATA.current[e] || {}).onRoll || 0), backgroundColor: ents.map(e => E_COLORS[e]), borderRadius: { topLeft: 6, topRight: 6 } },
+        { label: 'Off-Roll', data: ents.map(e => (DATA.current[e] || {}).offRoll || 0), backgroundColor: ents.map(e => E_COLORS_LIGHT[e]) }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { ...scaleOpts(), x: { stacked: false, grid: { display: false } } } }
+  });
+
+  // Growth chart
+  destroyChart('hc_growthChart');
+  charts.hc_growthChart = new Chart(document.getElementById('hc_growthChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [{
+        label: 'Growth vs Baseline',
+        data: ents.map(e => hcTotal(e) - baseTotal(e)),
+        backgroundColor: ents.map(e => (hcTotal(e) - baseTotal(e)) >= 0 ? 'rgba(52,199,89,0.75)' : 'rgba(255,59,48,0.75)'),
+        borderRadius: 6
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: scaleOpts() }
+  });
+
+  // Table
+  document.getElementById('hcDetailBody').innerHTML = ents.map(e => {
+    const c = DATA.current[e] || {};
+    const b = DATA.baseline[e] || {};
+    const total = (c.onRoll || 0) + (c.offRoll || 0);
+    const base = (b.onRoll || 0) + (b.offRoll || 0);
+    const growth = total - base;
+    const growthPct = base > 0 ? ((growth / base) * 100).toFixed(1) : '0.0';
+    const onRollPct = total > 0 ? ((c.onRoll / total) * 100).toFixed(0) : 0;
+    const offRollPct = 100 - onRollPct;
+    const color = growth >= 0 ? '#34C759' : '#FF3B30';
+    return `<tr>
+      <td><strong style="color:${E_COLORS[e]}">${e}</strong></td>
+      <td>${fmt(c.onRoll || 0)}</td>
+      <td>${fmt(c.offRoll || 0)}</td>
+      <td><strong>${fmt(total)}</strong></td>
+      <td>${fmt(base)}</td>
+      <td style="color:${color};font-weight:700">${growth >= 0 ? '+' : ''}${fmt(growth)} (${growth >= 0 ? '+' : ''}${growthPct}%)</td>
+      <td>
+        <div style="font-size:11px;color:var(--text3)">${onRollPct}% on-roll</div>
+        <div class="pct-bar" style="width:100px">
+          <div class="pct-fill" style="width:${onRollPct}%;background:${E_COLORS[e]}"></div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// HIRING PAGE
+// ══════════════════════════════════════════════════════════════
+function renderHiringPage() {
+  const ents = getEntities();
+
+  const totalHire = ents.reduce((s, e) => s + hiringTotal(e), 0);
+  const totalRep = ents.reduce((s, e) => s + ((DATA.hiring[e] || {}).rep || 0), 0);
+  const totalNew = ents.reduce((s, e) => s + ((DATA.hiring[e] || {}).newPos || 0), 0);
+
+  document.getElementById('hiringKPIs').innerHTML = [
+    { cls: 'green', icon: '📈', label: 'Total Hiring', value: fmt(totalHire), sub: 'This period' },
+    { cls: 'blue', icon: '🔄', label: 'Replacement Hires', value: fmt(totalRep), sub: `${pct(totalRep, totalHire)}% of total hiring` },
+    { cls: 'purple', icon: '✨', label: 'New Position Hires', value: fmt(totalNew), sub: `${pct(totalNew, totalHire)}% of total hiring` }
+  ].map(k => `<div class="kpi-card ${k.cls}">
+    <div class="kpi-icon">${k.icon}</div>
+    <div class="kpi-label">${k.label}</div>
+    <div class="kpi-value">${k.value}</div>
+    <div class="kpi-sub">${k.sub}</div>
+  </div>`).join('');
+
+  destroyChart('hiring_entityChart');
+  charts.hiring_entityChart = new Chart(document.getElementById('hiring_entityChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [
+        { label: 'Replacement', data: ents.map(e => (DATA.hiring[e] || {}).rep || 0), backgroundColor: ents.map(e => E_COLORS[e]), borderRadius: 6 },
+        { label: 'New Position', data: ents.map(e => (DATA.hiring[e] || {}).newPos || 0), backgroundColor: ents.map(e => E_COLORS_LIGHT[e]), borderRadius: 6 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: scaleOpts() }
+  });
+
+  destroyChart('hiring_typeChart');
+  charts.hiring_typeChart = new Chart(document.getElementById('hiring_typeChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Replacement Hires', 'New Position Hires'],
+      datasets: [{ data: [totalRep, totalNew], backgroundColor: ['#007AFF', '#AF52DE'], borderWidth: 3, borderColor: 'rgba(255,255,255,0.8)', hoverOffset: 8 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right' } } }
+  });
+
+  document.getElementById('hiringDetailBody').innerHTML = ents.map(e => {
+    const h = DATA.hiring[e] || {};
+    const ex = exitsTotal(e);
+    const total = hiringTotal(e);
+    const net = total - ex;
+    return `<tr>
+      <td><strong style="color:${E_COLORS[e]}">${e}</strong></td>
+      <td>${fmt(h.rep || 0)}</td>
+      <td>${fmt(h.newPos || 0)}</td>
+      <td><strong>${fmt(total)}</strong></td>
+      <td style="font-weight:700;color:${net >= 0 ? '#34C759' : '#FF3B30'}">${net >= 0 ? '+' : ''}${fmt(net)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ATTRITION PAGE
+// ══════════════════════════════════════════════════════════════
+function renderAttritionPage() {
+  const ents = getEntities();
+  const avgAttr = ents.length > 0 ? ents.reduce((s, e) => s + attrRate(e), 0) / ents.length : 0;
+  const totalVol = ents.reduce((s, e) => s + ((DATA.exits[e] || {}).vol || 0), 0);
+  const totalInvol = ents.reduce((s, e) => s + ((DATA.exits[e] || {}).invol || 0), 0);
+
+  document.getElementById('attritionKPIs').innerHTML = [
+    { cls: 'red', icon: '⚠️', label: 'Avg Attrition Rate', value: (avgAttr*100).toFixed(1) + '%', sub: 'All selected entities annualized' },
+    { cls: 'orange', icon: '🚶', label: 'Voluntary Exits', value: fmt(totalVol), sub: `${pct(totalVol, totalVol + totalInvol)}% of total exits` },
+    { cls: 'blue', icon: '📋', label: 'Involuntary Exits', value: fmt(totalInvol), sub: `${pct(totalInvol, totalVol + totalInvol)}% of total exits` }
+  ].map(k => `<div class="kpi-card ${k.cls}">
+    <div class="kpi-icon">${k.icon}</div>
+    <div class="kpi-label">${k.label}</div>
+    <div class="kpi-value">${k.value}</div>
+    <div class="kpi-sub">${k.sub}</div>
+  </div>`).join('');
+
+  destroyChart('attr_rateChart');
+  charts.attr_rateChart = new Chart(document.getElementById('attr_rateChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [{
+        label: 'Total Attrition Rate',
+        data: ents.map(e => +((attrRate(e) * 100).toFixed(1))),
+        backgroundColor: ents.map(e => attrRate(e) >= 0.5 ? '#FF3B30' : attrRate(e) >= 0.35 ? '#FF9500' : '#34C759'),
+        borderRadius: 8
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: scaleOpts(v => v + '%') }
+  });
+
+  destroyChart('attr_breakdownChart');
+  charts.attr_breakdownChart = new Chart(document.getElementById('attr_breakdownChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [
+        { label: 'Voluntary Exits', data: ents.map(e => (DATA.exits[e] || {}).vol || 0), backgroundColor: 'rgba(255,149,0,0.8)', borderRadius: 4 },
+        { label: 'Involuntary Exits', data: ents.map(e => (DATA.exits[e] || {}).invol || 0), backgroundColor: 'rgba(255,59,48,0.8)', borderRadius: 4 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: scaleOpts() }
+  });
+
+  document.getElementById('attrDetailBody').innerHTML = ents.map(e => {
+    const ex = DATA.exits[e] || {};
+    const at = DATA.attrition[e] || {};
+    return `<tr>
+      <td><strong style="color:${E_COLORS[e]}">${e}</strong></td>
+      <td>${fmt(ex.vol || 0)}</td>
+      <td>${fmt(ex.invol || 0)}</td>
+      <td><strong>${fmt(exitsTotal(e))}</strong></td>
+      <td>${((at.vol || 0) * 100).toFixed(1)}%</td>
+      <td>${((at.invol || 0) * 100).toFixed(1)}%</td>
+      <td style="font-weight:700">${((at.total || 0) * 100).toFixed(1)}%</td>
+      <td>${riskLabel(at.total || 0)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// VACANCIES PAGE
+// ══════════════════════════════════════════════════════════════
+function renderVacanciesPage() {
+  const ents = getEntities();
+  const vData = DATA.vacancy || {};
+
+  const totalApproved = ents.reduce((s, e) => s + ((vData[e] || {}).approved || 0), 0);
+  const totalFilled = ents.reduce((s, e) => s + ((vData[e] || {}).filled || 0), 0);
+  const totalVacant = ents.reduce((s, e) => s + ((vData[e] || {}).vacant || 0), 0);
+
+  if (totalApproved === 0) {
+    document.getElementById('vacancyKPIs').innerHTML = '<div style="grid-column:1/-1;color:var(--text3);font-size:14px;padding:20px 0">No vacancy data available. Please upload a file with vacancy information.</div>';
+    document.getElementById('vacDetailBody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:20px">No vacancy data loaded</td></tr>';
+    return;
+  }
+
+  document.getElementById('vacancyKPIs').innerHTML = [
+    { cls: 'blue', icon: '✅', label: 'Approved Positions', value: fmt(totalApproved), sub: 'Total sanctioned headcount' },
+    { cls: 'green', icon: '👤', label: 'Filled Positions', value: fmt(totalFilled), sub: `Fill rate: ${pct(totalFilled, totalApproved)}%` },
+    { cls: 'red', icon: '🏢', label: 'Open Vacancies', value: fmt(totalVacant), sub: `Vacancy rate: ${pct(totalVacant, totalApproved)}%` }
+  ].map(k => `<div class="kpi-card ${k.cls}">
+    <div class="kpi-icon">${k.icon}</div>
+    <div class="kpi-label">${k.label}</div>
+    <div class="kpi-value">${k.value}</div>
+    <div class="kpi-sub">${k.sub}</div>
+  </div>`).join('');
+
+  destroyChart('vac_entityChart');
+  charts.vac_entityChart = new Chart(document.getElementById('vac_entityChart'), {
+    type: 'bar',
+    data: {
+      labels: ents,
+      datasets: [
+        { label: 'Approved', data: ents.map(e => (vData[e] || {}).approved || 0), backgroundColor: 'rgba(0,122,255,0.2)', borderColor: '#007AFF', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'Filled', data: ents.map(e => (vData[e] || {}).filled || 0), backgroundColor: ents.map(e => E_COLORS[e]), borderRadius: 4 },
+        { label: 'Vacant', data: ents.map(e => (vData[e] || {}).vacant || 0), backgroundColor: 'rgba(255,59,48,0.7)', borderRadius: 4 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: scaleOpts() }
+  });
+
+  destroyChart('vac_rateChart');
+  charts.vac_rateChart = new Chart(document.getElementById('vac_rateChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ents.filter(e => vData[e]),
+      datasets: [{
+        data: ents.filter(e => vData[e]).map(e => (vData[e] || {}).vacant || 0),
+        backgroundColor: ['#FF3B30', '#FF9500', '#FFCC00'].slice(0, ents.length),
+        borderWidth: 3, borderColor: 'rgba(255,255,255,0.8)', hoverOffset: 8
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'right' } } }
+  });
+
+  document.getElementById('vacDetailBody').innerHTML = ents.map(e => {
+    const v = vData[e] || {};
+    if (!v.approved) return '';
+    const vacPct = pct(v.vacant, v.approved);
+    const fillPct = pct(v.filled, v.approved);
+    const color = parseFloat(vacPct) > 30 ? '#FF3B30' : parseFloat(vacPct) > 15 ? '#FF9500' : '#34C759';
+    return `<tr>
+      <td><strong style="color:${E_COLORS[e]}">${e}</strong></td>
+      <td>${fmt(v.approved || 0)}</td>
+      <td>${fmt(v.filled || 0)}</td>
+      <td>${fmt(v.vacant || 0)}</td>
+      <td>
+        ${fillPct}%
+        <div class="pct-bar" style="width:80px">
+          <div class="pct-fill" style="width:${Math.min(parseFloat(fillPct),100)}%;background:#34C759"></div>
+        </div>
+      </td>
+      <td style="color:${color};font-weight:700">${vacPct}%</td>
+      <td>${parseFloat(vacPct) > 30 ? '🔴 Critical' : parseFloat(vacPct) > 15 ? '🟡 Moderate' : '🟢 Good'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// MONTHLY REPORT PAGE
+// ══════════════════════════════════════════════════════════════
+function renderMonthlyReport() {
+  const ents = getEntities();
+  const totalHC = ents.reduce((s, e) => s + hcTotal(e), 0);
+  const totalHire = ents.reduce((s, e) => s + hiringTotal(e), 0);
+  const totalExit = ents.reduce((s, e) => s + exitsTotal(e), 0);
+  const avgAttr = ents.length > 0 ? (ents.reduce((s, e) => s + attrRate(e), 0) / ents.length * 100).toFixed(1) : 0;
+  const company = document.getElementById('set-company')?.value || 'Galaxia Group';
+  const fy = document.getElementById('set-fy')?.value || '2025-26';
+  const monthName = DATA.month || document.getElementById('set-month')?.value || 'Current Month';
+
+  document.getElementById('reportTitle').textContent = `${monthName} — Workforce Report`;
+  document.getElementById('reportMeta').innerHTML = [
+    `<div class="report-meta-item">Organization: <strong>${company}</strong></div>`,
+    `<div class="report-meta-item">FY: <strong>${fy}</strong></div>`,
+    `<div class="report-meta-item">Period: <strong>${monthName}</strong></div>`,
+    `<div class="report-meta-item">Generated: <strong>${new Date().toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'})}</strong></div>`
+  ].join('');
+
+  document.getElementById('reportEntityBlocks').innerHTML = ents.map(e => {
+    const c = DATA.current[e] || {};
+    const h = DATA.hiring[e] || {};
+    const ex = DATA.exits[e] || {};
+    const at = DATA.attrition[e] || {};
+    const v = (DATA.vacancy || {})[e];
+    return `
+    <div class="report-entity-block">
+      <div class="report-entity-header">
+        <div class="report-entity-title">
+          <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${E_COLORS[e]};margin-right:8px;vertical-align:middle"></span>
+          ${e}
+        </div>
+        ${riskLabel(at.total || 0)}
+      </div>
+      <div class="report-entity-body">
+        <div class="report-metrics">
+          <div class="report-metric">
+            <div class="report-metric-val">${fmt((c.onRoll || 0) + (c.offRoll || 0))}</div>
+            <div class="report-metric-label">Total Headcount</div>
+          </div>
+          <div class="report-metric">
+            <div class="report-metric-val">${fmt((h.rep || 0) + (h.newPos || 0))}</div>
+            <div class="report-metric-label">Total Hiring</div>
+          </div>
+          <div class="report-metric">
+            <div class="report-metric-val">${fmt((ex.vol || 0) + (ex.invol || 0))}</div>
+            <div class="report-metric-label">Total Exits</div>
+          </div>
+          <div class="report-metric">
+            <div class="report-metric-val" style="color:${(at.total || 0) >= 0.35 ? '#FF3B30' : '#34C759'}">${((at.total || 0)*100).toFixed(1)}%</div>
+            <div class="report-metric-label">Attrition Rate</div>
+          </div>
+        </div>
+        ${v ? `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Vacancies</div>
+          <div style="display:flex;gap:24px">
+            <div><span style="font-weight:700">${fmt(v.approved)}</span> <span style="color:var(--text3);font-size:12px">Approved</span></div>
+            <div><span style="font-weight:700">${fmt(v.filled)}</span> <span style="color:var(--text3);font-size:12px">Filled</span></div>
+            <div><span style="font-weight:700;color:#FF3B30">${fmt(v.vacant)}</span> <span style="color:var(--text3);font-size:12px">Vacant (${pct(v.vacant,v.approved)}%)</span></div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Executive summary
+  const netFlow = totalHire - totalExit;
+  const summaryLines = [
+    `<strong>${company}</strong> recorded a total headcount of <strong>${fmt(totalHC)}</strong> employees across ${ents.join(', ')} for <strong>${monthName}</strong>.`,
+    `Total hiring stood at <strong>${fmt(totalHire)}</strong> with <strong>${fmt(totalExit)}</strong> exits, resulting in a net workforce ${netFlow >= 0 ? 'addition' : 'reduction'} of <strong>${Math.abs(netFlow)}</strong> employees.`,
+    `The average annualized attrition rate across entities was <strong>${avgAttr}%</strong>.`,
+    ents.filter(e => attrRate(e) >= 0.35).length > 0
+      ? `⚠️ <strong>${ents.filter(e => attrRate(e) >= 0.35).join(', ')}</strong> ${ents.filter(e => attrRate(e) >= 0.35).length === 1 ? 'has' : 'have'} attrition rates above the 35% threshold — escalated retention focus is recommended.`
+      : `✅ All entities have attrition within acceptable thresholds.`
+  ];
+  document.getElementById('reportExecutiveSummary').innerHTML = summaryLines.map(l => `<p style="margin-bottom:10px">${l}</p>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// FILE UPLOAD & PARSING
+// ══════════════════════════════════════════════════════════════
+function triggerUpload() {
+  document.getElementById('uploadZone').style.display = 'block';
+  document.getElementById('fileInput').click();
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+}
+
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]);
+});
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = evt => {
+    try {
+      const wb = XLSX.read(evt.target.result, { type: 'array' });
+      const parsed = parseWorkbook(wb, file.name);
+      if (parsed) {
+        DATA = parsed;
+        zone.style.display = 'none';
+        document.getElementById('footerDataInfo').textContent = `Loaded: ${file.name}`;
+        renderAll();
+        showToast('✓', `Data loaded from "${file.name}"`);
+      } else {
+        showToast('⚠', 'Could not parse file. Check format.');
+      }
+    } catch(err) { showToast('✗', 'Error: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseWorkbook(wb, fname) {
+  const sheetName = wb.SheetNames[0];
+  const ws = wb.Sheets[sheetName];
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+  return extractSingleMonth(rows, sheetName);
+}
+
+function numVal(v) {
+  if (v === null || v === undefined || v === '') return 0;
+  const n = parseFloat(String(v).replace(/,/g, ''));
+  return isNaN(n) ? 0 : n;
+}
+
+function extractSingleMonth(rows, sheetName) {
+  const result = {
+    month: sheetName,
+    baseline: {}, current: {}, hiring: {}, exits: {}, attrition: {}, vacancy: null
+  };
+
+  ENTITIES.forEach(e => {
+    result.baseline[e] = { onRoll: 0, offRoll: 0 };
+    result.current[e] = { onRoll: 0, offRoll: 0 };
+    result.hiring[e] = { rep: 0, newPos: 0 };
+    result.exits[e] = { vol: 0, invol: 0 };
+    result.attrition[e] = { vol: 0, invol: 0, total: 0 };
+  });
+
+  let hasData = false;
+  let colMap = { sa: -1, gxc: -1, gxr: -1 };
+
+  rows.forEach((row, ri) => {
+    if (!row) return;
+    const cells = row.map(c => String(c || '').trim());
+    const fullRow = cells.join(' ').toLowerCase();
+
+    // Auto-detect column mapping from header
+    cells.forEach((c, ci) => {
+      const lc = c.toLowerCase();
+      if (lc.includes('aviora air') || lc.includes('avioraair')) colMap.sa = ci;
+      else if (lc === 'gxc') colMap.gxc = ci;
+      else if (lc === 'gxr') colMap.gxr = ci;
+    });
+
+    const ci = colMap.sa >= 0 ? colMap.sa : 2;
+    const gi = colMap.gxc >= 0 ? colMap.gxc : 3;
+    const ri2 = colMap.gxr >= 0 ? colMap.gxr : 4;
+
+    const sa = numVal(row[ci]), gxc = numVal(row[gi]), gxr = numVal(row[ri2]);
+
+    if (fullRow.includes('mar 2025') || fullRow.includes('31st mar')) {
+      if (fullRow.includes('on roll') || fullRow.includes('direct')) {
+        result.baseline['Aviora Air'].onRoll = sa;
+        result.baseline['GXC'].onRoll = gxc;
+        result.baseline['GXR'].onRoll = gxr;
+        hasData = true;
+      }
+      if (fullRow.includes('off role') || fullRow.includes('off roll') || fullRow.includes('indirect')) {
+        result.baseline['Aviora Air'].offRoll = sa;
+        result.baseline['GXC'].offRoll = gxc;
+        result.baseline['GXR'].offRoll = gxr;
+      }
+    }
+
+    if ((fullRow.includes('2025') || fullRow.includes('2026')) && !fullRow.includes('mar 2025')) {
+      if (fullRow.includes('on roll') || fullRow.includes('direct')) {
+        result.current['Aviora Air'].onRoll = sa;
+        result.current['GXC'].onRoll = gxc;
+        result.current['GXR'].onRoll = gxr;
+        hasData = true;
+      }
+      if (fullRow.includes('off role') || fullRow.includes('off roll') || fullRow.includes('indirect')) {
+        result.current['Aviora Air'].offRoll = sa;
+        result.current['GXC'].offRoll = gxc;
+        result.current['GXR'].offRoll = gxr;
+      }
+    }
+
+    if (fullRow.includes('replacement') && fullRow.includes('2025')) {
+      result.hiring['Aviora Air'].rep = sa;
+      result.hiring['GXC'].rep = gxc;
+      result.hiring['GXR'].rep = gxr;
+    }
+    if (fullRow.includes('new') && fullRow.includes('2025') && !fullRow.includes('total')) {
+      result.hiring['Aviora Air'].newPos = sa;
+      result.hiring['GXC'].newPos = gxc;
+      result.hiring['GXR'].newPos = gxr;
+    }
+
+    if (fullRow.includes('voluntary') && !fullRow.includes('involuntary') && fullRow.includes('2025')) {
+      result.exits['Aviora Air'].vol = sa;
+      result.exits['GXC'].vol = gxc;
+      result.exits['GXR'].vol = gxr;
+    }
+    if (fullRow.includes('involuntary') && fullRow.includes('2025')) {
+      result.exits['Aviora Air'].invol = sa;
+      result.exits['GXC'].invol = gxc;
+      result.exits['GXR'].invol = gxr;
+    }
+
+    if (fullRow.includes('total') && fullRow.includes('voluntary') && fullRow.includes('involuntary')) {
+      result.attrition['Aviora Air'].total = sa;
+      result.attrition['GXC'].total = gxc;
+      result.attrition['GXR'].total = gxr;
+    } else if (fullRow.includes('voluntary') && !fullRow.includes('involuntary') && !fullRow.includes('total') && (fullRow.includes('%') || sa < 1)) {
+      result.attrition['Aviora Air'].vol = sa;
+      result.attrition['GXC'].vol = gxc;
+      result.attrition['GXR'].vol = gxr;
+    }
+
+    if (fullRow.includes('approved') && (fullRow.includes('vacanc') || fullRow.includes('position'))) {
+      result.vacancy = result.vacancy || { 'Aviora Air': {}, GXC: {}, GXR: {} };
+      result.vacancy['Aviora Air'].approved = sa;
+      result.vacancy['GXC'].approved = gxc;
+      result.vacancy['GXR'].approved = gxr;
+    }
+    if (fullRow.includes('filled') && fullRow.includes('vacanc')) {
+      result.vacancy = result.vacancy || { 'Aviora Air': {}, GXC: {}, GXR: {} };
+      result.vacancy['Aviora Air'].filled = sa;
+      result.vacancy['GXC'].filled = gxc;
+      result.vacancy['GXR'].filled = gxr;
+    }
+    if (fullRow.includes('vacant') && !fullRow.includes('approved')) {
+      result.vacancy = result.vacancy || { 'Aviora Air': {}, GXC: {}, GXR: {} };
+      result.vacancy['Aviora Air'].vacant = sa;
+      result.vacancy['GXC'].vacant = gxc;
+      result.vacancy['GXR'].vacant = gxr;
+    }
+  });
+
+  // Auto-calc total attrition if missing
+  ENTITIES.forEach(e => {
+    if (!result.attrition[e].total && (result.attrition[e].vol || result.attrition[e].invol)) {
+      result.attrition[e].total = (result.attrition[e].vol || 0) + (result.attrition[e].invol || 0);
+    }
+  });
+
+  return hasData ? result : null;
+}
+
+// ══════════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════════
+function saveSettings() {
+  const monthInput = document.getElementById('set-month').value;
+  if (monthInput) DATA.month = monthInput;
+  renderAll();
+  showToast('✓', 'Settings saved successfully');
+}
+
+function resetToSampleData() {
+  DATA = { ...SAMPLE_DATA };
+  document.getElementById('footerDataInfo').textContent = 'Sample data loaded';
+  renderAll();
+  showToast('✓', 'Reset to sample data');
+}
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Galaxia_HR_${DATA.month || 'data'}.json`;
+  a.click();
+  showToast('✓', 'Exported successfully');
+}
+
+function printReport() {
+  renderMonthlyReport();
+  window.print();
+}
+
+// ══════════════════════════════════════════════════════════════
+// EXPORT BTN
+// ══════════════════════════════════════════════════════════════
+document.getElementById('exportBtn').addEventListener('click', () => {
+  exportJSON();
+});
+
+// ══════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════
+function showToast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+document.getElementById('uploadZone').style.display = 'none';
+document.getElementById('set-month').value = DATA.month || '';
+renderAll();
+</script>
+</body>
+</html>
