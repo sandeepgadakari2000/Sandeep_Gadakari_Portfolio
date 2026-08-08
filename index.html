@@ -797,11 +797,6 @@ line([[-1.6,5.62,0.1],[1.6,5.62,0.1]],INK,facade);
 box(3.6,3.4,0.05,1.5,1.5,0.02,INK,facade);line([[3.6,4.15,0.06],[3.6,2.65,0.06]],INK,facade);line([[2.85,3.4,0.06],[4.35,3.4,0.06]],INK,facade);
 const enterHit=new THREE.Mesh(new THREE.PlaneGeometry(2.4,3.3),new THREE.MeshBasicMaterial({transparent:true,opacity:0,side:THREE.DoubleSide}));
 enterHit.position.set(0,1.55,0.2);enterHit.userData={action:'enter'};facade.add(enterHit);clickable.push(enterHit);
-function treeSprite(){const t=tex(256,384,(x)=>{x.clearRect(0,0,256,384);x.strokeStyle='#3a3a38';x.lineWidth=7;x.beginPath();
-  x.moveTo(128,384);x.lineTo(128,150);x.moveTo(128,220);x.lineTo(70,150);x.moveTo(128,190);x.lineTo(190,130);x.stroke();x.lineWidth=5;
-  [[90,110,72],[150,90,82],[110,58,68],[70,140,52],[168,150,50]].forEach(b=>{x.beginPath();x.ellipse(b[0],b[1],b[2],b[2]*.82,0,0,Math.PI*2);x.stroke();});});
-  return new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:true}))}
-const tree=treeSprite();tree.position.set(-4.6,3.6,11.3);tree.scale.set(5.2,7.6,1);scene.add(tree);
 const catTex=tex(128,128,(x)=>{x.clearRect(0,0,128,128);x.strokeStyle='#2a2a2a';x.lineWidth=4;x.beginPath();
   x.moveTo(44,110);x.quadraticCurveTo(30,60,50,44);x.lineTo(40,24);x.lineTo(58,42);x.lineTo(72,42);x.lineTo(90,24);x.lineTo(80,46);
   x.quadraticCurveTo(98,64,84,110);x.closePath();x.stroke();x.beginPath();x.arc(56,64,3,0,7);x.arc(74,64,3,0,7);x.stroke();});
@@ -838,17 +833,201 @@ const sunRays=inkSprite(256,256,(x)=>{
 },{depthTest:false,order:-3,opacity:.8});
 sunRays.position.copy(sunDisc.position);sunRays.scale.set(2.5,2.5,1);scene.add(sunRays);
 
-/* ---- a second tree, so the door sits between two of them ---- */
-const tree2=treeSprite();tree2.position.set(5.15,3.25,11.15);tree2.scale.set(4.5,6.6,1);scene.add(tree2);
+/* ============================== THE GROVE ==============================
+   A tree either side of the building and a meadow of grass and daisies across
+   the foreground, in the same pencil hand as everything else. One shared wind
+   value drives every sway, so the whole scene leans the same way at once.
+   The grove lives in FRONT of the facade (z > 12) and fades as you walk in. */
+const grove=new THREE.Group();scene.add(grove);
+const GROVE_Z=12.62;
+let groveFade=1;
+const inkA=a=>'rgba(52,52,50,'+a+')';
 
-/* ---- grass tufts along the path ---- */
-const tuftTex=tex(64,64,(x)=>{x.clearRect(0,0,64,64);x.strokeStyle='rgba(42,42,42,.55)';x.lineWidth=4;x.lineCap='round';
-  x.beginPath();x.moveTo(32,60);x.quadraticCurveTo(12,42,10,18);x.moveTo(32,60);x.lineTo(32,10);x.moveTo(32,60);x.quadraticCurveTo(52,42,54,20);x.stroke();});
-const Rg=rnd(91);
-[-5.2,-4.3,-1.9,1.7,3.4,4.4,5.6].forEach(gx=>{
-  const g=new THREE.Sprite(new THREE.SpriteMaterial({map:tuftTex,transparent:true,depthWrite:false,opacity:.7}));
-  const s=0.26+Rg()*0.16;g.position.set(gx,s*0.5,YARD_Z-0.35+Rg()*0.5);g.scale.set(s,s,1);yard.add(g);
+/* ---- trunk and limbs: tapering slivers, lightly shaded, with bark hatching ---- */
+function trunkTex(seed){
+  return tex(256,512,(x)=>{
+    x.clearRect(0,0,256,512);const R=rnd(seed);x.lineCap='round';x.lineJoin='round';
+    (function limb(px,py,ang,len,w,depth){
+      const qx=px+Math.cos(ang)*len, qy=py+Math.sin(ang)*len;
+      const nx=Math.cos(ang+Math.PI/2), ny=Math.sin(ang+Math.PI/2), w2=w*0.5;
+      const mx=(px+qx)/2+nx*(R()-.5)*w*0.6, my=(py+qy)/2+ny*(R()-.5)*w*0.6;
+      /* the two long edges, kept as separate strokes — a closed outline would
+         cap each limb top and bottom and the tree would read as stacked boxes */
+      const edge=k=>[[px+nx*k*w/2,py+ny*k*w/2],[mx+nx*k*w*.42,my+ny*k*w*.42],[qx+nx*k*w2/2,qy+ny*k*w2/2]];
+      const eL=edge(1), eR=edge(-1);
+      x.beginPath();
+      x.moveTo(eL[0][0],eL[0][1]);x.quadraticCurveTo(eL[1][0],eL[1][1],eL[2][0],eL[2][1]);
+      x.lineTo(eR[2][0],eR[2][1]);x.quadraticCurveTo(eR[1][0],eR[1][1],eR[0][0],eR[0][1]);
+      x.closePath();x.fillStyle=inkA(.12);x.fill();
+      x.strokeStyle=inkA(.6);x.lineWidth=Math.max(.9,w*.1);
+      [eL,eR].forEach(e=>{x.beginPath();x.moveTo(e[0][0],e[0][1]);
+        x.quadraticCurveTo(e[1][0],e[1][1],e[2][0],e[2][1]);x.stroke();});
+      /* bark only on the heavy wood, so the twigs stay clean */
+      if(w>16){
+        x.strokeStyle=inkA(.2);x.lineWidth=1;
+        for(let i=0,n=Math.round(len/20);i<n;i++){
+          const u=.14+R()*.7, off=(R()-.5)*w*.5;
+          const bx=px+(qx-px)*u+nx*off, by=py+(qy-py)*u+ny*off;
+          x.beginPath();x.moveTo(bx,by);x.lineTo(bx+Math.cos(ang)*len*.09,by+Math.sin(ang)*len*.09);x.stroke();
+        }
+      }
+      if(depth<=0)return;
+      for(let i=0;i<2;i++){const u=.5+R()*.32;
+        limb(px+(qx-px)*u,py+(qy-py)*u,ang+(i?1:-1)*(.34+R()*.4),len*(.5+R()*.2),w*(.48+R()*.14),depth-1);}
+    })(128,506,-Math.PI/2+(R()-.5)*.12,286,56,3);
+    /* root flare, so the trunk sits into the ground rather than on it */
+    x.strokeStyle=inkA(.42);x.lineWidth=2.2;
+    [[-1,30],[1,26],[-1,54],[1,50]].forEach(r=>{x.beginPath();
+      x.moveTo(128+r[0]*11,468);x.quadraticCurveTo(128+r[0]*r[1],494,128+r[0]*(r[1]+20),508);x.stroke();});
+  });
+}
+
+/* ---- the crown: overlapping lobes of graphite shading, then scribbled leaves ---- */
+function canopyTex(seed){
+  return tex(512,512,(x)=>{
+    x.clearRect(0,0,512,512);const R=rnd(seed);x.lineCap='round';
+    const lobes=[{x:256,y:246,r:152},{x:256+(R()-.5)*60,y:220+(R()-.5)*50,r:120}];
+    for(let i=0;i<18;i++){
+      const a=(i/18)*Math.PI*2+(R()-.5)*.3, k=.72+R()*.28;
+      lobes.push({x:256+Math.cos(a)*178*k, y:240+Math.sin(a)*160*k, r:64+R()*36});
+    }
+    lobes.forEach(l=>{
+      const g=x.createRadialGradient(l.x-l.r*.3,l.y-l.r*.32,l.r*.08,l.x,l.y,l.r);
+      g.addColorStop(0,'rgba(74,74,72,.17)');g.addColorStop(.55,'rgba(74,74,72,.10)');g.addColorStop(1,'rgba(74,74,72,0)');
+      x.fillStyle=g;x.beginPath();x.arc(l.x,l.y,l.r,0,Math.PI*2);x.fill();
+    });
+    /* twigs climbing out of the trunk join at the bottom of the crown */
+    x.strokeStyle=inkA(.46);
+    for(let i=0;i<18;i++){
+      const a=-Math.PI/2+(R()-.5)*2.6, len=80+R()*170;
+      x.lineWidth=2.5-((len-80)/170)*1.4;
+      x.beginPath();x.moveTo(256+(R()-.5)*24,472);
+      x.quadraticCurveTo(256+Math.cos(a)*len*.6,472+Math.sin(a)*len*.62,256+Math.cos(a)*len,472+Math.sin(a)*len);
+      x.stroke();
+    }
+    /* leaves, packed toward each lobe's rim — that edge density is the silhouette */
+    lobes.forEach(l=>{
+      for(let i=0,n=Math.round(l.r*2.6);i<n;i++){
+        const a=R()*Math.PI*2, rad=l.r*Math.pow(R(),.55);
+        const px=l.x+Math.cos(a)*rad, py=l.y+Math.sin(a)*rad*.94;
+        const s=1.8+R()*3.4, d0=R()*Math.PI*2;
+        x.strokeStyle=inkA(.14+R()*.46);x.lineWidth=.8+R()*1;
+        x.beginPath();x.arc(px,py,s,d0,d0+.9+R()*1.4);x.stroke();
+      }
+    });
+  });
+}
+
+/* ---- a low, wide tuft of meadow grass, sometimes with a daisy or two ---- */
+const GRASS_W=512, GRASS_H=144, GRASS_AR=GRASS_W/GRASS_H, GB=GRASS_H-3;
+function grassTex(seed,withFlowers){
+  return tex(GRASS_W,GRASS_H,(x)=>{
+    x.clearRect(0,0,GRASS_W,GRASS_H);const R=rnd(seed);x.lineCap='round';
+    /* blades fan outward from the base, so a tuft reads wide rather than spiky */
+    for(let i=0,n=46+Math.round(R()*18);i<n;i++){
+      const bx=256+(R()-.5)*470, lean=(bx-256)/256, h=GB*(.26+R()*.66);
+      x.strokeStyle=inkA(.24+R()*.42);x.lineWidth=.9+R()*1.3;
+      x.beginPath();x.moveTo(bx,GB);
+      x.quadraticCurveTo(bx+lean*16,GB-h*.55,bx+lean*40+(R()-.5)*22,GB-h);x.stroke();
+    }
+    /* a few seed heads for texture */
+    for(let i=0;i<6;i++){
+      const bx=256+(R()-.5)*420, h=GB*(.48+R()*.36), tipx=bx+(R()-.5)*24;
+      x.strokeStyle=inkA(.38);x.lineWidth=1.1;
+      x.beginPath();x.moveTo(bx,GB);x.quadraticCurveTo(bx,GB-h*.6,tipx,GB-h);x.stroke();
+      for(let k=0;k<5;k++){x.beginPath();x.moveTo(tipx,GB-h+k*3.2);
+        x.lineTo(tipx+(k%2?6:-6),GB-h+k*3.2+4.2);x.stroke();}
+    }
+    if(!withFlowers)return;
+    for(let i=0,n=3+Math.round(R()*2);i<n;i++){
+      const bx=256+(R()-.5)*440, h=GB*(.58+R()*.3), fx=bx+(R()-.5)*20, fy=GB-h;
+      x.strokeStyle=inkA(.42);x.lineWidth=1.2;
+      x.beginPath();x.moveTo(bx,GB);x.quadraticCurveTo(bx,GB-h*.55,fx,fy+6);x.stroke();
+      const pr=6.5+R()*2.5;
+      x.strokeStyle=inkA(.62);x.lineWidth=1.1;
+      for(let p=0;p<7;p++){const a=p/7*Math.PI*2;
+        x.beginPath();x.ellipse(fx+Math.cos(a)*pr*.85,fy+Math.sin(a)*pr*.85,pr*.55,pr*.3,a,0,Math.PI*2);x.stroke();}
+      x.fillStyle='rgba(182,130,53,.85)';x.beginPath();x.arc(fx,fy,pr*.4,0,Math.PI*2);x.fill();
+    }
+  });
+}
+
+/* ---- a single drifting leaf ---- */
+const leafTex=tex(64,64,(x)=>{
+  x.clearRect(0,0,64,64);
+  x.strokeStyle=inkA(.66);x.lineWidth=2.2;x.lineCap='round';
+  x.beginPath();x.moveTo(8,32);x.quadraticCurveTo(32,8,58,30);x.quadraticCurveTo(32,56,8,32);x.closePath();
+  x.fillStyle=inkA(.1);x.fill();x.stroke();
+  x.lineWidth=1.4;x.beginPath();x.moveTo(8,32);x.lineTo(56,31);x.stroke();
 });
+
+function makeTree(seed,h,dir,phase){
+  const trunk=new THREE.Sprite(new THREE.SpriteMaterial({map:trunkTex(seed),transparent:true,depthWrite:false}));
+  trunk.center.set(.5,0);trunk.renderOrder=1;
+  const canopy=new THREE.Sprite(new THREE.SpriteMaterial({map:canopyTex(seed+11),transparent:true,depthWrite:false}));
+  canopy.center.set(.5,.03);canopy.renderOrder=1;
+  grove.add(trunk,canopy);
+  return {trunk,canopy,h,dir,phase,baseX:dir*10};
+}
+const trees=[makeTree(5,8.2,-1,0),makeTree(23,7.2,1,1.9)];
+
+const grassTexs=[grassTex(7,false),grassTex(19,true),grassTex(41,false),grassTex(63,true),
+                 grassTex(85,false),grassTex(107,false),grassTex(129,true)];
+/* ---- ground cover: outside the door the floor is meadow, not floorboards.
+        Two patches, one either side, leaving the paved path down the middle. ---- */
+const groundTex=tex(256,256,(x)=>{
+  x.fillStyle='#f0eee6';x.fillRect(0,0,256,256);
+  const R=rnd(37);x.lineCap='round';
+  for(let i=0;i<640;i++){
+    const bx=R()*256, by=R()*256, h=3+R()*10, lean=(R()-.5)*7;
+    x.strokeStyle=inkA(.12+R()*.26);x.lineWidth=.6+R()*.7;
+    x.beginPath();x.moveTo(bx,by);x.quadraticCurveTo(bx+lean*.4,by-h*.6,bx+lean,by-h);x.stroke();
+  }
+});
+groundTex.wrapS=groundTex.wrapT=THREE.RepeatWrapping;
+groundTex.generateMipmaps=true;groundTex.minFilter=THREE.LinearMipmapLinearFilter;groundTex.needsUpdate=true;
+const groundPatches=[-1,1].map(sd=>{
+  /* it runs on well past the wall so its far edge sits near the true horizon
+     rather than cutting a visible line across the field; the facade hides the
+     overlap while you are outside, and the grove has faded by the time you're in */
+  const w=40, z0=-2, z1=44.3, dz=z1-z0;
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,dz),
+    new THREE.MeshBasicMaterial({map:groundTex,transparent:true,depthWrite:false}));
+  m.material.map=groundTex.clone();m.material.map.needsUpdate=true;
+  m.material.map.wrapS=m.material.map.wrapT=THREE.RepeatWrapping;
+  m.material.map.repeat.set(w/2.4,dz/2.4);
+  m.rotation.x=-Math.PI/2;m.position.set(sd*(0.95+w/2),0.006,(z0+z1)/2);
+  m.renderOrder=0;grove.add(m);return m;
+});
+
+const meadow=[];const Rg=rnd(91);
+function tuft(z,s,op,q){
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:grassTexs[meadow.length%grassTexs.length],
+    transparent:true,depthWrite:false,opacity:op}));
+  sp.center.set(.5,0);sp.scale.set(s*GRASS_AR,s,1);sp.position.set(0,0.012,z);
+  /* anything nearer than the boy has to draw over him, so it needs a later order */
+  sp.renderOrder=z>=13.1?6:1;grove.add(sp);
+  meadow.push({sp,side:meadow.length%2?1:-1,q,z,s,ph:Rg()*7,amp:.7+Rg()*.7,base:op});
+}
+/* a band hugging the front wall, so the building stands in the grass */
+for(let i=0;i<18;i++)tuft(12.2+Rg()*.5, .2+Rg()*.24, .6, Math.pow(Rg(),.6));
+/* the open field between the wall and the viewer */
+for(let i=0;i<74;i++){const z=13+Rg()*6.6;
+  tuft(z, .24+((z-13)/6.6)*.22+Rg()*.14, .56, Math.pow(Rg(),.72));}
+/* and a nearer layer running right up to the camera, which perspective alone
+   turns into the tall grass filling the bottom corners of the frame */
+for(let i=0;i<62;i++)tuft(19.6+Rg()*8.8, .4+Rg()*.2, .54, .28+Rg()*.72);
+
+const leaves=[];const Rl=rnd(123);
+for(let i=0;i<7;i++){
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:leafTex,transparent:true,depthWrite:false,opacity:0}));
+  const s=0.15+Rl()*0.13;sp.scale.set(s,s,1);sp.renderOrder=7;grove.add(sp);
+  leaves.push({sp,ph:Rl(),dur:16+Rl()*14,y0:1.3+Rl()*3.4,z:15+Rl()*8,
+    spin:(Rl()-.5)*2.6,bob:.5+Rl()*.9,span:.32+Rl()*.2,X:14});
+}
+
+/* one breeze for the whole scene — mostly leaning one way, with slow gusts */
+const windAt=tt=>Math.sin(tt*.43)*.58+Math.sin(tt*.19+1.3)*.34+.16;
 
 /* ---- THE BOY (body + a separately pivoting throwing arm) ---- */
 function ground(w,op){return inkSprite(128,64,(x)=>{x.clearRect(0,0,128,64);
@@ -1146,6 +1325,33 @@ const camTarget=new THREE.Vector3(0,1.62,30);
 const lookTarget=new THREE.Vector3(0,1.78,21);
 const lookNow=lookTarget.clone();
 
+/* ---- FRAMING THE ENTRANCE ----
+   On a narrow window the 12-unit-wide facade no longer fits the frame, so the
+   entry stop backs off until it does. The grove is then laid out in fractions
+   of that frame, which keeps both trees and the whole meadow on screen at any
+   aspect instead of running off the sides. */
+function layoutExterior(){
+  const tanH=Math.tan(THREE.MathUtils.degToRad(camera.fov)/2), asp=camera.aspect;
+  const entryZ=12+Math.max(18,6.9/(tanH*asp)), prev=STOPS.entry;
+  STOPS.entry=entryZ;
+  /* if we're parked at the entrance, follow the stop as the window changes */
+  if(mode==='corridor'&&Math.abs(corridorZ-prev)<0.01){corridorZ=entryZ;camTarget.z=entryZ;}
+  const half=z=>(entryZ-z)*tanH*asp;                  // visible half-width at depth z
+  const treeHW=half(GROVE_Z), sc=THREE.MathUtils.clamp(treeHW/17.1,.6,1.15);
+  trees.forEach(tr=>{
+    const th=tr.h*.6*sc, ch=tr.h*.74*sc;
+    tr.baseX=tr.dir*THREE.MathUtils.clamp(treeHW*.73,6.6,13.5);
+    tr.trunk.scale.set(th*.5,th,1);tr.trunk.position.set(tr.baseX,.015,GROVE_Z-.05);
+    tr.canopy.scale.set(ch,ch,1);tr.canopy.position.set(tr.baseX,tr.h*.26*sc,GROVE_Z);
+  });
+  meadow.forEach(g=>{
+    /* the inner edge just clears the path, the outer edge follows the frame */
+    const inner=1.1+g.s*GRASS_AR*0.42;              // wider tufts start further out
+    g.sp.position.x=g.side*(inner+g.q*(Math.max(inner+2.2,half(g.z)*1.16)-inner));
+  });
+  leaves.forEach(l=>{l.X=Math.max(6,half(l.z)*1.15)});
+}
+
 /* nav bar */
 const NAVITEMS=[{k:'entry',t:'ENTRY'}].concat(CATS.map(c=>({k:c.id,t:c.label,n:byCat(c.id).length,c:c.color}))).concat([{k:'contact',t:'CONTACT'}]);
 NAVITEMS.forEach(item=>{
@@ -1238,7 +1444,7 @@ scatterBtn.onclick=()=>{
 /* ---- input ---- */
 addEventListener('wheel',e=>{
   if(mode!=='corridor')return;
-  autoWalk=false;entered=true;corridorZ=THREE.MathUtils.clamp(corridorZ+e.deltaY*0.016,CORR_END+5,24);
+  autoWalk=false;entered=true;corridorZ=THREE.MathUtils.clamp(corridorZ+e.deltaY*0.016,CORR_END+5,STOPS.entry);
 },{passive:true});
 let dragging=false,lastY=0,downX=0,downY=0;
 canvas.addEventListener('pointerdown',e=>{dragging=true;lastY=e.clientY;downX=e.clientX;downY=e.clientY;autoWalk=false;entered=true;
@@ -1248,7 +1454,7 @@ canvas.addEventListener('pointercancel',()=>dragging=false);
 canvas.addEventListener('pointermove',e=>{
   pointerX=e.clientX/innerWidth-0.5;pointerY=e.clientY/innerHeight-0.5;
   pointer.x=pointerX*2;pointer.y=-pointerY*2;
-  if(dragging&&mode==='corridor'){corridorZ=THREE.MathUtils.clamp(corridorZ+(e.clientY-lastY)*0.03,CORR_END+5,24);lastY=e.clientY;}
+  if(dragging&&mode==='corridor'){corridorZ=THREE.MathUtils.clamp(corridorZ+(e.clientY-lastY)*0.03,CORR_END+5,STOPS.entry);lastY=e.clientY;}
 });
 canvas.addEventListener('click',e=>{
   if(Math.abs(e.clientX-downX)>6||Math.abs(e.clientY-downY)>6)return;
@@ -1269,7 +1475,7 @@ function pick(){
   }
   return null;
 }
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);layoutExterior()});
 
 function regionFor(z){
   if(z>18)return'entry';
@@ -1283,7 +1489,7 @@ let lastRegion='entry';
 
 /* ============================== RENDER LOOP ============================== */
 const easeOutBack=t=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(t-1,3)+c1*Math.pow(t-1,2)};
-let t=0,lastT=performance.now(),hoverKey=null;
+let t=0,lastT=performance.now(),hoverKey=null,roomsHidden=false;
 function animate(now){
   requestAnimationFrame(animate);
   const dt=Math.min((now-lastT)/1000,0.05);lastT=now;t+=dt;
@@ -1320,21 +1526,56 @@ function animate(now){
   facadeWall.material.opacity=1-passed*0.92;
   doorL.rotation.y=-passed*1.2;doorR.rotation.y=passed*1.2;
   facade.visible=camera.position.z>4.2;
-  tree.visible=catSp.visible=camera.position.z>3;
+  catSp.visible=camera.position.z>3;
+
+  /* The rooms hang off the corridor out to x = ±22, well wider than the
+     12-unit facade, so from the entrance they show up past its left and right
+     edges. Nothing indoors may render until the facade covers the whole frame,
+     which it does from z = 15.4 inward even on a 32:9 window. */
+  const outdoors=camera.position.z>13.5;
+  if(outdoors!==roomsHidden){roomsHidden=outdoors;for(const k in rooms)rooms[k].group.visible=!outdoors;}
 
   /* ---- FRONT YARD: sun, trees, and the boy throwing for his dog ---- */
   {
     const skyOn=camera.position.z>3;
-    sunDisc.visible=sunRays.visible=tree2.visible=skyOn;
+    sunDisc.visible=sunRays.visible=skyOn;
     if(skyOn){
       sunRays.material.rotation=t*0.085;
       const breathe=1+Math.sin(t*1.15)*0.022;
       sunDisc.scale.set(1.65*breathe,1.65*breathe,1);
       sunRays.scale.set(2.5*breathe,2.5*breathe,1);
       sunRays.material.opacity=0.72+Math.sin(t*1.15)*0.09;
-      /* both trees sway, a little out of step */
-      tree.position.x=-4.6+Math.sin(t*0.42)*0.045;
-      tree2.position.x=5.15+Math.sin(t*0.37+1.7)*0.05;
+    }
+
+    /* ---- THE GROVE: the same breeze through the trees, grass and leaves ---- */
+    const wantGrove=THREE.MathUtils.clamp((camera.position.z-12.4)/3.6,0,1);
+    groveFade+=(wantGrove-groveFade)*(1-Math.pow(0.004,dt));
+    grove.visible=groveFade>0.02;
+    if(grove.visible){
+      const gust=1+Math.max(0,Math.sin(t*0.13-0.7))*0.55;
+      const w=windAt(t)*gust;
+      trees.forEach(tr=>{
+        const tw=windAt(t+tr.phase)*gust;
+        tr.canopy.material.rotation=tw*0.052;
+        tr.canopy.position.x=tr.baseX+tw*0.09;
+        tr.trunk.material.rotation=tw*0.013;
+        tr.canopy.material.opacity=tr.trunk.material.opacity=groveFade;
+      });
+      /* grass answers the same gust, just faster and further over */
+      meadow.forEach(g=>{
+        g.sp.material.rotation=w*0.115*g.amp+Math.sin(t*1.9+g.ph)*0.028;
+        g.sp.material.opacity=g.base*groveFade;
+      });
+      groundPatches.forEach(m=>{m.material.opacity=groveFade});
+      /* and every so often a leaf lets go and crosses the yard downwind */
+      leaves.forEach(l=>{
+        const u=((t/l.dur)+l.ph)%1;
+        if(u>l.span){l.sp.material.opacity=0;return}
+        const k=u/l.span;
+        l.sp.position.set(-l.X+k*2*l.X, l.y0+Math.sin(k*Math.PI*3.1+l.ph*6)*l.bob-k*0.9, l.z);
+        l.sp.material.rotation=k*l.spin*6+Math.sin(k*9)*0.5;
+        l.sp.material.opacity=groveFade*0.7*Math.min(1,4*k,4*(1-k));
+      });
     }
 
     /* the yard itself only exists while you are still outside */
@@ -1425,6 +1666,7 @@ function animate(now){
 
   renderer.render(scene,camera);
 }
+layoutExterior();
 setHUD('entry');
 requestAnimationFrame(animate);
 requestAnimationFrame(()=>{setProgress(94);setTimeout(finishLoad,520);});
