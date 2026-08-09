@@ -199,7 +199,7 @@
 <canvas id="webgl" aria-label="A hand-drawn three dimensional portfolio corridor with five doors: Demos, Dashboards, Tableau, Code and AI Systems. Drag or scroll to walk, click a door to open it, click a framed poster to read the case study."></canvas>
 
 <div class="frame-ui">
-  <div class="brand"><b>SANDEEP GADAKARI</b><span>AI PRODUCT MANAGEMENT · DATA &amp; BI</span></div>
+  <div class="brand"><b>SANDEEP GADAKARI</b><span>AI ENGINEER · GENAI &amp; MACHINE LEARNING SYSTEMS</span></div>
   <nav class="nav" id="nav" aria-label="Walk to"></nav>
   <div class="scene-label" id="sceneLabel"><span class="swatch"></span><span id="sceneLabelText">THE FRONT DOOR</span></div>
   <div class="social" aria-label="Social links">
@@ -213,7 +213,7 @@
     <button id="scatterBtn">✦ SCATTER THE WALL</button>
   </div>
   <div class="hud">
-    <p class="kicker" id="hudKicker">SANDEEP GADAKARI · AI PRODUCT MANAGEMENT</p>
+    <p class="kicker" id="hudKicker">SANDEEP GADAKARI · AI ENGINEER</p>
     <h1 id="hudTitle">PRODUCTS BUILT<br>TO MAKE DATA<br>ACTIONABLE.</h1>
     <p id="hudCopy">A hand-drawn walk through the work — five rooms of case studies in Python, SQL, Tableau, machine learning and agentic AI.</p>
   </div>
@@ -274,7 +274,7 @@
     </section>
     <section class="fb-sec fb-contact" id="fb-contact">
       <h2>Let's make data useful.</h2>
-      <p class="lead">Open to data analytics, BI engineering, and dashboard development roles.</p>
+      <p class="lead">Open to AI engineering, GenAI, and machine learning systems roles.</p>
       <a class="email" href="mailto:sandeepgadakari2000@gmail.com">sandeepgadakari2000@gmail.com</a>
       <div class="fb-social">
         <a href="https://www.linkedin.com/in/sandeep-gadakari/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5 2.5 2.5 0 0 0 4.98 3.5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.3c0-1.26-.02-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.8V21h-4z"></path></svg>LinkedIn ↗</a>
@@ -406,7 +406,7 @@ const PROJECTS=[
   {t:'Kaizen-to-EBITDA Engine', cat:'ai', kind:'live', link:'https://kaizen-ebitda-engine.streamlit.app/', repo:GH+'/kaizen-ebitda-engine', art:'forecast',
    d:'A live industrial-AI system that watches eight foundry machines minute by minute, predicts what is about to fail, and prices that risk straight into EBITDA. Two ML models score every machine 0–100 for failure in the next hour; the engine then converts the score into rupees at risk — including the losses most plants miss: knock-on stoppages, slow running and material starvation. Across eight simulated weeks holding 38 real breakdowns it warned about 50 minutes early and caught 30 of them, at roughly 0.7 false alarms per machine per day. One screen for the plant engineer, one for the CFO, over the same truth.',
    s:['Python','Machine Learning','Streamlit','EBITDA Modelling']},
-  {t:'NiftyPulse Quant Orchestrator', cat:'ai', kind:'internal', art:'terminal',
+  {t:'NiftyPulse Quant Orchestrator', cat:'ai', kind:'live', link:'https://niftypulse-quant-orchestrator-gzybrtwagi28rwaufjenjp.streamlit.app/', repo:GH+'/NiftyPulse-Quant-Orchestrator', art:'terminal',
    d:'An agentic AI research terminal for the NIFTY 50. Three CrewAI agents convene as an investment committee and run sequentially: a Macro Economist calls the regime off the cross-asset tape, a Technical Quant turns the indicator fact sheet into one falsifiable thesis with invalidation levels, and a Chief Risk Officer — holding a unilateral veto — tests it against the mandate and signs the memo APPROVED, CONDITIONAL or VETOED. The design decision that makes it trustworthy: the LLMs never do arithmetic. Every indicator, volatility figure and position size is computed deterministically in pandas/NumPy and handed to the agents as pre-computed evidence, so numbers are auditable and there is nothing numeric left to hallucinate. Three engines run in descending order of ambition — the agent committee, a single-shot LangChain/LiteLLM analyst, then a rule-based quant engine — so a rate-limited run still ships a defensible memo. You get a different author, never a broken app.',
    s:['CrewAI','Agentic AI','LangChain','Python','Streamlit']}
 ];
@@ -738,7 +738,7 @@ winMesh.position.set(0,3.3,CORR_END+0.12);scene.add(winMesh);
 box(0,3.3,CORR_END+0.14,4.6,3,0.02,INK);
 line([[0,4.8,CORR_END+0.16],[0,1.8,CORR_END+0.16]],INK);line([[-2.3,3.3,CORR_END+0.16],[2.3,3.3,CORR_END+0.16]],INK);
 const contactNote=new THREE.Mesh(new THREE.PlaneGeometry(3.4,2.55),
-  new THREE.MeshBasicMaterial({map:noteTexture('CONTACT','Open to data analytics, BI engineering and dashboard roles.\n'+EMAIL+'\nlinkedin.com/in/sandeep-gadakari'),transparent:true}));
+  new THREE.MeshBasicMaterial({map:noteTexture('CONTACT','Open to AI engineering, GenAI and machine learning systems roles.\n'+EMAIL+'\nlinkedin.com/in/sandeep-gadakari'),transparent:true}));
 contactNote.position.set(-3.9,2.4,CORR_END+0.1);scene.add(contactNote);
 box(-3.9,2.4,CORR_END+0.11,3.4,2.55,0.02,INK);
 const contactHit=new THREE.Mesh(new THREE.PlaneGeometry(3.4,2.55),new THREE.MeshBasicMaterial({transparent:true,opacity:0,side:THREE.DoubleSide}));
@@ -1372,7 +1372,7 @@ function setHUD(place,inRoom){
     markNav(c.id);return;
   }
   labelEl.style.setProperty('--dot','transparent');hudKicker.style.color='';
-  if(place==='entry'){labelText.textContent='THE FRONT DOOR';hudKicker.textContent='SANDEEP GADAKARI · AI PRODUCT MANAGEMENT';
+  if(place==='entry'){labelText.textContent='THE FRONT DOOR';hudKicker.textContent='SANDEEP GADAKARI · AI ENGINEER';
     hudTitle.innerHTML='PRODUCTS BUILT<br>TO MAKE DATA<br>ACTIONABLE.';hudCopy.textContent='Click the door to step inside — then pick a room off the corridor.';markNav('entry')}
   else if(place==='hero'){labelText.textContent='WELCOME IN';hudKicker.textContent='HELLO, I’M';hudTitle.innerHTML='SANDEEP<br>GADAKARI';
     hudCopy.textContent='‹ data storyteller /› — five doors ahead, one per kind of work.';markNav('entry')}
@@ -1381,7 +1381,7 @@ function setHUD(place,inRoom){
   else if(place==='toolkit'){labelText.textContent='TOOLKIT';hudKicker.textContent='TOOLKIT';
     hudTitle.innerHTML='WHAT’S UNDER<br>THE HOOD.';hudCopy.textContent=skills.join(' · ');markNav('')}
   else if(place==='contact'){labelText.textContent='CONTACT';hudKicker.textContent='CONTACT';
-    hudTitle.innerHTML='LET’S MAKE<br>DATA USEFUL.';hudCopy.textContent='Open to data & BI roles — links bottom-left, or email '+EMAIL;markNav('contact')}
+    hudTitle.innerHTML='LET’S MAKE<br>DATA USEFUL.';hudCopy.textContent='Open to AI engineering & ML roles — links bottom-left, or email '+EMAIL;markNav('contact')}
 }
 function clearNav(){if(navTimer){clearTimeout(navTimer);navTimer=null}}
 
