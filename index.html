@@ -326,9 +326,9 @@ const CATS=[
   {id:'tableau',    no:'03', label:'TABLEAU',    title:'TABLEAU<br>VIZZES', color:'#2f7f66', side:'L', z:-20,
    blurb:'Published Tableau Public workbooks — finance, HR, media, retail and geospatial.'},
   {id:'code',       no:'04', label:'CODE',       title:'CODE<br>&amp; SQL', color:'#8a5fb0', side:'R', z:-29,
-   blurb:'The source behind the work — Python pipelines and SQL analysis, on GitHub.'},
+   blurb:'The source behind the work — Python pipelines, SQL analysis and a tested JavaScript engineering engine, on GitHub.'},
   {id:'ai',         no:'05', label:'AI SYSTEMS', title:'AGENTIC AI<br>&amp; ML SYSTEMS', color:'#b07d2b', side:'L', z:-38,
-   blurb:'Systems where the model makes the call — a multi-agent investment committee and a predictive plant engine that turns a live signal into a decision, and a decision into rupees.'}
+   blurb:'Systems where the model makes the call — an agent investment committee, a plant engine that prices failure risk, a physics-trained cost model, and AI agents that run a Dubai firm’s front office.'}
 ];
 const CAT=Object.fromEntries(CATS.map(c=>[c.id,c]));
 
@@ -398,6 +398,9 @@ const PROJECTS=[
   {t:'OWSR Calculator — Automation Pipeline', cat:'code', kind:'internal', art:'code',
    d:'The Python engine behind the OWSR control tower. One run takes the raw secondary-sales export and rebuilds the entire outlet-wise report: productive calls per outlet-month, unique productive coverage, case-box conversion across differing unit factors, sale value, and the repeat-billing chain that needs the previous month to resolve the current one — overall and per product category. It rewrites the master workbook in place, carrying prior-month history forward, so a report that took days of manual pivoting lands in a single command. Written during the OneSGG internship.',
    s:['Python','Pandas','openpyxl','Excel Automation']},
+  {t:'BBS Generator — Rebar Detailing Engine', cat:'code', kind:'live', link:'https://sandeepgadakari2000.github.io/bbs-generator/bbs.html?style=modern&bx=4&sx=3000&by=4&sy=3750&floors=2&beds=4&scheme=2', repo:GH+'/bbs-generator', art:'house',
+   d:'A bar bending schedule generator for Indian site engineers. Type the structural grid, or drop the plan PDF: a PDF parser written from scratch, with no library and no network, reads the sheet the way a person does — off the dimensions lettered on it — and hands every value back with the text it came from, to confirm before anything is calculated. One engine then works out IS 456 slab loads and the load path, designs each beam for flexure and shear (always demand, capacity and the ratio, never a bare verdict), schedules every bar with its bend deductions and draws the 3D reinforcement cage. Finally it builds the house the rooms describe, floor by floor — as an Indian RCC home, or in Dubai styles: modern villa, Emirati heritage with mashrabiya and wind tower, or Arabian Ranches — without moving a single bar. One self-contained HTML file that opens offline; 312 tests pass.',
+   s:['JavaScript','IS 456 Design','PDF Parsing','3D Rendering','node:test']},
 
   /* ---- 05 AI SYSTEMS ---- */
   {t:'Argonaut — AI Job-Scam Detection', cat:'ai', kind:'live', link:'https://sandeepgadakari2000.github.io/https-sandeepgadakari2000.github.io-argonaut-/', repo:GH+'/Argonaut---Argus-', art:'scatter',
@@ -408,12 +411,21 @@ const PROJECTS=[
    s:['Python','Machine Learning','Streamlit','EBITDA Modelling']},
   {t:'NiftyPulse Quant Orchestrator', cat:'ai', kind:'live', link:'https://niftypulse-quant-orchestrator-gzybrtwagi28rwaufjenjp.streamlit.app/', repo:GH+'/NiftyPulse-Quant-Orchestrator', art:'terminal',
    d:'An agentic AI research terminal for the NIFTY 50. Three CrewAI agents convene as an investment committee and run sequentially: a Macro Economist calls the regime off the cross-asset tape, a Technical Quant turns the indicator fact sheet into one falsifiable thesis with invalidation levels, and a Chief Risk Officer — holding a unilateral veto — tests it against the mandate and signs the memo APPROVED, CONDITIONAL or VETOED. The design decision that makes it trustworthy: the LLMs never do arithmetic. Every indicator, volatility figure and position size is computed deterministically in pandas/NumPy and handed to the agents as pre-computed evidence, so numbers are auditable and there is nothing numeric left to hallucinate. Three engines run in descending order of ambition — the agent committee, a single-shot LangChain/LiteLLM analyst, then a rule-based quant engine — so a rate-limited run still ships a defensible memo. You get a different author, never a broken app.',
-   s:['CrewAI','Agentic AI','LangChain','Python','Streamlit']}
+   s:['CrewAI','Agentic AI','LangChain','Python','Streamlit']},
+  {t:'CoolScore Dubai — Cooling-Cost Predictor', cat:'ai', kind:'live', link:'https://coolscore-dubai.vercel.app/', repo:GH+'/coolscore-dubai', art:'tower',
+   d:'Know what a Dubai apartment will cost to cool before you rent or buy it. Listings show the rent, never the chiller bill — and with district cooling a fixed capacity charge lands even with the AC off. CoolScore runs ISO 13790 hourly building physics on bias-corrected 2023–25 Dubai weather, prices it through the published tariffs (district-cooling capacity and consumption, DEWA slabs, chiller-free), simulates 40,000 units, and trains a quantile gradient-boosting surrogate that answers in under a second with a P10–P90 range. It reproduces the physics at R² 0.996; from listing facts alone it reaches 0.94 with a calibrated 80% band — and it says plainly that real-bill accuracy is not yet measured. Paste a listing and a Claude parser (plain text matching when no key is set) marks every field found, inferred or missing; a guard rejects any explanation that quotes a number the engine didn’t produce. Out comes a CoolScore A–E, the true monthly cost and a Heat X-ray of where the heat comes from in AED, served live from a FastAPI function.',
+   s:['Machine Learning','Building Physics','FastAPI','Claude API','Python']},
+  {t:'Ziaco — Five AI Agents, One Job Lifecycle', cat:'ai', kind:'live', link:'https://ziaco-agents.vercel.app/', art:'chat',
+   d:'A client build for Ziaco, a Dubai AC-repair and plumbing firm: five marketing and operations agents — WhatsApp intake, job-photo marketing, local Google pages, review requests and B2B contract outreach — built as one application over one job lifecycle, not five products. Intake reads a customer’s message in Arabic, English, Hindi, Urdu or Malayalam and works out the fault, a price range and whether a person should take over. The architecture is the safety case: Node + TypeScript owns state and every outbound channel, while the Python FastAPI inference service holds no database handle and no ability to send, so it cannot message a customer even if it misbehaves — and every agent ends with a person approving the final send, post or publish. Google’s rules are built in: fixed review-request wording with no gating, no doorway pages, and a code check that stops Arabic replies guessing a reviewer’s gender. Runs on Gemini’s free tier with a model fallback chain. The scroll-through tour is public; running an agent asks for the office’s access code, because every run spends the client’s AI quota.',
+   s:['Agentic AI','Gemini API','FastAPI','Node · TypeScript','Human-in-the-Loop']},
+  {t:'ZIACO Website — AI Film & Multilingual Assistant', cat:'ai', kind:'live', link:'https://ziaco-site.vercel.app/', art:'film',
+   d:'The company website built for ZIACO Technical Services, Dubai. It opens on a 37-second walkthrough film scrubbed by scroll — a rooftop blueprint rises into a wireframe, becomes a finished residence, and the camera moves onto the terrace and inside — joined from four AI-generated clips, AI-upscaled to 1080p with Real-ESRGAN and cut four ways, so every screen loads the smallest film that stays sharp. Below it, a WhatsApp-style AI assistant answers in eight languages, right-to-left for Arabic and Urdu, and can look at a photo of the leak or the faulty unit. It works out the job, the area, the urgency and the visitor’s name, then hands over to WhatsApp with the enquiry already written out in English for the team. It never quotes prices or promises times, gives safety steps first for gas, sparks or flooding, and if the AI can’t be reached it goes straight to the WhatsApp hand-over, so no enquiry is lost. Runs on Gemini’s free tier, falling back across models down to Gemma, and holds 60 fps on integrated graphics.',
+   s:['Conversational AI','Gemini API','Real-ESRGAN','JavaScript','Multilingual · RTL']}
 ];
 PROJECTS.forEach((p,i)=>p.i=i);
 const byCat=id=>PROJECTS.filter(p=>p.cat===id);
 
-const skills=['Python','SQL','Tableau','Machine Learning','Agentic AI / CrewAI','Pandas / NumPy','JavaScript','Chart.js','Excel Automation','Streamlit','Data Visualization','Dashboard Engineering'];
+const skills=['Python','SQL','Tableau','Machine Learning','Agentic AI / CrewAI','Pandas / NumPy','JavaScript','Chart.js','Excel Automation','Streamlit','FastAPI','LLM APIs (Claude · Gemini)','Data Visualization','Dashboard Engineering'];
 const tagFor=p=>p.kind==='demo'?'▶ LIVE DEMO':p.kind==='live'?'▶ LIVE APP':p.kind==='app'?'OPEN ↗':p.kind==='github'?'GITHUB ↗':p.kind==='tableau'?'TABLEAU ↗':'CASE STUDY';
 
 /* ============================== LOADER ============================== */
@@ -501,6 +513,9 @@ function drawArt(x,kind,seed,W,H,color){
   const ink='#2a2a2a', tint=hexA(color,.22), tint2=hexA(color,.45);
   x.lineWidth=2; x.strokeStyle=ink; x.lineJoin='round'; x.lineCap='round';
   const axes=()=>{x.beginPath();x.moveTo(8,6);x.lineTo(8,H-10);x.lineTo(W-6,H-10);x.stroke()};
+  const ground=()=>{x.beginPath();x.moveTo(4,H-10);x.lineTo(W-4,H-10);x.stroke()};
+  const bub=(px,py,w,h)=>{const r=Math.min(6,h/2);x.beginPath();x.moveTo(px+r,py);x.arcTo(px+w,py,px+w,py+h,r);
+    x.arcTo(px+w,py+h,px,py+h,r);x.arcTo(px,py+h,px,py,r);x.arcTo(px,py,px+w,py,r);x.closePath();x.fill();x.stroke()};
   if(kind==='bars'){
     axes(); const n=6, bw=(W-30)/n*0.62, gap=(W-30)/n;
     for(let k=0;k<n;k++){const h=18+rr(k)*(H-56);x.fillStyle=k%2?tint:hexA(color,.1);
@@ -566,6 +581,68 @@ function drawArt(x,kind,seed,W,H,color){
       x.strokeStyle=k%3===0?color:ink;x.lineWidth=2.6;
       x.beginPath();x.moveTo(30+ind,y);x.lineTo(30+ind+(W-58-ind)*(0.3+rr(k)*0.65),y);x.stroke();x.lineWidth=2;}
     x.strokeStyle=ink;
+  }else if(kind==='tower'){
+    /* a tower whose windows shade hotter toward the sun, a cooler neighbour beside it */
+    const g=H-10, top=14, tx=W*0.36, tw=W*0.34, cols=4, rows=Math.max(5,Math.round((g-top)/26)), cw=tw/cols, ch=(g-top)/rows;
+    x.strokeStyle='rgba(42,42,42,.35)';x.strokeRect(W*0.1,g-(g-top)*0.55,W*0.18,(g-top)*0.55);x.strokeStyle=ink;
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const heat=(c+1)/cols*(0.45+0.55*(rows-r)/rows)+rr(r*cols+c)*0.15;
+      x.fillStyle=hexA(color,Math.min(.62,.05+heat*.5));x.fillRect(tx+c*cw+2,top+r*ch+2,cw-4,ch-4);
+      x.lineWidth=1.1;x.strokeRect(tx+c*cw+2,top+r*ch+2,cw-4,ch-4);}
+    x.lineWidth=2;x.strokeRect(tx,top,tw,g-top);
+    const sx=W-24, sy=24, sr=Math.min(W,H)*0.07;
+    x.fillStyle=tint;x.beginPath();x.arc(sx,sy,sr,0,6.29);x.fill();x.stroke();
+    for(let k=0;k<8;k++){const a=k*Math.PI/4;x.beginPath();x.moveTo(sx+Math.cos(a)*(sr+3),sy+Math.sin(a)*(sr+3));x.lineTo(sx+Math.cos(a)*(sr+8),sy+Math.sin(a)*(sr+8));x.stroke();}
+    x.setLineDash([4,4]);x.strokeStyle=tint2;
+    [0.3,0.55,0.8].forEach(f=>{x.beginPath();x.moveTo(sx-sr-4,sy+sr*0.6);x.lineTo(tx+tw+3,top+(g-top)*f);x.stroke()});
+    x.setLineDash([]);x.strokeStyle=ink;ground();
+  }else if(kind==='house'){
+    /* a two-storey RCC frame: the left bay finished, the right bay still showing its beam cages */
+    const g=H-10, fl=(H-30)/2, x0=W*0.14, x1=W*0.86, xm=(x0+x1)/2;
+    x.fillStyle=hexA(color,.1);x.fillRect(x0,g-2*fl,xm-x0,2*fl);
+    [1,2].forEach(k=>{const ww=(xm-x0)*0.44, wh=fl*0.42, wx=(x0+xm)/2-ww/2, wy=g-k*fl+fl*0.3;
+      x.fillStyle='#f4f2ec';x.fillRect(wx,wy,ww,wh);x.strokeRect(wx,wy,ww,wh);
+      x.lineWidth=1.2;x.beginPath();x.moveTo(wx+ww/2,wy);x.lineTo(wx+ww/2,wy+wh);x.stroke();x.lineWidth=2;});
+    [x0,xm,x1].forEach(px=>{x.fillStyle='#f4f2ec';x.fillRect(px-4,g-2*fl,8,2*fl);x.strokeRect(px-4,g-2*fl,8,2*fl)});
+    [1,2].forEach(k=>{const py=g-k*fl;x.fillStyle=tint2;x.fillRect(x0-10,py-7,x1-x0+20,7);x.strokeRect(x0-10,py-7,x1-x0+20,7);
+      const a=xm+7,b=x1-7;x.strokeStyle=color;x.lineWidth=1.3;
+      x.beginPath();x.moveTo(a,py+3);x.lineTo(b,py+3);x.moveTo(a,py+11);x.lineTo(b,py+11);x.stroke();
+      for(let px=a;px<=b;px+=7){x.beginPath();x.moveTo(px,py+1);x.lineTo(px,py+13);x.stroke();}
+      x.strokeStyle=ink;x.lineWidth=2;});
+    x.strokeRect(x0-2,g-2*fl-13,x1-x0+4,6);ground();
+  }else if(kind==='chat'){
+    /* a WhatsApp thread on the left, the five agents of one job lifecycle on the right */
+    const lw=W*0.62, n=4, rh=(H-20)/n;
+    for(let k=0;k<n;k++){const h=rh-8, w=lw*(0.55+rr(k)*0.35), right=k%2===1, px=right?10+lw-w:10, py=10+k*rh;
+      x.fillStyle=right?tint:'#f4f2ec';bub(px,py,w,h);
+      x.strokeStyle='rgba(42,42,42,.35)';x.lineWidth=1.2;const nl=h>26?2:1;
+      for(let j=0;j<nl;j++){const ly=py+h*(j+1)/(nl+1);x.beginPath();x.moveTo(px+8,ly);x.lineTo(px+w*(j?0.5:0.75),ly);x.stroke();}
+      x.strokeStyle=ink;x.lineWidth=2;}
+    const ax=W-24, ay=14, step=(H-28)/4, nr=Math.min(8,step*0.3);
+    x.beginPath();x.moveTo(ax,ay);x.lineTo(ax,ay+4*step);x.stroke();
+    x.setLineDash([4,4]);x.strokeStyle=tint2;x.beginPath();x.moveTo(lw+16,ay);x.lineTo(ax-nr-4,ay);x.stroke();x.setLineDash([]);x.strokeStyle=ink;
+    for(let k=0;k<5;k++){const py=ay+k*step;x.fillStyle=k<4?tint2:'#f4f2ec';x.beginPath();x.arc(ax,py,nr,0,6.29);x.fill();x.stroke();}
+    const cy=ay+4*step;x.beginPath();x.moveTo(ax-nr*0.5,cy);x.lineTo(ax-nr*0.1,cy+nr*0.4);x.lineTo(ax+nr*0.55,cy-nr*0.45);x.stroke();
+  }else if(kind==='film'){
+    /* a film strip running blueprint → wireframe → finished, and the assistant waiting below */
+    const sy=H*0.1, sh=H*0.62, fw3=(W-28)/3, hs=Math.max(3,sh*0.07), fy=sy+hs*2.6, fh=sh-hs*5.2;
+    x.fillStyle='rgba(42,42,42,.88)';x.fillRect(6,sy,W-12,sh);x.strokeRect(6,sy,W-12,sh);
+    x.fillStyle='#f1efe9';
+    for(let px=12;px<W-14;px+=hs*2.4){x.fillRect(px,sy+hs*0.6,hs,hs);x.fillRect(px,sy+sh-hs*1.6,hs,hs);}
+    for(let k=0;k<3;k++){const fx=10+k*(fw3+4), bx=fx+fw3*0.25, bw=fw3*0.5, by=fy+fh*0.22, bh=fh*0.72;
+      x.fillStyle=k===0?'#e3e8ee':'#f4f2ec';x.fillRect(fx,fy,fw3,fh);
+      x.lineWidth=1.1;
+      if(k===0){x.strokeStyle='rgba(63,111,184,.35)';for(let j=1;j<6;j++){x.beginPath();x.moveTo(fx+j*fw3/6,fy);x.lineTo(fx+j*fw3/6,fy+fh);x.stroke();}
+        for(let j=1;j<4;j++){x.beginPath();x.moveTo(fx,fy+j*fh/4);x.lineTo(fx+fw3,fy+j*fh/4);x.stroke();}
+        x.setLineDash([3,3]);x.strokeStyle=ink;x.strokeRect(bx,by,bw,bh);x.setLineDash([]);}
+      else if(k===1){x.strokeStyle=ink;x.strokeRect(bx,by,bw,bh);
+        for(let j=1;j<4;j++){x.beginPath();x.moveTo(bx,by+j*bh/4);x.lineTo(bx+bw,by+j*bh/4);x.stroke();}
+        x.beginPath();x.moveTo(bx,by+bh);x.lineTo(bx+bw,by);x.moveTo(bx,by);x.lineTo(bx+bw,by+bh);x.strokeStyle='rgba(42,42,42,.4)';x.stroke();x.strokeStyle=ink;}
+      else{x.fillStyle=tint2;x.fillRect(bx,by,bw,bh);x.strokeRect(bx,by,bw,bh);x.fillStyle='#f4f2ec';
+        for(let r=0;r<3;r++)for(let c=0;c<2;c++){const wx=bx+bw*(0.16+c*0.46), wy=by+bh*(0.12+r*0.3);x.fillRect(wx,wy,bw*0.24,bh*0.16);x.strokeRect(wx,wy,bw*0.24,bh*0.16);}}
+      x.lineWidth=2;x.strokeStyle=ink;x.strokeRect(fx,fy,fw3,fh);}
+    const py=sy+sh+7, bh2=Math.min(30,H-6-py), bw2=W*0.4, px=W-12-bw2;
+    x.fillStyle=tint;bub(px,py,bw2,bh2);x.fillStyle=ink;
+    for(let k=0;k<3;k++){x.beginPath();x.arc(px+bw2/2+(k-1)*10,py+bh2/2,2.4,0,6.29);x.fill();}
   }else{ axes(); }
 }
 

@@ -1,7 +1,7 @@
 # Sandeep Gadakari — Portfolio
 
 A hand-drawn 3D portfolio you walk through. Five rooms open off a corridor —
-**Demos**, **Dashboards**, **Tableau**, **Code**, and **AI Systems** — with 22
+**Demos**, **Dashboards**, **Tableau**, **Code**, and **AI Systems** — with 26
 projects hung on the walls. Built as a single self-contained HTML file: no build
 step, no framework, no bundler. three.js is the only dependency, loaded from a CDN.
 
