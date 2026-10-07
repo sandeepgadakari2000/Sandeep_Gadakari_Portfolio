@@ -257,6 +257,43 @@
   .guide input:focus{outline:none;border-style:solid}
   .guide form button{font:inherit;font-size:11px;letter-spacing:.12em;border:2px solid var(--ink);background:var(--ink);color:var(--paper);padding:0 14px;cursor:pointer}
   .carousel-on .ask-btn,.guide-open .plan-map{display:none}
+
+  /* ---- case-study spreads: a sketchbook opened flat ---- */
+  .spread-ov{position:fixed;inset:0;z-index:72;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(42,42,42,.42);backdrop-filter:blur(3px)}
+  .spread-ov.open{display:flex}
+  .spread{--dot:var(--paper-2);width:min(1280px,100%);height:min(840px,calc(100vh - 40px));display:flex;transform:rotate(-.3deg);filter:drop-shadow(12px 14px 0 rgba(42,42,42,.45))}
+  .spread .pg{flex:1;min-width:0;position:relative;overflow-y:auto;background:#f7f5ef;border:2.5px solid var(--ink);padding:32px 38px 64px;
+    background-image:radial-gradient(rgba(42,42,42,.09) 1px,transparent 1.2px);background-size:22px 22px}
+  .spread .pg.l{border-right-width:1px;box-shadow:inset -38px 0 40px -30px rgba(0,0,0,.25)}
+  .spread .pg.r{border-left-width:1px;box-shadow:inset 38px 0 40px -30px rgba(0,0,0,.25)}
+  .spread .tape{position:absolute;width:120px;height:28px;background:rgba(176,125,43,.28);border:1px solid rgba(42,42,42,.25);top:-1px}
+  .sp-eyebrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:11px;letter-spacing:.16em;margin:0}
+  .sp-eyebrow .chip{border:1.6px solid var(--ink);padding:3px 8px;background:var(--dot)}
+  .spread h2{font-size:clamp(22px,2.3vw,31px);line-height:1.08;letter-spacing:-.02em;margin:14px 0 8px}
+  .spread .lede{font-size:13.5px;line-height:1.55;margin:0}
+  .spread h3{font-size:11px;letter-spacing:.22em;margin:20px 0 10px;display:flex;align-items:center;gap:10px}
+  .spread h3::after{content:"";flex:1;height:1.6px;background:var(--ink);opacity:.45}
+  .spread .flow{width:100%;height:auto;display:block}
+  .spread .shot{display:block;width:100%;max-height:250px;object-fit:cover;object-position:top;border:2px solid var(--ink);box-shadow:4px 4px 0 rgba(42,42,42,.35);background:#fff}
+  #spShotWrap[hidden]{display:none}
+  .spread .stack{display:flex;flex-wrap:wrap;gap:8px}
+  .spread .stack span{font-size:11.5px;border:1.5px solid var(--ink);padding:5px 8px;background:#fffdf7;transform:rotate(-1deg)}
+  .spread .stack span:nth-child(even){transform:rotate(1.2deg)}
+  .spread ol.dec{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+  .spread ol.dec li{display:grid;grid-template-columns:38px 1fr;gap:12px;font-size:13px;line-height:1.5}
+  .spread ol.dec li i{font-style:normal;width:34px;height:34px;border:2px solid var(--ink);display:grid;place-items:center;font-weight:bold;background:var(--dot)}
+  .spread ol.dec li b{display:block;font-size:12.5px;letter-spacing:.08em;margin-bottom:2px}
+  .spread .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .spread .nums div{border:2px solid var(--ink);background:#fffdf7;padding:11px 10px;box-shadow:3px 3px 0 var(--ink)}
+  .spread .nums b{display:block;font-size:24px;letter-spacing:-.03em;white-space:nowrap}
+  .spread .nums small{display:block;font-size:10.5px;line-height:1.35;margin-top:4px;color:var(--ink-soft)}
+  .spread .honest{border:1.8px dashed var(--ink);padding:12px 14px;font-size:13px;line-height:1.5;background:rgba(192,86,63,.06)}
+  .spread .honest b{color:#c0563f;letter-spacing:.1em;font-size:11px;display:block;margin-bottom:4px}
+  .spread .row{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+  .spread .foot{position:absolute;left:38px;right:38px;bottom:18px;display:flex;justify-content:space-between;gap:12px}
+  .spread .foot button{font:inherit;font-size:11px;letter-spacing:.12em;border:0;background:none;color:var(--ink-soft);cursor:pointer;padding:4px 0;text-align:left}
+  .spread .foot button:last-child{text-align:right;margin-left:auto}
+  .spread .foot button:hover,.spread .foot button:focus-visible{color:var(--ink);text-decoration:underline;outline:none}
   @media (max-width:820px){
     .social{left:18px;bottom:16px;gap:8px}
     .social a{width:34px;height:34px}
@@ -272,6 +309,14 @@
     .theme-switch{left:auto;right:14px;top:auto;bottom:16px;padding:5px 8px;font-size:9px}
     .plan-map{right:12px;bottom:auto;top:104px;width:178px;padding:7px 8px 4px;box-shadow:3px 3px 0 var(--ink)}
     .plan-map span{display:none}
+    .spread-ov{padding:0}
+    .spread{flex-direction:column;height:100%;overflow-y:auto;transform:none;filter:none}
+    .spread .pg{flex:none;overflow:visible;border:0;box-shadow:none!important;padding:58px 18px 18px}
+    .spread .pg.r{padding-top:6px;padding-bottom:70px}
+    .spread .tape{display:none}
+    .spread .nums{grid-template-columns:1fr 1fr}
+    .spread .close{position:fixed;top:10px;right:10px;z-index:3}
+    .spread .foot{left:18px;right:18px}
     .ask-btn{left:auto;right:14px;top:auto;bottom:56px;padding:5px 8px;font-size:9px}
     .guide{left:10px;right:10px;top:auto;bottom:10px;width:auto;max-height:72vh}
   }
@@ -349,6 +394,35 @@
       <a class="launch" id="mPrimary" href="#">OPEN →</a>
       <a class="launch ghost" id="mSecondary" href="#">DISCUSS →</a>
     </div>
+  </article>
+</div>
+
+<!-- CASE-STUDY SPREAD -->
+<div class="spread-ov" id="spreadOv" role="dialog" aria-modal="true" aria-labelledby="spTitle" aria-hidden="true">
+  <article class="spread" id="spread">
+    <section class="pg l">
+      <span class="tape" style="left:60px;transform:rotate(-4deg)"></span>
+      <p class="sp-eyebrow"><span class="chip" id="spCat"></span><span id="spNo"></span></p>
+      <h2 id="spTitle"></h2>
+      <p class="lede" id="spLede"></p>
+      <h3>HOW IT WORKS</h3>
+      <div id="spFlow"></div>
+      <h3>BUILT WITH</h3>
+      <div class="stack" id="spStack"></div>
+      <div id="spShotWrap"><h3>WHAT IT LOOKS LIKE</h3><img class="shot" id="spShot" alt=""></div>
+    </section>
+    <section class="pg r">
+      <span class="tape" style="right:70px;transform:rotate(3deg)"></span>
+      <button class="close" id="spClose" aria-label="Close">×</button>
+      <h3 style="margin-top:6px">DECISIONS THAT MATTERED</h3>
+      <ol class="dec" id="spDec"></ol>
+      <h3>BY THE NUMBERS</h3>
+      <div class="nums" id="spNums"></div>
+      <h3>STILL HONEST</h3>
+      <div class="honest"><b>WHAT ISN’T DONE YET</b><span id="spHonest"></span></div>
+      <div class="row"><a class="launch" id="spP" href="#">OPEN →</a><a class="launch ghost" id="spS" href="#">DISCUSS →</a></div>
+      <div class="foot"><button id="spPrev" type="button"></button><button id="spNext" type="button"></button></div>
+    </section>
   </article>
 </div>
 
@@ -560,6 +634,76 @@ const PROJECTS=[
    s:['Conversational AI','Gemini API','Real-ESRGAN','JavaScript','Multilingual · RTL']}
 ];
 PROJECTS.forEach((p,i)=>p.i=i);
+/* Case-study spreads for the flagship projects: the problem, the flow, the decisions that
+   mattered, the numbers, and what isn't live yet. Every fact here is from the project's own
+   write-up. flow = [title, subtitle, guard?] steps, drawn left to right and snaking down. */
+const CASES={
+ 'Ziaco — Five AI Agents, One Job Lifecycle':{
+  lede:'A Dubai AC-repair and plumbing firm answered WhatsApp by hand, posted none of its work and rarely asked for reviews. Five agents now share one job record — and none of them can act without a person.',
+  flow:[['CUSTOMER','on WhatsApp'],['NODE + TYPESCRIPT','owns every job record, the webhook and every outbound channel'],['PYTHON · FASTAPI','drafts the reply — no database, no way to send','CAN’T MESSAGE ANYONE'],['APPROVAL INBOX','every draft waits here'],['A PERSON','sends, posts, publishes']],
+  dec:[['ONE APP, NOT FIVE','Every agent reads the same job record, one WhatsApp number and one approval inbox — so a finished job can trigger the photo post and the review request without re-typing anything.'],
+   ['THE MODEL CAN’T ACT','The inference service holds no database handle and no way to send. A person approves every message, post and page.'],
+   ['GOOGLE’S RULES, IN CODE','Review requests use the same fixed wording for everyone (no gating), pages come only from real local jobs (no doorway pages), and a check stops Arabic replies guessing a reviewer’s gender.']],
+  nums:[['5','agents sharing one job record'],['5','intake languages, Arabic to Malayalam'],['0','messages sent without a person'],['AED 0','model bill — Gemini’s free tier']],
+  honest:'The Node pipeline typechecks but hasn’t yet run against a database, and real WhatsApp sending waits on Meta’s business verification. The demo proves the agents’ judgement, not the plumbing.'},
+ 'CoolScore Dubai — Cooling-Cost Predictor':{
+  lede:'Dubai listings show the rent, never the cooling bill — and with district cooling a fixed capacity charge lands even with the AC off. Tenants find out from their first summer bill; brokers answer from rules of thumb.',
+  flow:[['DUBAI WEATHER 2023–25','bias-corrected to airport stations'],['ISO 13790 PHYSICS','hourly, one apartment at a time'],['DUBAI TARIFFS','district cooling, DEWA slabs, chiller-free'],['40,000 SIMULATED UNITS','the training set'],['QUANTILE MODEL','answers in under a second'],['COOLSCORE A–E','an AED range, and what drives it']],
+  dec:[['PHYSICS FIRST, ML SECOND','The model learns from a physics simulation, so every prediction traces back to sun, glass, tariffs and weather rather than to correlations in scraped data.'],
+   ['A RANGE, NOT A NUMBER','What a listing can’t tell you — the glass spec, the household’s habits, the weather year — becomes the width of a P10–P90 range instead of a hidden error.'],
+   ['NUMBERS ONLY FROM THE ENGINE','A Claude parser reads the pasted listing, but a guard rejects any explanation that quotes a number the engine didn’t produce.']],
+  nums:[['0.996','R² against the physics'],['0.94','R² from listing facts alone'],['40,000','simulated units'],['< 1 s','to score a unit']],
+  honest:'Real-bill accuracy is not yet measured. The collection kit and an automatic validation report are ready for the first bills.'},
+ 'Argonaut — AI Job-Scam Detection':{
+  lede:'Fake job posts on LinkedIn and WhatsApp ask Indian job-seekers for fees, UPI payments and documents. People need a verdict before they reply — without handing their messages to a server to get one.',
+  flow:[['PASTE A POST','LinkedIn or WhatsApp text'],['SIX RULE DETECTORS','fees, UPI, off-platform, pay, MLM, urgency'],['TF-IDF + LOGISTIC REGRESSION','trained in Python, run in the browser','RUNS ON YOUR DEVICE'],['BLEND 60 / 40','the model and the rules'],['TRUST SCORE 0–100','a verdict, and the evidence behind it']],
+  dec:[['ON THE DEVICE, ON PURPOSE','The model’s weights ship to the browser, so nothing a user pastes leaves their machine, every scan is free, and the privacy promise is literally true.'],
+   ['RULES AND A MODEL, BLENDED','Six detectors read the tells — fee demands, UPI handles, off-platform moves, unrealistic pay, MLM patterns, urgency — and a trained classifier scores the rest.'],
+   ['EVERY VERDICT EXPLAINS ITSELF','Deterministic and explainable: each result ships its own audit trail of the signals that fired.']],
+  nums:[['0–100','trust score on every post'],['4','verdicts, Legitimate to Actual Scam'],['6','rule detectors'],['0','bytes sent to a server']],
+  honest:'Accuracy on real-world posts is still being built up: users can report a wrong verdict, and those reports become the next round of training labels.'},
+ 'Kaizen-to-EBITDA Engine':{
+  lede:'In a foundry the plant engineer sees machine alarms and the CFO sees EBITDA. Nobody connects a failing machine to the rupees it is about to cost — including the knock-on losses most plants never count.',
+  flow:[['MINUTE-BY-MINUTE SIGNALS','eight foundry machines'],['TWO ML MODELS','failure score 0–100 for the next hour'],['RUPEES-AT-RISK ENGINE','knock-on stoppages, slow running, starvation'],['TWO SCREENS, ONE TRUTH','the plant engineer and the CFO']],
+  dec:[['PRICE THE RISK, NOT THE ALARM','A score of 80 means little to a CFO; rupees at risk this hour do. Every prediction becomes money before anyone sees it.'],
+   ['COUNT THE LOSSES PLANTS MISS','Knock-on stoppages, slow running and material starvation are priced in, not just the breakdown itself.'],
+   ['ONE TRUTH, TWO VIEWS','The engineer gets the machine; the CFO gets the bridge to EBITDA — from the same numbers.']],
+  nums:[['~50 min','early warning before a breakdown'],['30 / 38','real breakdowns caught'],['~0.7','false alarms per machine per day'],['8','machines watched']],
+  honest:'Proven on eight simulated weeks that hold 38 real breakdowns — not yet on a live plant floor.'},
+ 'NiftyPulse Quant Orchestrator':{
+  lede:'LLM “analysts” sound confident and get numbers wrong. A research memo a risk committee can trust needs the arithmetic done by code — and a reviewer with the power to say no.',
+  flow:[['MARKET DATA','NIFTY 50 and the cross-asset tape'],['PANDAS · NUMPY','every indicator, volatility and size computed'],['MACRO ECONOMIST','calls the regime'],['TECHNICAL QUANT','one falsifiable thesis'],['CHIEF RISK OFFICER','tests it against the mandate','HOLDS A VETO'],['SIGNED MEMO','approved, conditional or vetoed']],
+  dec:[['THE LLMS NEVER DO ARITHMETIC','Every number is computed in pandas and NumPy and handed over as evidence, so there is nothing numeric left to hallucinate.'],
+   ['A REVIEWER WHO CAN SAY NO','The Chief Risk Officer agent tests the thesis against the mandate and can veto it outright.'],
+   ['NEVER A BROKEN APP','Three engines run in order of ambition — the agent committee, a single LLM analyst, a rule-based engine — so a rate-limited run still ships a memo.']],
+  nums:[['3','agents in the committee'],['3','engines, agents down to rules'],['1','veto'],['0','numbers produced by an LLM']],
+  honest:'A research tool, not investment advice — and it runs on free-tier model quotas, which is exactly why the fallback engines exist.'},
+ 'ZIACO Website — AI Film & Multilingual Assistant':{
+  lede:'A Dubai technical-services firm needed a site that shows what it builds and turns a visitor’s question into a WhatsApp enquiry — in the visitor’s own language, at any hour.',
+  flow:[['A VISITOR','eight languages, photos welcome'],['GEMINI','free tier, falling back across models'],['WORKS OUT THE JOB','the job, the area, the urgency, the name'],['HAND-OVER TO WHATSAPP','the enquiry written out in English for the team']],
+  dec:[['NEVER PROMISE WHAT THE FIRM HASN’T','It never quotes prices or promises times, because the firm hasn’t given it those — and it gives safety steps first for gas, sparks or flooding.'],
+   ['NO ENQUIRY LOST','If the AI can’t be reached it goes straight to the WhatsApp hand-over.'],
+   ['A FILM THAT LOADS SMALL','Four AI clips, upscaled with Real-ESRGAN and cut four ways, so every screen loads the smallest film that stays sharp.']],
+  nums:[['8','languages, right-to-left for Arabic and Urdu'],['37 s','walkthrough film, scrubbed by scroll'],['4','film cuts, one per kind of screen'],['60 fps','on integrated graphics']],
+  honest:'The work photos are generated stand-ins until the firm has its own project photos, and the live link is a demo ahead of the firm’s own domain.'},
+ 'BBS Generator — Rebar Detailing Engine':{
+  lede:'On Indian sites the bar bending schedule is still worked out by hand from the drawings — bar by bar, bend by bend.',
+  flow:[['GRID OR PLAN PDF','typed in, or dropped on the page'],['PDF READER','no library, no network'],['YOU CONFIRM','every value shows the text it came from'],['IS 456 LOADS + DESIGN','demand, capacity and the ratio'],['BAR SCHEDULE + 3D CAGE','bend deductions included'],['THE HOUSE','Indian RCC, or three Dubai styles']],
+  dec:[['READ THE SHEET LIKE A PERSON','The plan reader takes dimensions from the numbers lettered on the drawing, not by measuring pixels, and shows the text each value came from.'],
+   ['NEVER A BARE VERDICT','Beam design always returns demand, capacity and the ratio, so an engineer can check the working.'],
+   ['STYLE NEVER MOVES A BAR','The house can be dressed as an Indian RCC home or a Dubai villa; a test proves the walls, openings and rooms stay identical.']],
+  nums:[['312','tests passing'],['0','libraries in the PDF reader'],['4','house styles'],['1','file, and it opens offline']],
+  honest:'Reactions are the statically determinate ones — there is no frame analysis — and no BS 8666 conformance is claimed.'},
+ 'OWSR Control Tower — Coolberg':{
+  lede:'A consumer-goods sales team rebuilt its outlet-wise sales report by hand — days of pivoting before anyone could ask which outlets had gone quiet.',
+  flow:[['RAW SECONDARY-SALES EXPORT','the month’s transactions'],['PYTHON PIPELINE','the OWSR calculator'],['MASTER WORKBOOK','prior months carried forward'],['CONTROL TOWER','parsed in a background worker'],['ACTION CENTRE','risks and openings ranked by rupees']],
+  dec:[['RANK BY RUPEES','The Action Centre orders every flag — high-value outlets gone silent, dormant accounts, cross-sell gaps — by its rupee impact.'],
+   ['SEGMENT EVERY OUTLET','Champion, Loyal, New, At Risk, Occasional, Dormant — assigned automatically.'],
+   ['NEVER FREEZE THE PAGE','Parsing runs in a background worker, so 49,000 rows never lock the interface.']],
+  nums:[['49,000','rows, without freezing'],['6','outlet segments'],['6','ways to slice, zone to category'],['1','command to rebuild the report']],
+  honest:'Built during the OneSGG internship. It opens here on synthetic data generated for the portfolio — the client’s sales data never leaves their hands.'}
+};
+PROJECTS.forEach(p=>{if(CASES[p.t])p.cs=CASES[p.t]});
 /* Real screenshots of the work, redrawn as ink and baked into art/. They load before the
    posters are painted; on a slow connection the drawn art stands in after a few seconds. */
 const INK={'Entity Performance Intelligence':'entity','HR Analytics Intelligence':'hr-analytics','HR Intelligence Platform v2':'hr-v2',
@@ -617,37 +761,91 @@ const mNo=document.getElementById('mNo'),mCat=document.getElementById('mCat'),mT
       mPlay=document.getElementById('mPlay'),mP=document.getElementById('mPrimary'),mS=document.getElementById('mSecondary');
 let lastFocus=null;
 function link(el,href,labelTxt,ext){el.hidden=false;el.textContent=labelTxt;el.href=href;if(ext){el.target='_blank';el.rel='noopener noreferrer'}else{el.removeAttribute('target');el.removeAttribute('rel')}}
+/* each project's two buttons: [href, label, opens-in-new-tab] */
+function linkPair(p){
+  const mail=`mailto:${EMAIL}?subject=${encodeURIComponent('Project: '+p.t)}`, discuss=[mail,'DISCUSS THIS →',false];
+  if(p.kind==='demo')return p.link?[[p.link,'VIEW SOURCE ↗',true],discuss]:[discuss,[GH,'MORE ON GITHUB ↗',true]];
+  if(p.kind==='live')return [[p.link,'OPEN THE LIVE APP ↗',true],p.repo?[p.repo,'VIEW SOURCE ↗',true]:discuss];
+  if(p.kind==='app')return [[p.link,'OPEN THE DASHBOARD ↗',true],discuss];
+  if(p.kind==='github')return [[p.link,'VIEW ON GITHUB ↗',true],discuss];
+  if(p.kind==='tableau')return [[p.link,'VIEW ON TABLEAU ↗',true],discuss];
+  return [[`mailto:${EMAIL}?subject=${encodeURIComponent('Walkthrough: '+p.t)}`,'REQUEST A WALKTHROUGH →',false],[GH,'MORE ON GITHUB ↗',true]];
+}
 function openProject(i){
+  /* the flagship projects open as a full case-study spread */
+  if(PROJECTS[i].cs){if(modal.classList.contains('open'))closeProject();return openSpread(i);}
+  closeSpread();
   lastFocus=document.activeElement;
   const p=PROJECTS[i], c=CAT[p.cat];
   mSheet.style.setProperty('--dot',hexA(c.color,.18));
   mCat.textContent=c.label; mNo.textContent='CASE STUDY / '+String(i+1).padStart(2,'0');
   mTitle.textContent=p.t; mDesc.textContent=p.d;
   mStack.innerHTML=p.s.map(x=>`<span>${x}</span>`).join('');
-  const mail=`mailto:${EMAIL}?subject=${encodeURIComponent('Project: '+p.t)}`;
   mPlay.hidden=!p.demo;
   mPlay.onclick=p.demo?(()=>{closeProject();openDemo(p.demo)}):null;
-  if(p.kind==='demo'){
-    if(p.link){ link(mP,p.link,'VIEW SOURCE ↗',true); link(mS,mail,'DISCUSS THIS →',false); }
-    else{ link(mP,mail,'DISCUSS THIS →',false); link(mS,GH,'MORE ON GITHUB ↗',true); }
-  }
-  else if(p.kind==='live'){
-    link(mP,p.link,'OPEN THE LIVE APP ↗',true);
-    if(p.repo) link(mS,p.repo,'VIEW SOURCE ↗',true); else link(mS,mail,'DISCUSS THIS →',false);
-  }
-  else if(p.kind==='app'){ link(mP,p.link,'OPEN THE DASHBOARD ↗',true); link(mS,mail,'DISCUSS THIS →',false); }
-  else if(p.kind==='github'){ link(mP,p.link,'VIEW ON GITHUB ↗',true); link(mS,mail,'DISCUSS THIS →',false); }
-  else if(p.kind==='tableau'){ link(mP,p.link,'VIEW ON TABLEAU ↗',true); link(mS,mail,'DISCUSS THIS →',false); }
-  else{ link(mP,`mailto:${EMAIL}?subject=${encodeURIComponent('Walkthrough: '+p.t)}`,'REQUEST A WALKTHROUGH →',false); link(mS,GH,'MORE ON GITHUB ↗',true); }
+  const [a,b]=linkPair(p);link(mP,...a);link(mS,...b);
   modal.classList.add('open'); modal.setAttribute('aria-hidden','false');
   document.getElementById('mClose').focus();
 }
 function closeProject(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');lastFocus&&lastFocus.focus&&lastFocus.focus()}
+/* ============================== CASE-STUDY SPREADS ============================== */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const spreadOv=document.getElementById('spreadOv'), spreadEl=document.getElementById('spread');
+let spreadAt=-1;
+/* the flow, drawn as inked boxes three to a row, snaking down */
+function flowSVG(flow,col){
+  const per=Math.min(innerWidth<620?2:3,flow.length), bw=178, bh=88, gx=36, gy=58, top=flow.some(f=>f[2])?24:6;
+  const rows=Math.ceil(flow.length/per), W=per*bw+(per-1)*gx+10, H=top+rows*bh+(rows-1)*gy+10;
+  const wrap=(s,n)=>{const out=[];let ln='';s.split(' ').forEach(w=>{if((ln+' '+w).trim().length>n&&ln){out.push(ln);ln=w}else ln=(ln+' '+w).trim()});if(ln)out.push(ln);return out};
+  const pos=flow.map((_,i)=>{const r=Math.floor(i/per), c=i%per;return [5+(r%2?per-1-c:c)*(bw+gx),top+r*(bh+gy)]});
+  let g='';
+  flow.forEach(([t,s,guard],i)=>{const [x,y]=pos[i], tl=wrap(t,24).slice(0,2), band=8+tl.length*13;
+    g+=`<rect x="${x+4}" y="${y+4}" width="${bw}" height="${bh}" fill="rgba(42,42,42,.16)"/><rect x="${x}" y="${y}" width="${bw}" height="${bh}" fill="#fffdf7" stroke="#2a2a2a" stroke-width="2"/>`;
+    g+=`<rect x="${x}" y="${y}" width="${bw}" height="${band}" fill="${hexA(col,.24)}" stroke="#2a2a2a" stroke-width="2"/>`;
+    tl.forEach((l,k)=>g+=`<text x="${x+bw/2}" y="${y+15+k*13}" text-anchor="middle" font-size="11.5" font-weight="bold">${esc(l)}</text>`);
+    wrap(s,27).slice(0,3).forEach((l,k)=>g+=`<text x="${x+bw/2}" y="${y+band+15+k*13}" text-anchor="middle" font-size="10.5" fill="#4a4a46">${esc(l)}</text>`);
+    if(guard)g+=`<rect x="${x-7}" y="${y-7}" width="${bw+14}" height="${bh+14}" fill="none" stroke="#c0563f" stroke-width="2.2" stroke-dasharray="7 6"/><text x="${x+bw/2}" y="${y-13}" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#c0563f">${esc(guard)}</text>`;
+    if(i<flow.length-1){const [nx,ny]=pos[i+1];
+      g+=ny===y?`<path d="M${nx>x?x+bw+3:x-3} ${y+bh/2} L${nx>x?nx-5:nx+bw+5} ${y+bh/2}" stroke="#2a2a2a" stroke-width="2" marker-end="url(#spArrow)"/>`
+               :`<path d="M${x+bw/2} ${y+bh+3} L${nx+bw/2} ${ny-(flow[i+1][2]?16:5)}" stroke="#2a2a2a" stroke-width="2" marker-end="url(#spArrow)"/>`;}
+  });
+  return `<svg class="flow" viewBox="0 0 ${W} ${H}" font-family="Courier New,monospace" fill="#2a2a2a" role="img" aria-label="How it works, step by step">
+    <defs><marker id="spArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#2a2a2a" stroke-width="1.6"/></marker></defs>${g}</svg>`;
+}
+function openSpread(i){
+  if(spreadAt<0)lastFocus=document.activeElement;
+  spreadAt=i;
+  const p=PROJECTS[i], c=CAT[p.cat], cs=p.cs, $=id=>document.getElementById(id);
+  spreadEl.style.setProperty('--dot',hexA(c.color,.22));
+  $('spCat').textContent=c.no+' · '+c.label;$('spNo').textContent='CASE STUDY / '+String(i+1).padStart(2,'0');
+  $('spTitle').textContent=p.t;$('spLede').textContent=cs.lede;
+  $('spFlow').innerHTML=flowSVG(cs.flow,c.color);
+  $('spStack').innerHTML=p.s.map(x=>`<span>${esc(x)}</span>`).join('');
+  $('spDec').innerHTML=cs.dec.map((d,k)=>`<li><i>${k+1}</i><div><b>${esc(d[0])}</b>${esc(d[1])}</div></li>`).join('');
+  $('spNums').innerHTML=cs.nums.map(n=>`<div><b>${esc(n[0])}</b><small>${esc(n[1])}</small></div>`).join('');
+  $('spHonest').textContent=cs.honest;
+  $('spShotWrap').hidden=!p.ink;if(p.ink){$('spShot').src=p.ink;$('spShot').alt=`${p.t.split(' — ')[0]}, redrawn in ink`;}
+  const [a,b]=linkPair(p);link($('spP'),...a);link($('spS'),...b);
+  /* the neighbours on the same wall */
+  const wall=byCat(p.cat), k=wall.indexOf(p), prev=wall[k-1], next=wall[k+1];
+  const nb=(el,q,arrow)=>{el.hidden=!q;if(q){el.textContent=arrow==='←'?`← ${String(q.i+1).padStart(2,'0')} · ${q.t.split(' — ')[0].toUpperCase()}`:`${String(q.i+1).padStart(2,'0')} · ${q.t.split(' — ')[0].toUpperCase()} →`;el.onclick=()=>openProject(q.i)}};
+  nb($('spPrev'),prev,'←');nb($('spNext'),next,'→');
+  spreadEl.scrollTop=0;spreadEl.querySelectorAll('.pg').forEach(pg=>pg.scrollTop=0);
+  spreadOv.classList.add('open');spreadOv.setAttribute('aria-hidden','false');
+  $('spClose').focus();
+}
+function closeSpread(){
+  if(spreadAt<0)return;spreadAt=-1;
+  spreadOv.classList.remove('open');spreadOv.setAttribute('aria-hidden','true');lastFocus&&lastFocus.focus&&lastFocus.focus();
+}
+document.getElementById('spClose').onclick=closeSpread;
+spreadOv.addEventListener('click',e=>{if(e.target===spreadOv)closeSpread()});
 document.getElementById('mClose').onclick=closeProject;
 modal.addEventListener('click',e=>{if(e.target===modal)closeProject()});
 addEventListener('keydown',e=>{
   if(e.key!=='Escape')return;
   if(demoOv.classList.contains('open'))return closeDemo();
+  if(spreadOv.classList.contains('open'))return closeSpread();
   const g=document.getElementById('guide');if(g&&!g.hidden)return g.querySelector('.x').click();
   if(modal.classList.contains('open'))return closeProject();
   if(typeof exitRoom==='function')exitRoom();
@@ -2267,7 +2465,6 @@ function animate(now){
    write-ups in the browser, the way Argonaut runs its model on-device. No API, no key,
    and nothing a visitor types leaves the page. */
 const guideEl=document.getElementById('guide'), guideMsgs=document.getElementById('guideMsgs'), guideIn=document.getElementById('guideIn');
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const STOP=new Set('a an and any are about can do does for from have i in is it me of on or show tell that the this to what which who with you your yours his he sandeep projects project work anything something use uses using built build made make has there'.split(' '));
 /* a few words people ask with, mapped to the words the write-ups use */
 const ALIAS={llm:'llm agent agents agentic crewai langchain litellm gemini claude genai conversational',ai:'ai agentic machine learning model llm',
