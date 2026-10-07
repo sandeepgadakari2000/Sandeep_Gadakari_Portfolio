@@ -711,7 +711,8 @@ const INK={'Entity Performance Intelligence':'entity','HR Analytics Intelligence
   'BBS Generator — Rebar Detailing Engine':'bbs','Argonaut — AI Job-Scam Detection':'argonaut','Kaizen-to-EBITDA Engine':'kaizen',
   'NiftyPulse Quant Orchestrator':'nifty','CoolScore Dubai — Cooling-Cost Predictor':'coolscore',
   'Ziaco — Five AI Agents, One Job Lifecycle':'ziaco-agents','ZIACO Website — AI Film & Multilingual Assistant':'ziaco-site'};
-PROJECTS.forEach(p=>{if(INK[p.t])p.ink=`art/ink-${INK[p.t]}.webp`});
+/* a file:// page can't hand its own images to WebGL (each file is its own origin), so there the drawn art stays */
+if(location.protocol!=='file:')PROJECTS.forEach(p=>{if(INK[p.t])p.ink=`art/ink-${INK[p.t]}.webp`});
 await Promise.race([
   Promise.all(PROJECTS.filter(p=>p.ink).map(p=>new Promise(res=>{const im=new Image();im.onload=()=>{p.inkImg=im;res()};im.onerror=res;im.src=p.ink}))),
   new Promise(res=>setTimeout(res,4000))]);
