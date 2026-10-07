@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Sandeep Gadakari — AI Product Management (certified), data &amp; BI portfolio. A hand-drawn 3D walkthrough: five rooms of case studies in Python, SQL, Tableau, machine learning and agentic AI.">
+<meta name="description" content="Sandeep Gadakari — AI Product Manager who ships. A hand-drawn 3D walkthrough of 26 projects and 7 live apps: AI products, agentic systems, dashboards and client work, from the business case to the deployed app.">
 <meta name="author" content="Sandeep Gadakari">
 <meta name="theme-color" content="#f1efe9">
 <title>Sandeep Gadakari — Portfolio</title>
@@ -196,10 +196,10 @@
 </div>
 
 <!-- 3D EXPERIENCE -->
-<canvas id="webgl" aria-label="A hand-drawn three dimensional portfolio corridor with five doors: Demos, Dashboards, Tableau, Code and AI Systems. Drag or scroll to walk, click a door to open it, click a framed poster to read the case study."></canvas>
+<canvas id="webgl" aria-label="A hand-drawn three dimensional portfolio corridor with six doors: Demos, Dashboards, Tableau, Code, AI Systems and About. Drag or scroll to walk, click a door to open it, click a framed poster to read the case study."></canvas>
 
 <div class="frame-ui">
-  <div class="brand"><b>SANDEEP GADAKARI</b><span>AI ENGINEER · GENAI &amp; MACHINE LEARNING SYSTEMS</span></div>
+  <div class="brand"><b>SANDEEP GADAKARI</b><span>AI PRODUCT MANAGER · FROM BUSINESS CASE TO LIVE APP</span></div>
   <nav class="nav" id="nav" aria-label="Walk to"></nav>
   <div class="scene-label" id="sceneLabel"><span class="swatch"></span><span id="sceneLabelText">THE FRONT DOOR</span></div>
   <div class="social" aria-label="Social links">
@@ -213,9 +213,9 @@
     <button id="scatterBtn">✦ SCATTER THE WALL</button>
   </div>
   <div class="hud">
-    <p class="kicker" id="hudKicker">SANDEEP GADAKARI · AI ENGINEER</p>
-    <h1 id="hudTitle">PRODUCTS BUILT<br>TO MAKE DATA<br>ACTIONABLE.</h1>
-    <p id="hudCopy">A hand-drawn walk through the work — five rooms of case studies in Python, SQL, Tableau, machine learning and agentic AI.</p>
+    <p class="kicker" id="hudKicker">SANDEEP GADAKARI · AI PRODUCT MANAGER</p>
+    <h1 id="hudTitle">I SPEC IT.<br>I SHIP IT.</h1>
+    <p id="hudCopy">An AI product manager who builds — seven live apps and real client work inside.</p>
   </div>
   <div class="hint" id="hint"><b>DRAG</b> or <b>SCROLL</b> to walk<br><b>CLICK</b> a door to open it<span class="dot">↓</span></div>
 </div>
@@ -257,11 +257,11 @@
     <header class="fb-hero">
       <div class="kick">HELLO, I'M</div>
       <h1>SANDEEP<br>GADAKARI</h1>
-      <div class="tag">‹ data storyteller /›</div>
+      <div class="tag">‹ AI product manager /›</div>
     </header>
     <section class="fb-sec" id="fb-about">
-      <h2>Turning data into direction.</h2>
-      <p class="lead">End-to-end product leadership for AI-driven solutions — from predictive market forecasting to automated enterprise analytics. I build the bridge between raw data and the decisions it should drive: cleaning and modelling messy inputs, engineering dashboards people actually use, and shipping analytics that answer real business questions.</p>
+      <h2>I spec it. I ship it.</h2>
+      <p class="lead">I’m an AI product manager who builds what I spec. I start from the business case — who has the problem, what it costs them, what would prove it solved — and take it all the way to a live app: the model, the guard-rails, the interface, and the numbers that say whether it worked. Seven are live today, and two were built for a client.</p>
     </section>
     <section class="fb-sec" id="fb-gallery">
       <h2>The work, by room.</h2>
@@ -274,7 +274,7 @@
     </section>
     <section class="fb-sec fb-contact" id="fb-contact">
       <h2>Let's make data useful.</h2>
-      <p class="lead">Open to AI engineering, GenAI, and machine learning systems roles.</p>
+      <p class="lead">Open to AI product management roles.</p>
       <a class="email" href="mailto:sandeepgadakari2000@gmail.com">sandeepgadakari2000@gmail.com</a>
       <div class="fb-social">
         <a href="https://www.linkedin.com/in/sandeep-gadakari/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 1 0 5 8.5 2.5 2.5 0 0 0 4.98 3.5zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.3c0-1.26-.02-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.8V21h-4z"></path></svg>LinkedIn ↗</a>
@@ -425,7 +425,7 @@ const PROJECTS=[
 PROJECTS.forEach((p,i)=>p.i=i);
 const byCat=id=>PROJECTS.filter(p=>p.cat===id);
 
-const skills=['Python','SQL','Tableau','Machine Learning','Agentic AI / CrewAI','Pandas / NumPy','JavaScript','Chart.js','Excel Automation','Streamlit','FastAPI','LLM APIs (Claude · Gemini)','Data Visualization','Dashboard Engineering'];
+const skills=['AI Product Management','Business Cases & Unit Economics','Python','SQL','Tableau','Machine Learning','Agentic AI / CrewAI','Pandas / NumPy','JavaScript','Chart.js','Excel Automation','Streamlit','FastAPI','LLM APIs (Claude · Gemini)','Data Visualization','Dashboard Engineering'];
 const tagFor=p=>p.kind==='demo'?'▶ LIVE DEMO':p.kind==='live'?'▶ LIVE APP':p.kind==='app'?'OPEN ↗':p.kind==='github'?'GITHUB ↗':p.kind==='tableau'?'TABLEAU ↗':'CASE STUDY';
 
 /* ============================== LOADER ============================== */
@@ -815,7 +815,7 @@ winMesh.position.set(0,3.3,CORR_END+0.12);scene.add(winMesh);
 box(0,3.3,CORR_END+0.14,4.6,3,0.02,INK);
 line([[0,4.8,CORR_END+0.16],[0,1.8,CORR_END+0.16]],INK);line([[-2.3,3.3,CORR_END+0.16],[2.3,3.3,CORR_END+0.16]],INK);
 const contactNote=new THREE.Mesh(new THREE.PlaneGeometry(3.4,2.55),
-  new THREE.MeshBasicMaterial({map:noteTexture('CONTACT','Open to AI engineering, GenAI and machine learning systems roles.\n'+EMAIL+'\nlinkedin.com/in/sandeep-gadakari'),transparent:true}));
+  new THREE.MeshBasicMaterial({map:noteTexture('CONTACT','Open to AI product management roles.\n'+EMAIL+'\nlinkedin.com/in/sandeep-gadakari'),transparent:true}));
 contactNote.position.set(-3.9,2.4,CORR_END+0.1);scene.add(contactNote);
 box(-3.9,2.4,CORR_END+0.11,3.4,2.55,0.02,INK);
 const contactHit=new THREE.Mesh(new THREE.PlaneGeometry(3.4,2.55),new THREE.MeshBasicMaterial({transparent:true,opacity:0,side:THREE.DoubleSide}));
@@ -1191,7 +1191,7 @@ new FontLoader().load('https://cdn.jsdelivr.net/npm/three@0.166.1/examples/fonts
   const outline=new THREE.LineSegments(new THREE.EdgesGeometry(geo,32),new THREE.LineBasicMaterial({color:0x2a2a2a}));outline.position.x=-cx;heroGroup.add(outline);
   setProgress(96);
 },undefined,()=>setProgress(96));
-const tagline=labelSprite('‹ data storyteller /›',{size:58,weight:'normal',pad:0.145,color:'#4a4a47'});
+const tagline=labelSprite('‹ AI product manager /›',{size:58,weight:'normal',pad:0.145,color:'#4a4a47'});
 tagline.position.set(0,-1.05,0.3);heroGroup.add(tagline);
 const doodleGroup=new THREE.Group();heroGroup.add(doodleGroup);
 function sparkle(x,y,z,s){const t=tex(64,64,(c)=>{c.clearRect(0,0,64,64);c.strokeStyle='#2a2a2a';c.lineWidth=4;c.beginPath();
@@ -1385,7 +1385,7 @@ function wallNote(side,z,head,body,color,y=2.7){
     d.position.set(WALL_X*s-0.07*s,y+p[1],z+p[0]*s);d.rotation.y=m.rotation.y;scene.add(d)});
   return m;
 }
-wallNote('L',-11,'ABOUT','End-to-end product leadership for AI-driven solutions. I clean and model messy inputs, engineer dashboards people actually use, and ship analytics that answer real business questions.','#b68235');
+wallNote('L',-11,'ABOUT','An AI product manager who builds. I start from the business case, then ship the model, the guard-rails and the interface — and measure whether it worked.','#b68235');
 wallNote('R',-20,'TOOLKIT',skills.join(' · '),'#b68235');
 
 /* ============================== NAV / CAMERA STATE ============================== */
@@ -1449,16 +1449,16 @@ function setHUD(place,inRoom){
     markNav(c.id);return;
   }
   labelEl.style.setProperty('--dot','transparent');hudKicker.style.color='';
-  if(place==='entry'){labelText.textContent='THE FRONT DOOR';hudKicker.textContent='SANDEEP GADAKARI · AI ENGINEER';
-    hudTitle.innerHTML='PRODUCTS BUILT<br>TO MAKE DATA<br>ACTIONABLE.';hudCopy.textContent='Click the door to step inside — then pick a room off the corridor.';markNav('entry')}
+  if(place==='entry'){labelText.textContent='THE FRONT DOOR';hudKicker.textContent='SANDEEP GADAKARI · AI PRODUCT MANAGER';
+    hudTitle.innerHTML='I SPEC IT.<br>I SHIP IT.';hudCopy.textContent='Seven live apps and real client work inside. Click a lit window to jump straight to a room — or the door to walk in.';markNav('entry')}
   else if(place==='hero'){labelText.textContent='WELCOME IN';hudKicker.textContent='HELLO, I’M';hudTitle.innerHTML='SANDEEP<br>GADAKARI';
-    hudCopy.textContent='‹ data storyteller /› — five doors ahead, one per kind of work.';markNav('entry')}
+    hudCopy.textContent='‹ AI product manager /› — six doors ahead, one per kind of work.';markNav('entry')}
   else if(place==='about'){labelText.textContent='ABOUT · THE HALLWAY';hudKicker.textContent='ABOUT';
-    hudTitle.innerHTML='TURNING DATA<br>INTO DIRECTION.';hudCopy.textContent='End-to-end product leadership for AI-driven solutions — grounded in Python, SQL, and data strategy.';markNav('')}
+    hudTitle.innerHTML='FROM BUSINESS CASE<br>TO LIVE APP.';hudCopy.textContent='Product leadership for AI — I write the case, then build the thing, grounded in Python, SQL and data strategy.';markNav('')}
   else if(place==='toolkit'){labelText.textContent='TOOLKIT';hudKicker.textContent='TOOLKIT';
     hudTitle.innerHTML='WHAT’S UNDER<br>THE HOOD.';hudCopy.textContent=skills.join(' · ');markNav('')}
   else if(place==='contact'){labelText.textContent='CONTACT';hudKicker.textContent='CONTACT';
-    hudTitle.innerHTML='LET’S MAKE<br>DATA USEFUL.';hudCopy.textContent='Open to AI engineering & ML roles — links bottom-left, or email '+EMAIL;markNav('contact')}
+    hudTitle.innerHTML='LET’S MAKE<br>DATA USEFUL.';hudCopy.textContent='Open to AI product management roles — links bottom-left, or email '+EMAIL;markNav('contact')}
 }
 function clearNav(){if(navTimer){clearTimeout(navTimer);navTimer=null}}
 
